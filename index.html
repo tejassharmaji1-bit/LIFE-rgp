@@ -916,7 +916,7 @@ async function saveAll(){
   }
   const hsc=calcHealth();
   const todayXPObj=calcTodayXP(hsc);
-  const todayXP=Math.max(0,todayXPObj.net); // season XP can't go below 0
+  const todayXP=Math.max(0,todayXPObj.net);
   const prevTotalXP=calcTotalXP(0);
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
@@ -932,13 +932,11 @@ async function saveAll(){
     savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
   };
 
-  // Save to allDayData
   allDayData[todayKey]=rec;
   localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
 
-  // Check rank up
   const newTotalXP=calcTotalXP(todayXP);
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
@@ -955,7 +953,6 @@ async function saveAll(){
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
 }
- 
 
 function showRankUp(rank){
   document.getElementById('lvlEm').textContent=rank.emoji;
@@ -963,70 +960,6 @@ function showRankUp(rank){
   document.getElementById('lvlTi').style.color=rank.color;
   document.getElementById('lvlSu').textContent='You reached '+rank.name+' rank! Keep going!';
   document.getElementById('lvlOver').classList.add('show');
-}
-
-// ══ SYNC ══
-function setSyncSt(s,msg){
-  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt');
-  dot.className='sdot '+s; txt.textContent=msg;
-}
-async function syncToSheets(){
-  setSyncSt('syncing','Google Sheets mein save ho raha hai...');
-  try{
-    const payload={
-      action:'save',
-      data:{
-        days:allDayData,
-        nf:nfDays,
-        meta:metaData
-      }
-    };
-    // no-cors fixes CORS block issue with Google Apps Script
-    await fetch(SHEETS_API,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(payload)
-    });
-    setSyncSt('synced','Synced to Google Sheets ✓');
-  }catch(e){
-    setSyncSt('error','Offline — local save ho gaya');
-  }
-}
-async function loadFromSheets(){
-  setSyncSt('syncing','Google Sheets se load ho raha hai...');
-  // Always load local first so UI is instant
-  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
-  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
-  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
-  loadToday(); updAll(); renderNFGrid(); renderHistGrid();
-
-  try{
-    // 8 second timeout
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),8000);
-    const res=await fetch(SHEETS_API+'?action=load&t='+Date.now(),{signal:controller.signal});
-    clearTimeout(timer);
-    const raw=await res.text();
-    const parsed=JSON.parse(raw);
-    if(parsed && typeof parsed==='object'){
-      if(parsed.days && typeof parsed.days==='object'){
-        allDayData={...allDayData,...parsed.days}; // merge, sheets wins
-      }
-      if(parsed.nf && typeof parsed.nf==='object'){
-        nfDays={...nfDays,...parsed.nf};
-      }
-      if(parsed.meta) metaData=parsed.meta;
-      // Save merged back to local
-      localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
-      localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
-      localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-      loadToday(); updAll(); renderNFGrid(); renderHistGrid();
-      setSyncSt('synced','Google Sheets sync ✓ — dono devices same!');
-    }
-  }catch(e){
-    setSyncSt('error','Offline — local data chal raha hai, net check karo');
-  }
 }
 
 // ══ LOAD TODAY ══
@@ -1042,7 +975,6 @@ function loadToday(){
   if(rec.studyData){
     SUBJECTS.forEach(s=>{studyData[s]={...{lec:0,rev:false},...rec.studyData[s]};});
   }
-  // Restore UI
   document.getElementById('sSlider').value=sleepH;
   exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
   foods.forEach(k=>{const el=document.getElementById('food-'+k);if(el)el.classList.add('on');});
@@ -1076,7 +1008,6 @@ function renderHistGrid(){
     const isFuture=i>todayDN&&!isToday;
     const rec=allDayData[key];
     const box=document.createElement('div');
-    // Calculate what date this day is
     const dayOffset=(seasonNum-1)*90+(i-1);
     const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+dayOffset);
     const dn=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
@@ -1126,47 +1057,54 @@ function openPop(key,r,dateObj,dayN){
 }
 function closePop(e){if(e.target.id==='dayPopup')document.getElementById('dayPopup').classList.remove('open');}
 
+function initApp(){
+  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
+  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
+  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
+  loadToday(); updAll(); renderNFGrid(); renderHistGrid();
+}
+
 // ══ INIT ══
 buildStudyGrid();
 renderWDots();
-loadFromSheets(); // loads from Sheets → local → renders everything
+initApp();
 </script>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
-      authDomain: "life-rgp-tracker.firebaseapp.com",
-      databaseURL: "https://life-rgp-tracker-default-rtdb.firebaseio.com",
-      projectId: "life-rgp-tracker",
-      storageBucket: "life-rgp-tracker.firebasestorage.app",
-      messagingSenderId: "531466954078",
-      appId: "1:531466954078:web:702640e5278e459d919bcf"
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
+    authDomain: "life-rgp-tracker.firebaseapp.com",
+    databaseURL: "https://life-rgp-tracker-default-rtdb.firebaseio.com",
+    projectId: "life-rgp-tracker",
+    storageBucket: "life-rgp-tracker.firebasestorage.app",
+    messagingSenderId: "531466954078",
+    appId: "1:531466954078:web:702640e5278e459d919bcf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.saveDataToFirebase = async function() {
+    const dataToSave = {
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString(),
+      xp: typeof totalXP !== 'undefined' ? totalXP : 0, 
+      rank: typeof currentRank !== 'undefined' ? currentRank : "Bronze",
+      streak: typeof currentStreak !== 'undefined' ? currentStreak : 0
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    window.saveDataToFirebase = async function() {
-      // Data collect kar rahe hain
-      const dataToSave = {
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-        xp: typeof totalXP !== 'undefined' ? totalXP : 0, 
-        rank: typeof currentRank !== 'undefined' ? currentRank : "Bronze",
-        streak: typeof currentStreak !== 'undefined' ? currentStreak : 0
-      };
-
-      try {
-        const logsRef = ref(db, 'season_1_logs');
-        const newLogRef = push(logsRef); 
-        await set(newLogRef, dataToSave);
-        alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
-      } catch (error) {
-        alert("Oops! Data save nahi hua: " + error.message);
-      }
+    try {
+      const logsRef = ref(db, 'season_1_logs');
+      const newLogRef = push(logsRef); 
+      await set(newLogRef, dataToSave);
+      alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
+    } catch (error) {
+      alert("Oops! Data save nahi hua: " + error.message);
     }
-  </script>
+  }
+</script>
 </body>
 </html>
