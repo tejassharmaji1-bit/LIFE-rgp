@@ -983,46 +983,52 @@ async function syncToSheets(){
         meta:metaData
       }
     };
-    await fetch(SHEETS_API,{method:'POST',body:JSON.stringify(payload)});
-    setSyncSt('synced','Synced to Google Sheets ✓ — koi bhi device pe same data!');
+    // no-cors fixes CORS block issue with Google Apps Script
+    await fetch(SHEETS_API,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
+    setSyncSt('synced','Synced to Google Sheets ✓');
   }catch(e){
-    setSyncSt('error','Offline — local save ho gaya, net aane pe save dabao');
+    setSyncSt('error','Offline — local save ho gaya');
   }
 }
 async function loadFromSheets(){
   setSyncSt('syncing','Google Sheets se load ho raha hai...');
+  // Always load local first so UI is instant
+  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
+  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
+  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
+  loadToday(); updAll(); renderNFGrid(); renderHistGrid();
+
   try{
-    const res=await fetch(SHEETS_API+'?action=load&t='+Date.now());
+    // 8 second timeout
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),8000);
+    const res=await fetch(SHEETS_API+'?action=load&t='+Date.now(),{signal:controller.signal});
+    clearTimeout(timer);
     const raw=await res.text();
     const parsed=JSON.parse(raw);
     if(parsed && typeof parsed==='object'){
       if(parsed.days && typeof parsed.days==='object'){
-        // Sheets is source of truth — merge with local (sheets wins)
-        const localDays=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
-        allDayData={...localDays,...parsed.days};
+        allDayData={...allDayData,...parsed.days}; // merge, sheets wins
       }
       if(parsed.nf && typeof parsed.nf==='object'){
-        const localNF=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
-        nfDays={...localNF,...parsed.nf};
+        nfDays={...nfDays,...parsed.nf};
       }
       if(parsed.meta) metaData=parsed.meta;
+      // Save merged back to local
+      localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
+      localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
+      localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
+      loadToday(); updAll(); renderNFGrid(); renderHistGrid();
+      setSyncSt('synced','Google Sheets sync ✓ — dono devices same!');
     }
-    // Save merged back to local
-    localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
-    localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
-    localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-    setSyncSt('synced','Loaded from Google Sheets ✓');
   }catch(e){
-    setSyncSt('error','Offline — local data use ho raha hai');
-    // Load from localStorage fallback
-    allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
-    nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
-    metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
+    setSyncSt('error','Offline — local data chal raha hai, net check karo');
   }
-  loadToday();
-  updAll();
-  renderNFGrid();
-  renderHistGrid();
 }
 
 // ══ LOAD TODAY ══
