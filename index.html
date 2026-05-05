@@ -1133,5 +1133,42 @@ buildStudyGrid();
 renderWDots();
 loadFromSheets(); // loads from Sheets → local → renders everything
 </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
+      authDomain: "life-rgp-tracker.firebaseapp.com",
+      databaseURL: "https://life-rgp-tracker-default-rtdb.firebaseio.com",
+      projectId: "life-rgp-tracker",
+      storageBucket: "life-rgp-tracker.firebasestorage.app",
+      messagingSenderId: "531466954078",
+      appId: "1:531466954078:web:702640e5278e459d919bcf"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.saveDataToFirebase = async function() {
+      // Data collect kar rahe hain
+      const dataToSave = {
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        xp: typeof totalXP !== 'undefined' ? totalXP : 0, 
+        rank: typeof currentRank !== 'undefined' ? currentRank : "Bronze",
+        streak: typeof currentStreak !== 'undefined' ? currentStreak : 0
+      };
+
+      try {
+        const logsRef = ref(db, 'season_1_logs');
+        const newLogRef = push(logsRef); 
+        await set(newLogRef, dataToSave);
+        alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
+      } catch (error) {
+        alert("Oops! Data save nahi hua: " + error.message);
+      }
+    }
+  </script>
 </body>
 </html>
