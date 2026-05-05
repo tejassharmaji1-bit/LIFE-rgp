@@ -947,7 +947,13 @@ async function saveAll(){
   updAll();
   renderNFGrid();
   renderHistGrid();
-
+const msg=document.getElementById('saveMsg');
+  const penMsg=todayXPObj.penalties>0?` (−${todayXPObj.penalties} penalty)`:'';
+  const netXP=todayXPObj.net;
+  msg.textContent=`${netXP>=0?'⚡ +':'💀 '}${netXP} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
+  msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
+  setTimeout(()=>msg.textContent='',5000);
+}
  
 
 function showRankUp(rank){
