@@ -452,9 +452,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- SAVE -->
 <div class="save-wrap">
-  <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
+  <button class="save-btn" onclick="saveAll(); saveDataToFirebase();">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
-  <div class="sync-row"><div class="sdot" id="sdot"></div><span id="stxt">Google Sheets se connect ho raha hai...</span></div>
 </div>
 
 </div><!-- app -->
@@ -949,15 +948,7 @@ async function saveAll(){
   renderNFGrid();
   renderHistGrid();
 
-  const msg=document.getElementById('saveMsg');
-  const penMsg=todayXPObj.penalties>0?` (−${todayXPObj.penalties} penalty)`:'';
-  const netXP=todayXPObj.net;
-  msg.textContent=`${netXP>=0?'⚡ +':'💀 '}${netXP} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
-  msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
-  setTimeout(()=>msg.textContent='',5000);
-
-  syncToSheets();
-}
+ 
 
 function showRankUp(rank){
   document.getElementById('lvlEm').textContent=rank.emoji;
