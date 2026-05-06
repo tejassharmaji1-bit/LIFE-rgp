@@ -435,7 +435,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <div class="save-wrap">
-  <button class="save-btn" onclick="saveAll(); window.saveDataToFirebase();">⚡ SAVE & EARN XP</button>
+ <button class="save-btn" onclick="saveAll(); setTimeout(() => window.saveDataToFirebase(), 1000);">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
 </div>
 
