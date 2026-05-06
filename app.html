@@ -215,11 +215,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
 .lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
 
-/* SEASON OVER */
-.sover-banner{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(180,79,255,.1));border:1px solid var(--gold);border-radius:14px;padding:16px 20px;margin-bottom:14px;text-align:center;}
-.sover-ti{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:4px;}
-.sover-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);}
-
 /* AI feedback */
 .ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-top:10px;display:flex;gap:9px;align-items:flex-start;}
 .ai-lbl{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
@@ -435,7 +430,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <div class="save-wrap">
-<button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
+  <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
 </div>
 
@@ -860,7 +855,7 @@ function switchTab(t){
   if(t==='nofap')renderNFGrid();
   if(t==='history')renderHistGrid();
 }
-// ══ SAVE ══
+
 async function saveAll(){
   if(!todayKey){
     document.getElementById('saveMsg').textContent='Season not started yet!';
@@ -868,7 +863,10 @@ async function saveAll(){
   }
   const hsc=calcHealth();
   const todayXPObj=calcTodayXP(hsc);
-  const todayXP=Math.max(0,todayXPObj.net);
+  
+  // Math.max ensures XP doesn't go below 0 visually, but netXP keeps exact record
+  const todayXP=Math.max(0,todayXPObj.net); 
+  
   const prevTotalXP=calcTotalXP(0);
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
@@ -892,14 +890,15 @@ async function saveAll(){
   const newTotalXP=calcTotalXP(todayXP);
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
+  
   if(newRank.name!==prevRank.name) showRankUp(newRank);
 
   updAll();
   renderNFGrid();
   renderHistGrid();
 
-  // Streak calculate karke direct nikal li
-  const {streak} = calcStreaks(); 
+  // STREAK NIKALI DIRECT FORMULA SE
+  const {streak} = calcStreaks();
 
   const msg=document.getElementById('saveMsg');
   const penMsg=todayXPObj.penalties>0?` (−${todayXPObj.penalties} penalty)`:'';
@@ -908,9 +907,10 @@ async function saveAll(){
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
 
-  // YE HAIN MASTERSTROKE: Direct Firebase ko asli number bhejna
+  // DIRECT FIREBASE CALL SCRIPT SE!
   if(window.saveDataToFirebase) {
-    window.saveDataToFirebase(netXP, newTotalXP, newRank.name, streak);
+    // Exact background variables bhej rahe hain
+    window.saveDataToFirebase(todayXP, newTotalXP, newRank.name, streak);
   }
 }
 
@@ -1026,7 +1026,6 @@ initApp();
 </script>
 
 <script type="module">
-<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -1043,15 +1042,15 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Ab ye screen nahi padhega, seedha function se number lega!
+  // Function ab 4 exact parameters le raha hai jo JS pass kar raha hai
   window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
     const dataToSave = {
       date: new Date().toLocaleDateString('en-IN'),
       time: new Date().toLocaleTimeString('en-IN'),
-      aaj_ka_xp: aajKaXP,     // Aaj kitna kamaya
-      total_xp: totalXP,      // Season mein ab tak kitna ho gaya
-      rank: rank,
-      streak: streak
+      season_xp: aajKaXP,   // Exact calculated XP
+      total_xp: totalXP,    // Exact calculated Total XP
+      rank: rank,           // Exact Rank name
+      streak: streak        // Exact Streak
     };
 
     try {
@@ -1063,7 +1062,6 @@ initApp();
       alert("Oops! Data save nahi hua: " + error.message);
     }
   }
-</script>
 </script>
 </body>
 </html>
