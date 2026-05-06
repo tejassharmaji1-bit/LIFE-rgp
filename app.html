@@ -1018,6 +1018,7 @@ initApp();
 </script>
 
 <script type="module">
+ <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -1035,16 +1036,19 @@ initApp();
   const db = getDatabase(app);
 
   window.saveDataToFirebase = async function() {
-    const xpValue = document.getElementById('totalXPDisp') ? document.getElementById('totalXPDisp').innerText.replace(/\D/g,'') : 0;
-    const rankValue = document.getElementById('rName') ? document.getElementById('rName').innerText : "Bronze";
-    const streakValue = document.getElementById('pStreak') ? document.getElementById('pStreak').innerText : 0;
+    // Screen par jo data dikh raha hai, seedha wahi uthayenge taaki kabhi 0 na aaye
+    const currentSeasonXP = document.getElementById('xpBig') ? document.getElementById('xpBig').innerText.replace(/\D/g,'') : "0";
+    const currentTotalXP = document.getElementById('totalXPDisp') ? document.getElementById('totalXPDisp').innerText.replace(/\D/g,'') : "0";
+    const currentRank = document.getElementById('rName') ? document.getElementById('rName').innerText : "BRONZE";
+    const currentStreak = document.getElementById('pStreak') ? document.getElementById('pStreak').innerText : "0";
 
     const dataToSave = {
       date: new Date().toLocaleDateString('en-IN'),
       time: new Date().toLocaleTimeString('en-IN'),
-      xp: Number(xpValue),
-      rank: rankValue,
-      streak: Number(streakValue)
+      season_xp: Number(currentSeasonXP), // Ye aapka 70 XP bhejega
+      total_xp: Number(currentTotalXP),
+      rank: currentRank,
+      streak: Number(currentStreak)
     };
 
     try {
@@ -1056,6 +1060,7 @@ initApp();
       alert("Oops! Data save nahi hua: " + error.message);
     }
   }
+</script>
 </script>
 </body>
 </html>
