@@ -435,7 +435,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <div class="save-wrap">
- <button class="save-btn" onclick="saveAll(); setTimeout(() => window.saveDataToFirebase(), 1000);">⚡ SAVE & EARN XP</button>
+<button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
 </div>
 
@@ -860,7 +860,7 @@ function switchTab(t){
   if(t==='nofap')renderNFGrid();
   if(t==='history')renderHistGrid();
 }
-
+// ══ SAVE ══
 async function saveAll(){
   if(!todayKey){
     document.getElementById('saveMsg').textContent='Season not started yet!';
@@ -898,12 +898,20 @@ async function saveAll(){
   renderNFGrid();
   renderHistGrid();
 
+  // Streak calculate karke direct nikal li
+  const {streak} = calcStreaks(); 
+
   const msg=document.getElementById('saveMsg');
   const penMsg=todayXPObj.penalties>0?` (−${todayXPObj.penalties} penalty)`:'';
   const netXP=todayXPObj.net;
   msg.textContent=`${netXP>=0?'⚡ +':'💀 '}${netXP} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
+
+  // YE HAIN MASTERSTROKE: Direct Firebase ko asli number bhejna
+  if(window.saveDataToFirebase) {
+    window.saveDataToFirebase(netXP, newTotalXP, newRank.name, streak);
+  }
 }
 
 function showRankUp(rank){
@@ -1018,7 +1026,7 @@ initApp();
 </script>
 
 <script type="module">
- <script type="module">
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -1035,20 +1043,15 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  window.saveDataToFirebase = async function() {
-    // Screen par jo data dikh raha hai, seedha wahi uthayenge taaki kabhi 0 na aaye
-    const currentSeasonXP = document.getElementById('xpBig') ? document.getElementById('xpBig').innerText.replace(/\D/g,'') : "0";
-    const currentTotalXP = document.getElementById('totalXPDisp') ? document.getElementById('totalXPDisp').innerText.replace(/\D/g,'') : "0";
-    const currentRank = document.getElementById('rName') ? document.getElementById('rName').innerText : "BRONZE";
-    const currentStreak = document.getElementById('pStreak') ? document.getElementById('pStreak').innerText : "0";
-
+  // Ab ye screen nahi padhega, seedha function se number lega!
+  window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
     const dataToSave = {
       date: new Date().toLocaleDateString('en-IN'),
       time: new Date().toLocaleTimeString('en-IN'),
-      season_xp: Number(currentSeasonXP), // Ye aapka 70 XP bhejega
-      total_xp: Number(currentTotalXP),
-      rank: currentRank,
-      streak: Number(currentStreak)
+      aaj_ka_xp: aajKaXP,     // Aaj kitna kamaya
+      total_xp: totalXP,      // Season mein ab tak kitna ho gaya
+      rank: rank,
+      streak: streak
     };
 
     try {
