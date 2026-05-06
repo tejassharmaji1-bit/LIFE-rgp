@@ -1026,8 +1026,9 @@ initApp();
 </script>
 
 <script type="module">
+ <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
@@ -1042,26 +1043,49 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Function ab 4 exact parameters le raha hai jo JS pass kar raha hai
+  // 1. DATA LOAD KARNE KA FUNCTION (Cloud se wapas lana)
+  window.loadFromFirebase = async function() {
+    const dbRef = ref(getDatabase());
+    try {
+      // 'my_full_backup' folder se poora data uthayega
+      const snapshot = await get(child(dbRef, 'my_full_backup'));
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // Data ko wapas phone ki memory mein dalega
+        if(data.days) localStorage.setItem('rpg_days_v2', JSON.stringify(data.days));
+        if(data.nf) localStorage.setItem('rpg_nf_v2', JSON.stringify(data.nf));
+        if(data.meta) localStorage.setItem('rpg_meta_v2', JSON.stringify(data.meta));
+        
+        // Screen ko turant refresh karega
+        if(typeof window.initApp === 'function') window.initApp();
+      }
+    } catch(e) {
+      console.error("Load failed", e);
+    }
+  }
+
+  // JAISE HI WEBSITE KHULEGI, DATA CLOUD SE WAPAS AAYEGA
+  window.loadFromFirebase();
+
+  // 2. DATA SAVE KARNE KA FUNCTION (Full Backup)
   window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
-    const dataToSave = {
-      date: new Date().toLocaleDateString('en-IN'),
-      time: new Date().toLocaleTimeString('en-IN'),
-      season_xp: aajKaXP,   // Exact calculated XP
-      total_xp: totalXP,    // Exact calculated Total XP
-      rank: rank,           // Exact Rank name
-      streak: streak        // Exact Streak
+    // Ab sirf XP nahi, poora Calendar save hoga
+    const fullBackup = {
+      days: JSON.parse(localStorage.getItem('rpg_days_v2') || '{}'),
+      nf: JSON.parse(localStorage.getItem('rpg_nf_v2') || '{}'),
+      meta: JSON.parse(localStorage.getItem('rpg_meta_v2') || '{}'),
+      stats: { xp: totalXP, rank: rank, streak: streak, last_updated: new Date().toLocaleTimeString('en-IN') }
     };
 
     try {
-      const logsRef = ref(db, 'season_1_logs');
-      const newLogRef = push(logsRef); 
-      await set(newLogRef, dataToSave);
-      alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
+      await set(ref(db, 'my_full_backup'), fullBackup);
+      alert("Wah! Pura Calendar aur XP Cloud mein Save Ho Gaya! ☁️⚔️");
     } catch (error) {
       alert("Oops! Data save nahi hua: " + error.message);
     }
   }
+</script>
 </script>
 </body>
 </html>
