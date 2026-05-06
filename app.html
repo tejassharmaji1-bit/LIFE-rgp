@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life RPG — Season Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;
+  --border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;
+  --water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;
+  --food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;
+  --bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;
+  --diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,100,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,100,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.app{max-width:920px;margin:0 auto;padding:1.2rem 0.9rem;position:relative;z-index:1;}
+
+/* HEADER */
+.hdr{text-align:center;margin-bottom:1.5rem;}
+.hdr-tag{font-family:'Space Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;}
+.hdr-title{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,6vw,3rem);font-weight:900;letter-spacing:.06em;background:linear-gradient(135deg,#ff4d6d,#b44fff,#00c8ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
+.hdr-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:5px;letter-spacing:.1em;}
+.season-pill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:5px 16px;border:1px solid var(--border);border-radius:20px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);}
+.season-day{color:var(--text);font-weight:700;}
+
+/* RANK CARD */
+.rank-card{border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border:1px solid var(--border);background:var(--surface);position:relative;overflow:hidden;}
+.rank-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.rank-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;}
+.rank-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;}
+.rank-left{display:flex;align-items:center;gap:12px;}
+.rank-emblem{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:2px solid currentColor;flex-shrink:0;}
+.rank-lbl{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.rank-nm{font-family:'Orbitron',monospace;font-size:1.25rem;font-weight:700;}
+.rank-xpneed{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:2px;}
+.rank-right{text-align:right;}
+.xp-big{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;line-height:1;}
+.xp-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.lvl-txt{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:2px;}
+.xp-bar-wrap{margin-top:.7rem;}
+.xp-bar-top{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:4px;}
+.xp-track{height:7px;background:var(--surface3);border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+/* SEASON INFO */
+.season-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.2rem;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 10px;text-align:center;}
+.scard-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;line-height:1;}
+.scard-lbl{font-family:'Space Mono',monospace;font-size:.54rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* STAT PILLS */
+.stat-pills{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.2rem;}
+.pill{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center;}
+.pill-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;line-height:1;}
+.pill-lbl{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* TABS */
+.tabs{display:flex;gap:5px;margin-bottom:1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:5px;}
+.tab{flex:1;padding:9px 4px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
+.tab.active{color:var(--text);}
+.tab-ic{display:block;font-size:1rem;margin-bottom:2px;}
+.panel{display:none;animation:fadeIn .3s ease;}
+.panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION */
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:16px 18px;margin-bottom:12px;}
+.sec-hd{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
+.sec-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.sec-ttl{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.05em;}
+.sec-sub{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:1px;}
+.sec-xp{margin-left:auto;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);background:var(--surface2);padding:3px 9px;border-radius:20px;border:1px solid var(--border);}
+
+/* CARDS 2-col */
+.c2{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:12px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 16px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.card.water::before{background:var(--water);}
+.card.sleep::before{background:var(--sleep);}
+.card.exercise::before{background:var(--exercise);}
+.card.food::before{background:var(--food);}
+.card.mind::before{background:var(--mind);}
+.ctop{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+.cttl{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;}
+.csub{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);margin-top:1px;}
+.bignum{font-family:'Orbitron',monospace;font-size:1.7rem;font-weight:700;line-height:1;}
+.unit{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);}
+.ptrack{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;margin:7px 0 5px;}
+.pfill{height:100%;border-radius:3px;transition:width .4s ease;}
+
+/* Water dots */
+.wdots{display:flex;gap:4px;flex-wrap:wrap;margin:5px 0 8px;}
+.wdot{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .18s;}
+.wdot.on{background:var(--water);border-color:var(--water);}
+
+/* Btns */
+.btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;}
+.btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn:hover{border-color:#7c6af7;color:#a78bfa;}
+.btnp{border:none;color:#05050d;font-weight:700;}
+
+/* Slider */
+.slwrap{display:flex;align-items:center;gap:8px;margin:7px 0;}
+.slwrap input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--border);border-radius:3px;outline:none;}
+.slwrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;}
+
+/* Toggle */
+.toglist{display:flex;flex-direction:column;gap:6px;}
+.tog{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .17s;font-size:.8rem;user-select:none;}
+.tog:hover{border-color:#7c6af7;}
+.tog.on{border-color:currentColor;}
+.ck{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .17s;}
+.tog.on .ck{background:currentColor;border-color:currentColor;}
+.ck::after{content:'✓';color:#05050d;font-size:.58rem;font-weight:700;display:none;}
+.tog.on .ck::after{display:block;}
+.tgtlbl{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:6px;}
+.tgtlbl span{font-weight:700;}
+
+/* Mood */
+.mrow{display:flex;gap:6px;margin-top:4px;}
+.mbtn{flex:1;padding:8px 0;border-radius:8px;border:1px solid var(--border);background:var(--surface2);font-size:1.25rem;cursor:pointer;transition:all .17s;text-align:center;}
+.mbtn:hover{transform:scale(1.1);}
+.mbtn.on{border-width:2px;transform:scale(1.1);}
+.mtxt{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;margin-top:6px;}
+
+/* badge */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;margin-top:4px;}
+
+/* ── STUDY ── */
+.study-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.subj{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px 14px;}
+.subj-nm{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;margin-bottom:9px;}
+.lec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.lec-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);}
+.lec-ctrl{display:flex;align-items:center;gap:6px;}
+.lec-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.lec-btn:hover{border-color:#7c6af7;color:#a78bfa;}
+.lec-num{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;min-width:20px;text-align:center;}
+.subj-xp{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--study);margin-top:4px;}
+.rev-tog{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .17s;font-size:.75rem;user-select:none;margin-top:6px;}
+.rev-tog.on{border-color:var(--study);}
+.rev-tog .ck2{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .17s;}
+.rev-tog.on .ck2{background:var(--study);border-color:var(--study);}
+.rev-tog .ck2::after{content:'✓';color:#05050d;font-size:.5rem;font-weight:700;display:none;}
+.rev-tog.on .ck2::after{display:block;}
+.study-total{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:var(--surface2);border-radius:10px;margin-top:11px;flex-wrap:wrap;gap:8px;}
+
+/* ── NOFAP ── */
+.nf-hero{text-align:center;padding:.8rem 0 .5rem;}
+.nf-big{font-family:'Orbitron',monospace;font-size:3.2rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--nofap),var(--diamond));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nf-lbl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:3px;}
+.nf-btns{display:flex;gap:9px;justify-content:center;margin:10px 0;}
+.nfbtn{padding:9px 20px;border-radius:9px;border:none;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .2s;}
+.nfbtn:hover{transform:scale(1.04);}
+.nfbtn.win{background:linear-gradient(135deg,#00ff88,#00c8ff);color:#05050d;}
+.nfbtn.fail{background:linear-gradient(135deg,#ff4d6d,#ff8c42);color:#fff;}
+.nf-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0;}
+.nfbox{aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;user-select:none;}
+.nfbox:hover{border-color:#7c6af7;transform:scale(1.07);z-index:2;}
+.nfbox .nd{font-family:'Space Mono',monospace;font-size:.42rem;color:var(--muted);}
+.nfbox .ns{font-size:.68rem;font-weight:700;line-height:1;}
+.nfbox.win{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.5);}
+.nfbox.fail{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.5);}
+.nfbox.fut{opacity:.2;cursor:default;}
+.nfbox.fut:hover{transform:none;border-color:var(--border);}
+.nfbox.tod{box-shadow:0 0 0 2px var(--nofap);}
+.nf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+
+/* HISTORY */
+.hgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:12px;}
+.hbox{aspect-ratio:1;border-radius:7px;border:1px solid var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;user-select:none;}
+.hbox:hover{border-color:#7c6af7;transform:scale(1.06);z-index:2;}
+.hbox .dn{font-family:'Space Mono',monospace;font-size:.42rem;color:var(--muted);}
+.hbox .ds{font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;}
+.hbox.sg{background:rgba(180,79,255,.18);border-color:rgba(180,79,255,.5);}
+.hbox.sgo{background:rgba(0,255,136,.12);border-color:rgba(0,255,136,.4);}
+.hbox.sa{background:rgba(255,214,0,.12);border-color:rgba(255,214,0,.4);}
+.hbox.sl{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.4);}
+.hbox.emp{opacity:.22;cursor:default;}
+.hbox.emp:hover{transform:none;border-color:var(--border);}
+.hbox.tod{box-shadow:0 0 0 2px #7c6af7;}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:9px;}
+.li{display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);}
+.ld{width:9px;height:9px;border-radius:3px;}
+
+/* SAVE */
+.save-wrap{margin-top:1.2rem;}
+.save-btn{display:block;width:100%;padding:13px;border-radius:13px;border:none;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;cursor:pointer;letter-spacing:.08em;background:linear-gradient(135deg,#7c6af7,#b44fff,#ff4d6d);color:#fff;transition:all .2s;}
+.save-btn:hover{opacity:.88;transform:scale(1.01);}
+.save-msg{text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;margin-top:5px;min-height:1rem;}
+
+/* POPUP */
+.poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
+.poverlay.open{display:flex;}
+.pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
+.pclose{position:absolute;top:13px;right:13px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:3px 9px;cursor:pointer;font-size:.7rem;font-family:'Space Mono',monospace;}
+.pdate{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.pscore{font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;line-height:1;}
+.plv{font-size:.8rem;font-weight:600;margin:3px 0 13px;}
+.prows{display:flex;flex-direction:column;gap:6px;}
+.pr{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--surface2);border-radius:8px;}
+.prlbl{flex:1;color:var(--muted);font-family:'Space Mono',monospace;font-size:.6rem;}
+.prval{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:600;}
+
+/* LEVEL UP */
+.lvlover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;}
+.lvlover.show{display:flex;animation:fadeIn .4s ease;}
+.lvl-em{font-size:4rem;}
+.lvl-ti{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:900;letter-spacing:.1em;text-align:center;}
+.lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
+.lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
+
+/* SEASON OVER */
+.sover-banner{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(180,79,255,.1));border:1px solid var(--gold);border-radius:14px;padding:16px 20px;margin-bottom:14px;text-align:center;}
+.sover-ti{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.sover-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);}
+
+/* AI feedback */
+.ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-top:10px;display:flex;gap:9px;align-items:flex-start;}
+.ai-lbl{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.ai-txt{font-size:.82rem;font-weight:600;line-height:1.5;}
+
+@media(max-width:560px){
+  .c2{grid-template-columns:1fr;}
+  .stat-pills{grid-template-columns:repeat(2,1fr);}
+  .study-grid{grid-template-columns:1fr;}
+  .nf-grid{grid-template-columns:repeat(9,1fr);}
+  .hgrid{grid-template-columns:repeat(6,1fr);}
+  .season-row{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hdr">
+  <div class="hdr-tag">// Life RPG Tracker — Season System</div>
+  <div class="hdr-title">LIFE RPG</div>
+  <div class="hdr-sub">No Fap · Health · Study · 90 Days</div>
+  <div class="season-pill">
+    Season <span class="season-day" id="seasonNum">1</span>
+    &nbsp;·&nbsp; Day <span class="season-day" id="dayNum">—</span> / 90
+    &nbsp;·&nbsp; <span id="todayDateStr"></span>
+  </div>
+</div>
+
+<div class="rank-card" id="rankCard">
+  <div class="rank-glow" id="rankGlow"></div>
+  <div class="rank-top">
+    <div class="rank-left">
+      <div class="rank-emblem" id="rEmblem">🥉</div>
+      <div>
+        <div class="rank-lbl">Current Rank</div>
+        <div class="rank-nm" id="rName">BRONZE</div>
+        <div class="rank-xpneed" id="rXPneed">—</div>
+      </div>
+    </div>
+    <div class="rank-right">
+      <div class="xp-big" id="xpBig">0</div>
+      <div class="xp-lbl">Season XP (Rank resets each season)</div>
+      <div class="lvl-txt" id="lvlTxt">Level 1</div>
+      <div class="lvl-txt" id="totalXPDisp" style="color:var(--muted)">Total: 0 XP</div>
+    </div>
+  </div>
+  <div class="xp-bar-wrap">
+    <div class="xp-bar-top"><span id="xpBarLbl">To next rank</span><span id="xpBarPct">0%</span></div>
+    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="season-row">
+  <div class="scard"><div class="scard-val" id="sSeasonXP" style="color:#ffd700">0</div><div class="scard-lbl">Season XP (Rank)</div></div>
+  <div class="scard"><div class="scard-val" id="sLastRank" style="color:#c0c0c0">—</div><div class="scard-lbl">Last Season Rank</div></div>
+  <div class="scard"><div class="scard-val" id="sLastXP" style="color:#a78bfa">—</div><div class="scard-lbl">Last Season XP</div></div>
+</div>
+
+<div class="stat-pills">
+  <div class="pill"><div class="pill-val" id="pStreak" style="color:#ff8c42">0</div><div class="pill-lbl">🔥 Streak</div></div>
+  <div class="pill"><div class="pill-val" id="pBest" style="color:#ffd700">0</div><div class="pill-lbl">🏆 Best</div></div>
+  <div class="pill"><div class="pill-val" id="pNofap" style="color:#ff4d6d">0</div><div class="pill-lbl">⚔️ NF Days</div></div>
+  <div class="pill"><div class="pill-val" id="pDays" style="color:#b44fff">0</div><div class="pill-lbl">📅 Tracked</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" id="tab-health" onclick="switchTab('health')"><span class="tab-ic">💪</span>Health</button>
+  <button class="tab" id="tab-study" onclick="switchTab('study')"><span class="tab-ic">📚</span>Study</button>
+  <button class="tab" id="tab-nofap" onclick="switchTab('nofap')"><span class="tab-ic">⚔️</span>NoFap</button>
+  <button class="tab" id="tab-history" onclick="switchTab('history')"><span class="tab-ic">📅</span>History</button>
+</div>
+
+<div class="panel active" id="panel-health">
+  <div class="c2">
+    <div class="card water">
+      <div class="ctop"><span style="font-size:1.1rem">💧</span><div><div class="cttl">PAANI</div><div class="csub">8 glass · 5 XP each</div></div></div>
+      <div style="display:flex;align-items:baseline;gap:5px"><span class="bignum" id="wNum" style="color:var(--water)">0</span><span class="unit">/ 8</span></div>
+      <div class="ptrack"><div class="pfill" id="wBar" style="width:0%;background:var(--water)"></div></div>
+      <div class="wdots" id="wDots"></div>
+      <div class="btnrow">
+        <button class="btn btnp" style="background:var(--water)" onclick="addW()">+ Piya</button>
+        <button class="btn" onclick="remW()">- Hatao</button>
+      </div>
+    </div>
+    <div class="card sleep">
+      <div class="ctop"><span style="font-size:1.1rem">😴</span><div><div class="cttl">NEEND</div><div class="csub">7h+ → +30 XP</div></div></div>
+      <div style="display:flex;align-items:baseline;gap:5px"><span class="bignum" id="sNum" style="color:var(--sleep)">0</span><span class="unit">ghante</span></div>
+      <div class="slwrap"><span class="unit">0</span><input type="range" min="0" max="12" step="0.5" value="0" id="sSlider" oninput="updSleep(this.value)" style="-webkit-slider-thumb-color:var(--sleep)"><span class="unit">12h</span></div>
+      <div class="ptrack"><div class="pfill" id="sBar" style="width:0%;background:var(--sleep)"></div></div>
+      <div id="sBadge"></div>
+    </div>
+    <div class="card exercise">
+      <div class="ctop"><span style="font-size:1.1rem">🏃</span><div><div class="cttl">EXERCISE</div><div class="csub">Koi ek · +30 XP</div></div></div>
+      <div class="toglist">
+        <div class="tog" id="ex-run" style="color:var(--exercise)" onclick="togEx('run')"><div class="ck"></div><span>🏃 Run / Jogging</span></div>
+        <div class="tog" id="ex-workout" style="color:var(--exercise)" onclick="togEx('workout')"><div class="ck"></div><span>💪 Workout / Gym</span></div>
+        <div class="tog" id="ex-stretch" style="color:var(--exercise)" onclick="togEx('stretch')"><div class="ck"></div><span>🧘 Stretching / Yoga</span></div>
+      </div>
+      <div id="exSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
+    </div>
+    <div class="card food">
+      <div class="ctop"><span style="font-size:1.1rem">🥗</span><div><div class="cttl">HEALTHY KHANA</div><div class="csub">Koi bhi 3 → +20 XP</div></div></div>
+      <div class="tgtlbl">Selected: <span id="fCnt" style="color:var(--food);font-weight:700">0</span>/5 · Target: <span style="color:var(--food)">3</span></div>
+      <div class="toglist">
+        <div class="tog" id="food-nojunk" style="color:var(--food)" onclick="togFood('nojunk')"><div class="ck"></div><span>🚫 No Junk Food</span></div>
+        <div class="tog" id="food-home" style="color:var(--food)" onclick="togFood('home')"><div class="ck"></div><span>🏠 Home Food (gud/sakar)</span></div>
+        <div class="tog" id="food-oats" style="color:var(--food)" onclick="togFood('oats')"><div class="ck"></div><span>🌾 Oats / Healthy Bowl</span></div>
+        <div class="tog" id="food-milk" style="color:var(--food)" onclick="togFood('milk')"><div class="ck"></div><span>🥛 Milk + Curd</span></div>
+        <div class="tog" id="food-protein" style="color:var(--food)" onclick="togFood('protein')"><div class="ck"></div><span>💊 Protein Shake</span></div>
+      </div>
+      <div id="foodSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(255,95,160,.12)">🧠</div>
+      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi bhi 2 karo → +20 XP</div></div>
+      <div class="sec-xp" id="mindCnt">0/4</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px">
+      <div class="tog" id="mind-write" style="color:var(--mind)" onclick="togMind('write')"><div class="ck"></div><span>✍️ Write / Journal</span></div>
+      <div class="tog" id="mind-read" style="color:var(--mind)" onclick="togMind('read')"><div class="ck"></div><span>📖 Read 15-20 min</span></div>
+      <div class="tog" id="mind-selftalk" style="color:var(--mind)" onclick="togMind('selftalk')"><div class="ck"></div><span>🗣️ Self Talk</span></div>
+      <div class="tog" id="mind-meditation" style="color:var(--mind)" onclick="togMind('meditation')"><div class="ck"></div><span>🧘 Meditation</span></div>
+    </div>
+    <div id="mindSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(255,95,160,.12)">😊</div>
+      <div><div class="sec-ttl">MOOD</div><div class="sec-sub">Sach batao!</div></div>
+    </div>
+    <div class="mrow">
+      <button class="mbtn" id="mood-1" onclick="setMood(1)">😞</button>
+      <button class="mbtn" id="mood-2" onclick="setMood(2)">😐</button>
+      <button class="mbtn" id="mood-3" onclick="setMood(3)">🙂</button>
+      <button class="mbtn" id="mood-4" onclick="setMood(4)">😄</button>
+      <button class="mbtn" id="mood-5" onclick="setMood(5)">🤩</button>
+    </div>
+    <div class="mtxt" id="moodTxt">Mood select karo</div>
+  </div>
+  <div class="sec" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:3px">HEALTH SCORE</div>
+      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;" id="hScoreDisp">0%</div>
+      <div id="xpPreview" style="font-family:'Space Mono',monospace;font-size:.6rem;margin-top:4px"></div>
+    </div>
+    <div class="ai-box" style="flex:1;max-width:280px">
+      <span style="font-size:1.1rem;flex-shrink:0">🤖</span>
+      <div><div class="ai-lbl">AI Feedback</div><div class="ai-txt" id="aiFeed">Data bharo!</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-study">
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(255,224,51,.12)">📚</div>
+      <div><div class="sec-ttl">STUDY TRACKER</div><div class="sec-sub">2 lec = 30 XP each · 3rd+ lec = 40 XP bonus · Revision = 15 XP</div></div>
+      <div class="sec-xp" id="studyXPDisp">0 XP</div>
+    </div>
+    <div class="study-grid" id="studyGrid">
+      </div>
+    <div class="study-total">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Total Lectures</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)" id="totalLec">0</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Study XP Today</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)" id="totalStudyXP">0 XP</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-nofap">
+  <div class="sec">
+    <div class="nf-hero">
+      <div class="nf-big" id="nfCount">0</div>
+      <div class="nf-lbl">DAYS STRONG THIS SEASON (90 DAYS)</div>
+    </div>
+    <div class="nf-btns">
+      <button class="nfbtn win" onclick="setNFToday('win')">✕ AAJ JEET GAYA +50 XP</button>
+      <button class="nfbtn fail" onclick="setNFToday('fail')">0 RELAPSED</button>
+    </div>
+    <div class="nf-grid" id="nfGrid"></div>
+    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:6px">Click karke toggle karo · ✕ = Win · 0 = Relapse</div>
+    <div class="nf-stats">
+      <div class="pill"><div class="pill-val" id="nfWins" style="color:#00ff88">0</div><div class="pill-lbl">✕ Wins</div></div>
+      <div class="pill"><div class="pill-val" id="nfFails" style="color:#ff4d6d">0</div><div class="pill-lbl">0 Fails</div></div>
+      <div class="pill"><div class="pill-val" id="nfXP" style="color:#ffd700">+0</div><div class="pill-lbl">Today XP</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-history">
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(124,106,247,.12)">📅</div>
+      <div><div class="sec-ttl">90 DAYS HISTORY</div><div class="sec-sub" id="histDateRange">Season 1</div></div>
+    </div>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:rgba(180,79,255,.5)"></div>God 90%+</div>
+      <div class="li"><div class="ld" style="background:rgba(0,255,136,.5)"></div>Good 80%+</div>
+      <div class="li"><div class="ld" style="background:rgba(255,214,0,.5)"></div>Avg 70%+</div>
+      <div class="li"><div class="ld" style="background:rgba(255,77,109,.4)"></div>Low</div>
+    </div>
+    <div class="hgrid" id="histGrid"></div>
+    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:7px">Kisi bhi din pe click karo → detail dekho</div>
+  </div>
+</div>
+
+<div class="save-wrap">
+  <button class="save-btn" onclick="saveAll(); window.saveDataToFirebase();">⚡ SAVE & EARN XP</button>
+  <div class="save-msg" id="saveMsg"></div>
+</div>
+
+</div><div class="poverlay" id="dayPopup" onclick="closePop(event)">
+  <div class="pbox">
+    <button class="pclose" onclick="document.getElementById('dayPopup').classList.remove('open')">✕ Close</button>
+    <div class="pdate" id="popDate"></div>
+    <div class="pscore" id="popScore"></div>
+    <div class="plv" id="popLv"></div>
+    <div class="prows" id="popRows"></div>
+  </div>
+</div>
+
+<div class="lvlover" id="lvlOver">
+  <div class="lvl-em" id="lvlEm">🎉</div>
+  <div class="lvl-ti" id="lvlTi">RANK UP!</div>
+  <div class="lvl-su" id="lvlSu">New rank reached!</div>
+  <button class="lvl-cl" onclick="document.getElementById('lvlOver').classList.remove('show')">CONTINUE ⚡</button>
+</div>
+
+<script>
+// ══ CONFIG ══
+const SEASON_START = new Date('2026-04-04');
+SEASON_START.setHours(0,0,0,0);
+const SUBJECTS = ['maths','physics','chemistry','english'];
+const SUBJ_LABELS = {maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English'};
+
+// ══ RANKS ══
+const RANKS = [
+  {name:'BRONZE',   emoji:'🥉', color:'#cd7f32', xp:0},
+  {name:'SILVER',   emoji:'🥈', color:'#c0c0c0', xp:400},
+  {name:'GOLD',     emoji:'🥇', color:'#ffd700', xp:1000},
+  {name:'PLATINUM', emoji:'💠', color:'#00e5ff', xp:2000},
+  {name:'DIAMOND',  emoji:'💎', color:'#b44fff', xp:4000},
+  {name:'HEROIC',   emoji:'⚔️', color:'#ff4444', xp:7000},
+  {name:'MASTER',   emoji:'👑', color:'#ff8c00', xp:11000},
+  {name:'GRANDMASTER',emoji:'🔱',color:'#ffffff', xp:16000},
+];
+
+// ══ STATE ══
+let water=0, sleepH=0, exercises=new Set(), foods=new Set(), minds=new Set(), mood=0;
+let studyData = {}; 
+let nfDays = {};    
+let allDayData = {}; 
+let metaData = {};   
+
+const today = new Date(); today.setHours(0,0,0,0);
+const todayKey = getDayKey(today);
+const dayNum = getDayNum(today);
+const seasonNum = getSeasonNum(today);
+
+// ══ DATE HELPERS ══
+function getDayNum(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const diff = Math.floor((d - SEASON_START) / 86400000);
+  const sn = Math.floor(diff / 90);
+  const dn = (diff % 90) + 1;
+  return dn > 0 ? dn : null;
+}
+function getSeasonNum(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const diff = Math.floor((d - SEASON_START) / 86400000);
+  return Math.floor(diff / 90) + 1;
+}
+function getDayKey(date) {
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const diff = Math.floor((d - SEASON_START) / 86400000);
+  if(diff < 0) return null;
+  const sn = Math.floor(diff / 90) + 1;
+  const dn = (diff % 90) + 1;
+  return `s${sn}_d${dn}`;
+}
+function getDateFromKey(key) {
+  const m = key.match(/s(\d+)_d(\d+)/);
+  if(!m) return null;
+  const sn = parseInt(m[1]), dn = parseInt(m[2]);
+  const dayOffset = (sn-1)*90 + (dn-1);
+  const d = new Date(SEASON_START);
+  d.setDate(SEASON_START.getDate() + dayOffset);
+  return d;
+}
+
+document.getElementById('dayNum').textContent = dayNum || '—';
+document.getElementById('seasonNum').textContent = seasonNum;
+document.getElementById('todayDateStr').textContent = today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+document.getElementById('histDateRange').textContent = `Season ${seasonNum} · Apr 4 onwards`;
+
+function buildStudyGrid() {
+  const g = document.getElementById('studyGrid');
+  g.innerHTML = '';
+  SUBJECTS.forEach(s => {
+    studyData[s] = studyData[s] || {lec:0, rev:false};
+    g.innerHTML += `
+    <div class="subj" id="subj-${s}">
+      <div class="subj-nm">${SUBJ_LABELS[s]}</div>
+      <div class="lec-row">
+        <div class="lec-lbl">Lectures</div>
+        <div class="lec-ctrl">
+          <button class="lec-btn" onclick="chgLec('${s}',-1)">−</button>
+          <div class="lec-num" id="ln-${s}">0</div>
+          <button class="lec-btn" onclick="chgLec('${s}',1)">+</button>
+        </div>
+      </div>
+      <div class="subj-xp" id="sxp-${s}">0 XP</div>
+      <div class="rev-tog" id="rev-${s}" onclick="togRev('${s}')">
+        <div class="ck2"></div>
+        <span>📝 Revision +15 XP</span>
+      </div>
+    </div>`;
+  });
+}
+
+function chgLec(s, delta) {
+  studyData[s] = studyData[s] || {lec:0, rev:false};
+  studyData[s].lec = Math.max(0, Math.min(8, studyData[s].lec + delta));
+  updStudyUI(s);
+  updStudyTotals();
+  updAll();
+}
+function togRev(s) {
+  studyData[s] = studyData[s] || {lec:0, rev:false};
+  studyData[s].rev = !studyData[s].rev;
+  const el = document.getElementById('rev-'+s);
+  studyData[s].rev ? el.classList.add('on') : el.classList.remove('on');
+  updStudyUI(s);
+  updStudyTotals();
+  updAll();
+}
+function calcSubjXP(lec, rev) {
+  let xp = 0;
+  for(let i=1; i<=lec; i++) xp += i<=2 ? 30 : 40;
+  if(rev) xp += 15;
+  return xp;
+}
+function updStudyUI(s) {
+  const d = studyData[s] || {lec:0,rev:false};
+  document.getElementById('ln-'+s).textContent = d.lec;
+  const xp = calcSubjXP(d.lec, d.rev);
+  document.getElementById('sxp-'+s).textContent = xp + ' XP' + (d.lec>=3?' (bonus! +40/lec)':'');
+}
+function updStudyTotals() {
+  let totalLec = 0, totalXP = 0;
+  SUBJECTS.forEach(s => {
+    const d = studyData[s] || {lec:0,rev:false};
+    totalLec += d.lec;
+    totalXP += calcSubjXP(d.lec, d.rev);
+  });
+  document.getElementById('totalLec').textContent = totalLec;
+  document.getElementById('totalStudyXP').textContent = totalXP + ' XP';
+  document.getElementById('studyXPDisp').textContent = totalXP + ' XP';
+}
+
+function renderWDots() {
+  const c = document.getElementById('wDots'); c.innerHTML = '';
+  for(let i=0; i<8; i++) {
+    const d = document.createElement('div');
+    d.className = 'wdot' + (i<water?' on':'');
+    d.onclick = () => { water = i<water ? i : i+1; renderWDots(); updAll(); };
+    c.appendChild(d);
+  }
+}
+function addW(){if(water<8)water++;renderWDots();updAll();}
+function remW(){if(water>0)water--;renderWDots();updAll();}
+
+function updSleep(v) {
+  sleepH = parseFloat(v);
+  document.getElementById('sNum').textContent = sleepH;
+  document.getElementById('sBar').style.width = Math.round(Math.min(sleepH/8,1)*100)+'%';
+  const b = document.getElementById('sBadge');
+  if(!sleepH) b.innerHTML='';
+  else if(sleepH<6) b.innerHTML='<span class="badge" style="color:#ff4d6d;border:1px solid #ff4d6d;background:rgba(255,77,109,.1)">Bahut kam 😴</span>';
+  else if(sleepH<7) b.innerHTML='<span class="badge" style="color:#ffd700;border:1px solid #ffd700;background:rgba(255,215,0,.1)">Thodi aur chahiye</span>';
+  else if(sleepH<=9) b.innerHTML='<span class="badge" style="color:#00ff88;border:1px solid #00ff88;background:rgba(0,255,136,.1)">Perfect! +30 XP</span>';
+  else b.innerHTML='<span class="badge" style="color:#ffd700;border:1px solid #ffd700;background:rgba(255,215,0,.1)">Zyada so gaye</span>';
+  updAll();
+}
+
+function togEx(k) {
+  const el = document.getElementById('ex-'+k);
+  exercises.has(k)?(exercises.delete(k),el.classList.remove('on')):(exercises.add(k),el.classList.add('on'));
+  document.getElementById('exSt').textContent = exercises.size>0?'✓ '+exercises.size+' activity done! +30 XP':'';
+  updAll();
+}
+function togFood(k) {
+  const el = document.getElementById('food-'+k);
+  foods.has(k)?(foods.delete(k),el.classList.remove('on')):(foods.add(k),el.classList.add('on'));
+  document.getElementById('fCnt').textContent = foods.size;
+  const s = document.getElementById('foodSt');
+  if(!foods.size){s.textContent='';}
+  else if(foods.size<3){s.textContent=(3-foods.size)+' aur karo!';s.style.color='var(--muted)';}
+  else{s.textContent='Target done! +20 XP';s.style.color='var(--food)';}
+  updAll();
+}
+function togMind(k) {
+  const el = document.getElementById('mind-'+k);
+  minds.has(k)?(minds.delete(k),el.classList.remove('on')):(minds.add(k),el.classList.add('on'));
+  document.getElementById('mindCnt').textContent = minds.size+'/4';
+  const s = document.getElementById('mindSt');
+  if(!minds.size){s.textContent='';}
+  else if(minds.size<2){s.textContent='1 aur karo!';s.style.color='var(--muted)';}
+  else{s.textContent='Target done! +20 XP';s.style.color='var(--mind)';}
+  updAll();
+}
+
+const moodC=['','#ff4d6d','#ffd700','#00ff88','#00c8ff','#b44fff'];
+const moodT=['','Bahut bura din...','Theek-thaak','Accha lag raha hai!','Bahut accha!','Ekdum mast! Champion!'];
+function setMood(n) {
+  mood=n;
+  for(let i=1;i<=5;i++){const b=document.getElementById('mood-'+i);b.classList.remove('on');b.style.borderColor='';b.style.background='';}
+  const s=document.getElementById('mood-'+n);
+  s.classList.add('on');s.style.borderColor=moodC[n];s.style.background=moodC[n]+'22';
+  document.getElementById('moodTxt').textContent=moodT[n];
+  document.getElementById('moodTxt').style.color=moodC[n];
+  updAll();
+}
+
+function getNFKey(dayN) { return `s${seasonNum}_d${dayN}`; }
+function setNFToday(status) {
+  if(!todayKey)return;
+  nfDays[todayKey]=status;
+  saveNFLocal();renderNFGrid();updAll();
+}
+function toggleNF(key, dayN) {
+  const cur=nfDays[key];
+  if(!cur)nfDays[key]='win';
+  else if(cur==='win')nfDays[key]='fail';
+  else delete nfDays[key];
+  saveNFLocal();renderNFGrid();updAll();
+}
+function saveNFLocal(){localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));}
+function renderNFGrid() {
+  const g=document.getElementById('nfGrid'); g.innerHTML='';
+  let wins=0, fails=0;
+  const todayDN = getDayNum(today);
+  for(let i=1;i<=90;i++) {
+    const key=`s${seasonNum}_d${i}`;
+    const status=nfDays[key];
+    const isFuture = todayDN !== null && i > todayDN;
+    const isToday = i === todayDN;
+    if(status==='win')wins++;
+    if(status==='fail')fails++;
+    const box=document.createElement('div');
+    box.className='nfbox'+(isFuture&&!isToday?' fut':'')+(status==='win'?' win':'')+(status==='fail'?' fail':'')+(isToday?' tod':'');
+    box.innerHTML=`<div class="nd">${i}</div><div class="ns" style="color:${status==='win'?'#00ff88':status==='fail'?'#ff4d6d':'var(--muted)'}">${status==='win'?'✕':status==='fail'?'0':''}</div>`;
+    if(!isFuture||isToday)box.onclick=()=>toggleNF(key,i);
+    g.appendChild(box);
+  }
+  document.getElementById('nfCount').textContent=wins;
+  document.getElementById('nfWins').textContent=wins;
+  document.getElementById('nfFails').textContent=fails;
+  document.getElementById('nfXP').textContent='+'+(nfDays[todayKey]==='win'?50:0);
+  document.getElementById('pNofap').textContent=wins;
+}
+
+function calcHealth(){
+  const w=Math.round(water/8*100);
+  const s=!sleepH?0:Math.round(Math.min(sleepH/8,1)*100);
+  const e=exercises.size>0?100:0;
+  const f=foods.size>=3?100:Math.round(foods.size/3*100);
+  const m=minds.size>=2?100:Math.round(minds.size/2*100);
+  return{w,s,e,f,m,total:Math.round((w+s+e+f+m)/5)};
+}
+
+function calcTodayXP(hsc){
+  let xp=0;
+  let penalties=0;
+  xp+=water*5;                          
+  if(sleepH>=7)xp+=30;                  
+  if(exercises.size>0)xp+=30;           
+  if(foods.size>=3)xp+=20;             
+  if(minds.size>=2)xp+=20;             
+  if(hsc.total>=90)xp+=50;             
+  else if(hsc.total>=80)xp+=25;        
+  SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.rev||false);});
+  if(nfDays[todayKey]==='win')xp+=50;   
+  if(nfDays[todayKey]==='fail') penalties+=30;       
+  if(hsc.total<70 && hsc.total>0) penalties+=50;    
+  const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
+  if(totalLec===0) penalties+=35;                    
+  const net=xp-penalties;
+  return {earned:xp, penalties, net};
+}
+
+function calcTotalXP(todayXP){
+  let total=0;
+  Object.keys(allDayData).forEach(k=>{
+    if(k!==todayKey && allDayData[k] && allDayData[k].xp) total+=allDayData[k].xp;
+  });
+  const pastXP = (metaData.pastSeasonsXP)||0;
+  return Math.max(0, total + todayXP + pastXP); 
+}
+function calcSeasonXP(todayXP){
+  let total=0;
+  Object.keys(allDayData).forEach(k=>{
+    if(k.startsWith('s'+seasonNum+'_') && k!==todayKey && allDayData[k]?.xp)total+=allDayData[k].xp;
+  });
+  return Math.max(0, total+todayXP); 
+}
+
+function getRank(xp){let r=RANKS[0];for(const rk of RANKS)if(xp>=rk.xp)r=rk;return r;}
+function getNextRank(xp){for(const r of RANKS)if(r.xp>xp)return r;return null;}
+
+function getAdvice(sc){
+  if(!sc.total)return'Data bharo — AI feedback milega! 📊';
+  if(sc.total<50)return'💀 Full fail. Discipline zero. Kal pakka sudhar.';
+  if(sc.w<50)return'💧 Paani kam hai — energy aur focus dono down.';
+  if(sc.s<60)return'😴 Neend kharab — pura system fail hoga.';
+  if(sc.e===0)return'🏃 Exercise zero — body nahi banegi!';
+  if(sc.f<70)return'🥗 Khana improve kar — growth slow rahegi.';
+  if(sc.total<80)return'📈 Theek hai, aur push kar sakta hai!';
+  if(sc.total<90)return'🟢 Solid! Bas consistency bana ke rakh.';
+  return'🔥 GOD LEVEL! Aaj jeet liya — kal bhi aise!';
+}
+
+function calcStreaks(){
+  let streak=0,best=0,temp=0,days=0;
+  for(let i=89;i>=0;i--){
+    const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+i+(seasonNum-1)*90);
+    const key=getDayKey(d);
+    const rec=allDayData[key];
+    if(rec){days++;if(rec.score>=80){temp++;if(temp>best)best=temp;}else temp=0;}
+    else temp=0;
+  }
+  streak=0;
+  const todayDN=getDayNum(today);
+  if(todayDN){
+    for(let i=todayDN-1;i>=1;i--){
+      const key=`s${seasonNum}_d${i}`;
+      const rec=allDayData[key];
+      if(rec&&rec.score>=80)streak++;
+      else break;
+    }
+  }
+  return{streak,best,days};
+}
+
+function updAll(){
+  const hsc=calcHealth();
+  const todayXPObj=calcTodayXP(hsc);
+  const todayXP=Math.max(0,todayXPObj.net); 
+  const totalXP=calcTotalXP(todayXP);
+  const seasonXP=calcSeasonXP(todayXP);
+  const {streak,best,days}=calcStreaks();
+
+  const hEl=document.getElementById('hScoreDisp');
+  hEl.textContent=hsc.total+'%';
+  hEl.style.color=hsc.total>=90?'#b44fff':hsc.total>=80?'#00ff88':hsc.total>=70?'#ffd700':'#ff4d6d';
+  document.getElementById('aiFeed').textContent=getAdvice(hsc);
+
+  const xpPrev=document.getElementById('xpPreview');
+  if(todayXPObj.earned>0||todayXPObj.penalties>0){
+    let html='';
+    if(todayXPObj.earned>0) html+=`<span style="color:#00ff88">+${todayXPObj.earned} XP</span>`;
+    if(todayXPObj.penalties>0) html+=` <span style="color:#ff4d6d">−${todayXPObj.penalties} penalty</span>`;
+    html+=` <span style="color:#ffd700;font-weight:700">= ${todayXPObj.net} net</span>`;
+    xpPrev.innerHTML=html;
+  } else {
+    xpPrev.textContent='';
+  }
+
+  document.getElementById('wNum').textContent=water;
+  document.getElementById('wBar').style.width=Math.round(water/8*100)+'%';
+
+  const rank=getRank(seasonXP);
+  const nxtRank=getNextRank(seasonXP);
+  const level=Math.floor(seasonXP/100)+1;
+
+  document.getElementById('rName').textContent=rank.name;
+  document.getElementById('rName').style.color=rank.color;
+  document.getElementById('rEmblem').textContent=rank.emoji;
+  document.getElementById('rEmblem').style.color=rank.color;
+  document.getElementById('rEmblem').style.borderColor=rank.color;
+  document.getElementById('rankGlow').style.background=rank.color;
+  document.getElementById('rankCard').style.borderColor=rank.color+'44';
+  
+  if(!document.getElementById('rankCard').querySelector('.rank-card::before')) {
+    document.getElementById('rankCard').style.backgroundImage=`linear-gradient(${rank.color}22,transparent)`;
+  }
+  
+  document.getElementById('xpBig').textContent=seasonXP.toLocaleString();
+  document.getElementById('xpBig').style.color=rank.color;
+  document.getElementById('lvlTxt').textContent='Level '+level;
+  document.getElementById('totalXPDisp').textContent='Total: '+totalXP.toLocaleString()+' XP';
+
+  if(nxtRank){
+    const pct=Math.round((seasonXP-rank.xp)/(nxtRank.xp-rank.xp)*100);
+    document.getElementById('xpFill').style.width=pct+'%';
+    document.getElementById('xpFill').style.background=`linear-gradient(90deg,${rank.color},${nxtRank.color})`;
+    document.getElementById('xpBarPct').textContent=pct+'%';
+    document.getElementById('xpBarLbl').textContent='To '+nxtRank.name;
+    document.getElementById('rXPneed').textContent=(nxtRank.xp-seasonXP)+' XP → '+nxtRank.name;
+  } else {
+    document.getElementById('xpFill').style.width='100%';
+    document.getElementById('xpFill').style.background=rank.color;
+    document.getElementById('xpBarPct').textContent='MAX';
+    document.getElementById('xpBarLbl').textContent='GRANDMASTER — Peak!';
+    document.getElementById('rXPneed').textContent='Peak rank achieved! 🔱';
+  }
+
+  document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
+  const lastSeason=metaData.seasons?.[seasonNum-2];
+  if(lastSeason){
+    document.getElementById('sLastRank').textContent=lastSeason.rank||'—';
+    document.getElementById('sLastXP').textContent=(lastSeason.xp||0).toLocaleString();
+  } else {
+    document.getElementById('sLastRank').textContent='—';
+    document.getElementById('sLastXP').textContent='—';
+  }
+
+  document.getElementById('pStreak').textContent=streak;
+  document.getElementById('pBest').textContent=best;
+  document.getElementById('pDays').textContent=days;
+}
+
+function switchTab(t){
+  ['health','study','nofap','history'].forEach(x=>{
+    document.getElementById('panel-'+x).classList.remove('active');
+    document.getElementById('tab-'+x).classList.remove('active');
+  });
+  document.getElementById('panel-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='nofap')renderNFGrid();
+  if(t==='history')renderHistGrid();
+}
+
+async function saveAll(){
+  if(!todayKey){
+    document.getElementById('saveMsg').textContent='Season not started yet!';
+    return;
+  }
+  const hsc=calcHealth();
+  const todayXPObj=calcTodayXP(hsc);
+  const todayXP=Math.max(0,todayXPObj.net);
+  const prevTotalXP=calcTotalXP(0);
+  const prevSeasonXP=calcSeasonXP(0);
+  const prevRank=getRank(prevSeasonXP);
+
+  const rec={
+    water, sleep:sleepH,
+    exercises:[...exercises], foods:[...foods], minds:[...minds], mood,
+    studyData:{...studyData},
+    nofap:nfDays[todayKey]||null,
+    score:hsc.total, w:hsc.w, s:hsc.s, e:hsc.e, f:hsc.f, m:hsc.m,
+    xp:todayXP, xpEarned:todayXPObj.earned, xpPenalty:todayXPObj.penalties,
+    dayNum, seasonNum,
+    savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
+  };
+
+  allDayData[todayKey]=rec;
+  localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
+  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
+  localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
+
+  const newTotalXP=calcTotalXP(todayXP);
+  const newSeasonXP=calcSeasonXP(todayXP);
+  const newRank=getRank(newSeasonXP);
+  if(newRank.name!==prevRank.name) showRankUp(newRank);
+
+  updAll();
+  renderNFGrid();
+  renderHistGrid();
+
+  const msg=document.getElementById('saveMsg');
+  const penMsg=todayXPObj.penalties>0?` (−${todayXPObj.penalties} penalty)`:'';
+  const netXP=todayXPObj.net;
+  msg.textContent=`${netXP>=0?'⚡ +':'💀 '}${netXP} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
+  msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
+  setTimeout(()=>msg.textContent='',5000);
+}
+
+function showRankUp(rank){
+  document.getElementById('lvlEm').textContent=rank.emoji;
+  document.getElementById('lvlTi').textContent='RANK UP! '+rank.name;
+  document.getElementById('lvlTi').style.color=rank.color;
+  document.getElementById('lvlSu').textContent='You reached '+rank.name+' rank! Keep going!';
+  document.getElementById('lvlOver').classList.add('show');
+}
+
+function loadToday(){
+  const rec=allDayData[todayKey];
+  if(!rec)return;
+  water=rec.water||0;
+  sleepH=rec.sleep||0;
+  exercises=new Set(rec.exercises||[]);
+  foods=new Set(rec.foods||[]);
+  minds=new Set(rec.minds||[]);
+  mood=rec.mood||0;
+  if(rec.studyData){
+    SUBJECTS.forEach(s=>{studyData[s]={...{lec:0,rev:false},...rec.studyData[s]};});
+  }
+  document.getElementById('sSlider').value=sleepH;
+  exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
+  foods.forEach(k=>{const el=document.getElementById('food-'+k);if(el)el.classList.add('on');});
+  minds.forEach(k=>{const el=document.getElementById('mind-'+k);if(el)el.classList.add('on');});
+  document.getElementById('fCnt').textContent=foods.size;
+  document.getElementById('mindCnt').textContent=minds.size+'/4';
+  if(foods.size>=3){const s=document.getElementById('foodSt');s.textContent='Target done! +20 XP';s.style.color='var(--food)';}
+  if(minds.size>=2){const s=document.getElementById('mindSt');s.textContent='Target done! +20 XP';s.style.color='var(--mind)';}
+  if(mood>0)setMood(mood);
+  SUBJECTS.forEach(s=>{
+    updStudyUI(s);
+    document.getElementById('ln-'+s).textContent=studyData[s]?.lec||0;
+    if(studyData[s]?.rev)document.getElementById('rev-'+s).classList.add('on');
+  });
+  updStudyTotals();
+  renderWDots();
+  updSleep(sleepH);
+}
+
+function getLvC(sc){if(sc>=90)return'sg';if(sc>=80)return'sgo';if(sc>=70)return'sa';return'sl';}
+function getLvCol(sc){if(sc>=90)return'#b44fff';if(sc>=80)return'#00ff88';if(sc>=70)return'#ffd700';return'#ff4d6d';}
+function getLvTxt(sc){if(sc>=90)return'⚡ GOD LEVEL';if(sc>=80)return'🟢 Good Level';if(sc>=70)return'🟡 Average';return'🔴 Low Level';}
+
+function renderHistGrid(){
+  const g=document.getElementById('histGrid'); g.innerHTML='';
+  const todayDN=getDayNum(today)||0;
+  for(let i=1;i<=90;i++){
+    const key=`s${seasonNum}_d${i}`;
+    const isToday=i===todayDN;
+    const isFuture=i>todayDN&&!isToday;
+    const rec=allDayData[key];
+    const box=document.createElement('div');
+    const dayOffset=(seasonNum-1)*90+(i-1);
+    const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+dayOffset);
+    const dn=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    if(isFuture){
+      box.className='hbox emp';
+      box.innerHTML=`<div class="dn">${i}</div><div class="ds" style="color:var(--border)">·</div>`;
+    } else if(rec){
+      box.className='hbox '+getLvC(rec.score)+(isToday?' tod':'');
+      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:${getLvCol(rec.score)}">${rec.score}%</div>`;
+      box.onclick=()=>openPop(key,rec,d,i);
+    } else {
+      box.className='hbox'+(isToday?' tod':' emp');
+      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:var(--muted)">—</div>`;
+      if(isToday)box.classList.remove('emp');
+    }
+    g.appendChild(box);
+  }
+}
+
+const moodE=['','😞','😐','🙂','😄','🤩'];
+function openPop(key,r,dateObj,dayN){
+  const ds=dateObj.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('popDate').textContent=`Day ${dayN} · ${ds}`;
+  const ps=document.getElementById('popScore');ps.textContent=r.score+'%';ps.style.color=getLvCol(r.score);
+  const pl=document.getElementById('popLv');pl.textContent=getLvTxt(r.score)+' · '+(r.xp||0)+' XP';pl.style.color=getLvCol(r.score);
+  const ex=r.exercises?.length?r.exercises.join(', '):'koi nahi';
+  const fd=r.foods?.length?r.foods.join(', '):'koi nahi';
+  const md=r.minds?.length?r.minds.join(', '):'koi nahi';
+  let studyStr='';
+  if(r.studyData){
+    SUBJECTS.forEach(s=>{const d=r.studyData[s];if(d?.lec>0)studyStr+=SUBJ_LABELS[s]+': '+d.lec+' lec'+(d.rev?'+rev':'')+' ';});
+  }
+  document.getElementById('popRows').innerHTML=`
+    <div class="pr"><span>💧</span><span class="prlbl">Paani</span><span class="prval" style="color:var(--water)">${r.w||0}% (${r.water||0}/8)</span></div>
+    <div class="pr"><span>😴</span><span class="prlbl">Neend</span><span class="prval" style="color:var(--sleep)">${r.s||0}% (${r.sleep||0}h)</span></div>
+    <div class="pr"><span>🏃</span><span class="prlbl">Exercise</span><span class="prval" style="color:var(--exercise)">${r.e||0}% — ${ex}</span></div>
+    <div class="pr"><span>🥗</span><span class="prlbl">Khana</span><span class="prval" style="color:var(--food)">${r.f||0}% — ${fd}</span></div>
+    <div class="pr"><span>🧠</span><span class="prlbl">Mind</span><span class="prval" style="color:var(--mind)">${r.m||0}% — ${md}</span></div>
+    <div class="pr"><span>📚</span><span class="prlbl">Study</span><span class="prval" style="color:var(--study)">${studyStr||'koi nahi'}</span></div>
+    <div class="pr"><span>${r.nofap==='win'?'✕':'0'}</span><span class="prlbl">NoFap</span><span class="prval" style="color:${r.nofap==='win'?'#00ff88':'#ff4d6d'}">${r.nofap||'—'}</span></div>
+    <div class="pr"><span>${r.mood?moodE[r.mood]:'—'}</span><span class="prlbl">Mood</span><span class="prval">${r.mood?moodT[r.mood]:'—'}</span></div>
+    ${(r.xpPenalty>0)?`<div class="pr"><span>💀</span><span class="prlbl">Penalty</span><span class="prval" style="color:#ff4d6d">−${r.xpPenalty} XP</span></div>`:''}
+  `;
+  document.getElementById('dayPopup').classList.add('open');
+}
+function closePop(e){if(e.target.id==='dayPopup')document.getElementById('dayPopup').classList.remove('open');}
+
+function initApp(){
+  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
+  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
+  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
+  loadToday(); updAll(); renderNFGrid(); renderHistGrid();
+}
+
+buildStudyGrid();
+renderWDots();
+initApp();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
+    authDomain: "life-rgp-tracker.firebaseapp.com",
+    databaseURL: "https://life-rgp-tracker-default-rtdb.firebaseio.com",
+    projectId: "life-rgp-tracker",
+    storageBucket: "life-rgp-tracker.firebasestorage.app",
+    messagingSenderId: "531466954078",
+    appId: "1:531466954078:web:702640e5278e459d919bcf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.saveDataToFirebase = async function() {
+    const xpValue = document.getElementById('totalXPDisp') ? document.getElementById('totalXPDisp').innerText.replace(/\D/g,'') : 0;
+    const rankValue = document.getElementById('rName') ? document.getElementById('rName').innerText : "Bronze";
+    const streakValue = document.getElementById('pStreak') ? document.getElementById('pStreak').innerText : 0;
+
+    const dataToSave = {
+      date: new Date().toLocaleDateString('en-IN'),
+      time: new Date().toLocaleTimeString('en-IN'),
+      xp: Number(xpValue),
+      rank: rankValue,
+      streak: Number(streakValue)
+    };
+
+    try {
+      const logsRef = ref(db, 'season_1_logs');
+      const newLogRef = push(logsRef); 
+      await set(newLogRef, dataToSave);
+      alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
+    } catch (error) {
+      alert("Oops! Data save nahi hua: " + error.message);
+    }
+  }
+</script>
+</body>
+</html>
