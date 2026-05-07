@@ -6,29 +6,19 @@
 <title>Life RPG — Season Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;
-  --border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;
-  --water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;
-  --food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;
-  --bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;
-  --diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;
-}
+/* CSS Wahi Same Hai */
+:root{--bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;--border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;--water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;--food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;--bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;--diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,100,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,100,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 .app{max-width:920px;margin:0 auto;padding:1.2rem 0.9rem;position:relative;z-index:1;}
-
-/* HEADER */
 .hdr{text-align:center;margin-bottom:1.5rem;}
 .hdr-tag{font-family:'Space Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;}
 .hdr-title{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,6vw,3rem);font-weight:900;letter-spacing:.06em;background:linear-gradient(135deg,#ff4d6d,#b44fff,#00c8ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
 .hdr-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:5px;letter-spacing:.1em;}
 .season-pill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:5px 16px;border:1px solid var(--border);border-radius:20px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);}
 .season-day{color:var(--text);font-weight:700;}
-
-/* RANK CARD */
 .rank-card{border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border:1px solid var(--border);background:var(--surface);position:relative;overflow:hidden;}
 .rank-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .rank-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;}
@@ -46,20 +36,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .xp-bar-top{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:4px;}
 .xp-track{height:7px;background:var(--surface3);border-radius:4px;overflow:hidden;}
 .xp-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-
-/* SEASON INFO */
 .season-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.2rem;}
 .scard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 10px;text-align:center;}
 .scard-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;line-height:1;}
 .scard-lbl{font-family:'Space Mono',monospace;font-size:.54rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
-
-/* STAT PILLS */
 .stat-pills{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.2rem;}
 .pill{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center;}
 .pill-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;line-height:1;}
 .pill-lbl{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
-
-/* TABS */
 .tabs{display:flex;gap:5px;margin-bottom:1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:5px;}
 .tab{flex:1;padding:9px 4px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
 .tab.active{color:var(--text);}
@@ -67,16 +51,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .panel{display:none;animation:fadeIn .3s ease;}
 .panel.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-/* SECTION */
 .sec{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:16px 18px;margin-bottom:12px;}
 .sec-hd{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
 .sec-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
 .sec-ttl{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.05em;}
 .sec-sub{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:1px;}
 .sec-xp{margin-left:auto;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);background:var(--surface2);padding:3px 9px;border-radius:20px;border:1px solid var(--border);}
-
-/* CARDS 2-col */
 .c2{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:12px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 16px;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
@@ -92,24 +72,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .unit{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);}
 .ptrack{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;margin:7px 0 5px;}
 .pfill{height:100%;border-radius:3px;transition:width .4s ease;}
-
-/* Water dots */
 .wdots{display:flex;gap:4px;flex-wrap:wrap;margin:5px 0 8px;}
 .wdot{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .18s;}
 .wdot.on{background:var(--water);border-color:var(--water);}
-
-/* Btns */
 .btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;}
 .btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}
 .btn:hover{border-color:#7c6af7;color:#a78bfa;}
 .btnp{border:none;color:#05050d;font-weight:700;}
-
-/* Slider */
 .slwrap{display:flex;align-items:center;gap:8px;margin:7px 0;}
 .slwrap input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--border);border-radius:3px;outline:none;}
 .slwrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;}
-
-/* Toggle */
 .toglist{display:flex;flex-direction:column;gap:6px;}
 .tog{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .17s;font-size:.8rem;user-select:none;}
 .tog:hover{border-color:#7c6af7;}
@@ -120,18 +92,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .tog.on .ck::after{display:block;}
 .tgtlbl{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:6px;}
 .tgtlbl span{font-weight:700;}
-
-/* Mood */
 .mrow{display:flex;gap:6px;margin-top:4px;}
 .mbtn{flex:1;padding:8px 0;border-radius:8px;border:1px solid var(--border);background:var(--surface2);font-size:1.25rem;cursor:pointer;transition:all .17s;text-align:center;}
 .mbtn:hover{transform:scale(1.1);}
 .mbtn.on{border-width:2px;transform:scale(1.1);}
 .mtxt{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;margin-top:6px;}
-
-/* badge */
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;margin-top:4px;}
-
-/* ── STUDY ── */
 .study-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 .subj{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px 14px;}
 .subj-nm{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;margin-bottom:9px;}
@@ -149,8 +115,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .rev-tog .ck2::after{content:'✓';color:#05050d;font-size:.5rem;font-weight:700;display:none;}
 .rev-tog.on .ck2::after{display:block;}
 .study-total{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:var(--surface2);border-radius:10px;margin-top:11px;flex-wrap:wrap;gap:8px;}
-
-/* ── NOFAP ── */
 .nf-hero{text-align:center;padding:.8rem 0 .5rem;}
 .nf-big{font-family:'Orbitron',monospace;font-size:3.2rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--nofap),var(--diamond));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .nf-lbl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:3px;}
@@ -170,8 +134,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .nfbox.fut:hover{transform:none;border-color:var(--border);}
 .nfbox.tod{box-shadow:0 0 0 2px var(--nofap);}
 .nf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
-
-/* HISTORY */
 .hgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:12px;}
 .hbox{aspect-ratio:1;border-radius:7px;border:1px solid var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;user-select:none;}
 .hbox:hover{border-color:#7c6af7;transform:scale(1.06);z-index:2;}
@@ -187,14 +149,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:9px;}
 .li{display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);}
 .ld{width:9px;height:9px;border-radius:3px;}
-
-/* SAVE */
 .save-wrap{margin-top:1.2rem;}
 .save-btn{display:block;width:100%;padding:13px;border-radius:13px;border:none;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;cursor:pointer;letter-spacing:.08em;background:linear-gradient(135deg,#7c6af7,#b44fff,#ff4d6d);color:#fff;transition:all .2s;}
 .save-btn:hover{opacity:.88;transform:scale(1.01);}
 .save-msg{text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;margin-top:5px;min-height:1rem;}
-
-/* POPUP */
 .poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
 .poverlay.open{display:flex;}
 .pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
@@ -206,20 +164,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .pr{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--surface2);border-radius:8px;}
 .prlbl{flex:1;color:var(--muted);font-family:'Space Mono',monospace;font-size:.6rem;}
 .prval{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:600;}
-
-/* LEVEL UP */
 .lvlover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;}
 .lvlover.show{display:flex;animation:fadeIn .4s ease;}
 .lvl-em{font-size:4rem;}
 .lvl-ti{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:900;letter-spacing:.1em;text-align:center;}
 .lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
 .lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
-
-/* AI feedback */
 .ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-top:10px;display:flex;gap:9px;align-items:flex-start;}
 .ai-lbl{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
 .ai-txt{font-size:.82rem;font-weight:600;line-height:1.5;}
-
 @media(max-width:560px){
   .c2{grid-template-columns:1fr;}
   .stat-pills{grid-template-columns:repeat(2,1fr);}
@@ -516,7 +469,6 @@ function getDateFromKey(key) {
 document.getElementById('dayNum').textContent = dayNum || '—';
 document.getElementById('seasonNum').textContent = seasonNum;
 document.getElementById('todayDateStr').textContent = today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-document.getElementById('histDateRange').textContent = `Season ${seasonNum} · Apr 4 onwards`;
 
 function buildStudyGrid() {
   const g = document.getElementById('studyGrid');
@@ -863,10 +815,7 @@ async function saveAll(){
   }
   const hsc=calcHealth();
   const todayXPObj=calcTodayXP(hsc);
-  
-  // Math.max ensures XP doesn't go below 0 visually, but netXP keeps exact record
   const todayXP=Math.max(0,todayXPObj.net); 
-  
   const prevTotalXP=calcTotalXP(0);
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
@@ -897,7 +846,6 @@ async function saveAll(){
   renderNFGrid();
   renderHistGrid();
 
-  // STREAK NIKALI DIRECT FORMULA SE
   const {streak} = calcStreaks();
 
   const msg=document.getElementById('saveMsg');
@@ -907,9 +855,8 @@ async function saveAll(){
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
 
-  // DIRECT FIREBASE CALL SCRIPT SE!
+  // PURANA 100% WORKING FIREBASE CALL
   if(window.saveDataToFirebase) {
-    // Exact background variables bhej rahe hain
     window.saveDataToFirebase(todayXP, newTotalXP, newRank.name, streak);
   }
 }
@@ -1026,9 +973,8 @@ initApp();
 </script>
 
 <script type="module">
- <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
@@ -1043,49 +989,26 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 1. DATA LOAD KARNE KA FUNCTION (Cloud se wapas lana)
-  window.loadFromFirebase = async function() {
-    const dbRef = ref(getDatabase());
-    try {
-      // 'my_full_backup' folder se poora data uthayega
-      const snapshot = await get(child(dbRef, 'my_full_backup'));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        
-        // Data ko wapas phone ki memory mein dalega
-        if(data.days) localStorage.setItem('rpg_days_v2', JSON.stringify(data.days));
-        if(data.nf) localStorage.setItem('rpg_nf_v2', JSON.stringify(data.nf));
-        if(data.meta) localStorage.setItem('rpg_meta_v2', JSON.stringify(data.meta));
-        
-        // Screen ko turant refresh karega
-        if(typeof window.initApp === 'function') window.initApp();
-      }
-    } catch(e) {
-      console.error("Load failed", e);
-    }
-  }
-
-  // JAISE HI WEBSITE KHULEGI, DATA CLOUD SE WAPAS AAYEGA
-  window.loadFromFirebase();
-
-  // 2. DATA SAVE KARNE KA FUNCTION (Full Backup)
   window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
-    // Ab sirf XP nahi, poora Calendar save hoga
-    const fullBackup = {
-      days: JSON.parse(localStorage.getItem('rpg_days_v2') || '{}'),
-      nf: JSON.parse(localStorage.getItem('rpg_nf_v2') || '{}'),
-      meta: JSON.parse(localStorage.getItem('rpg_meta_v2') || '{}'),
-      stats: { xp: totalXP, rank: rank, streak: streak, last_updated: new Date().toLocaleTimeString('en-IN') }
+    const dataToSave = {
+      date: new Date().toLocaleDateString('en-IN'),
+      time: new Date().toLocaleTimeString('en-IN'),
+      season_xp: aajKaXP,
+      total_xp: totalXP,
+      rank: rank,
+      streak: streak
     };
 
     try {
-      await set(ref(db, 'my_full_backup'), fullBackup);
-      alert("Wah! Pura Calendar aur XP Cloud mein Save Ho Gaya! ☁️⚔️");
+      // Ye waapas wahi log bhejega jo 100% chal raha tha
+      const logsRef = ref(db, 'season_1_logs');
+      const newLogRef = push(logsRef); 
+      await set(newLogRef, dataToSave);
+      alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
     } catch (error) {
       alert("Oops! Data save nahi hua: " + error.message);
     }
   }
-</script>
 </script>
 </body>
 </html>
