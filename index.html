@@ -973,8 +973,9 @@ initApp();
 </script>
 
 <script type="module">
+  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  import { getDatabase, ref, set, push, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
@@ -989,8 +990,34 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  // 1. DATA LOAD KARNE KA FUNCTION (Website khulte hi automatically chalega)
+  async function fetchBackup() {
+    try {
+      const snapshot = await get(child(ref(db), 'rpg_full_backup'));
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // Cloud ka data utha kar computer ki memory mein wapas daalo
+        if(data.days) localStorage.setItem('rpg_days_v2', data.days);
+        if(data.nf) localStorage.setItem('rpg_nf_v2', data.nf);
+        if(data.meta) localStorage.setItem('rpg_meta_v2', data.meta);
+
+        // Screen ko turant update karo naye data ke sath
+        if(typeof window.initApp === 'function') window.initApp();
+      }
+    } catch(error) {
+      console.error("Cloud se data nahi aaya:", error);
+    }
+  }
+
+  // Jaise hi website khule, data mangwa lo
+  fetchBackup();
+
+  // 2. DATA SAVE KARNE KA FUNCTION
   window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
-    const dataToSave = {
+    
+    // History logs ke liye data
+    const logData = {
       date: new Date().toLocaleDateString('en-IN'),
       time: new Date().toLocaleTimeString('en-IN'),
       season_xp: aajKaXP,
@@ -999,16 +1026,24 @@ initApp();
       streak: streak
     };
 
+    // Cloud Restore Backup ke liye poora data
+    const backupData = {
+      days: localStorage.getItem('rpg_days_v2') || '{}',
+      nf: localStorage.getItem('rpg_nf_v2') || '{}',
+      meta: localStorage.getItem('rpg_meta_v2') || '{}'
+    };
+
     try {
-      // Ye waapas wahi log bhejega jo 100% chal raha tha
-      const logsRef = ref(db, 'season_1_logs');
-      const newLogRef = push(logsRef); 
-      await set(newLogRef, dataToSave);
-      alert("Wah! Data 100% Cloud mein Save Ho Gaya! ☁️⚔️");
+      // Dono jagah data save karo (Logs mein aur Backup mein)
+      await push(ref(db, 'season_1_logs'), logData);
+      await set(ref(db, 'rpg_full_backup'), backupData);
+      
+      alert("Wah! Data 100% Cloud mein Save + Backup Ho Gaya! ☁️⚔️");
     } catch (error) {
       alert("Oops! Data save nahi hua: " + error.message);
     }
   }
+</script>
 </script>
 </body>
 </html>
