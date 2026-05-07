@@ -6,8 +6,14 @@
 <title>Life RPG — Season Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* CSS Wahi Same Hai */
-:root{--bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;--border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;--water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;--food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;--bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;--diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;}
+:root{
+  --bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;
+  --border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;
+  --water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;
+  --food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;
+  --bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;
+  --diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
@@ -149,10 +155,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:9px;}
 .li{display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);}
 .ld{width:9px;height:9px;border-radius:3px;}
+
+/* BACKUP & SAVE BUTTONS UI */
 .save-wrap{margin-top:1.2rem;}
 .save-btn{display:block;width:100%;padding:13px;border-radius:13px;border:none;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;cursor:pointer;letter-spacing:.08em;background:linear-gradient(135deg,#7c6af7,#b44fff,#ff4d6d);color:#fff;transition:all .2s;}
 .save-btn:hover{opacity:.88;transform:scale(1.01);}
 .save-msg{text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;margin-top:5px;min-height:1rem;}
+.bkp-row {display:flex; gap:10px; margin-top:10px;}
+.bkp-btn {flex:1; padding:10px; border-radius:9px; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; cursor:pointer; transition:all 0.2s;}
+.bkp-btn:hover {border-color:#7c6af7; background:var(--surface3);}
+
 .poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
 .poverlay.open{display:flex;}
 .pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
@@ -385,6 +397,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="save-wrap">
   <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
+
+  <div class="bkp-row">
+     <button class="bkp-btn" onclick="downloadBackup()">💾 DOWNLOAD DATA</button>
+     <button class="bkp-btn" onclick="document.getElementById('uploadBackup').click()">📂 LOAD DATA</button>
+     <input type="file" id="uploadBackup" style="display:none" accept=".json" onchange="uploadBackup(event)">
+  </div>
 </div>
 
 </div><div class="poverlay" id="dayPopup" onclick="closePop(event)">
@@ -855,7 +873,7 @@ async function saveAll(){
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
 
-  // PURANA 100% WORKING FIREBASE CALL
+  // Firebase Log Push
   if(window.saveDataToFirebase) {
     window.saveDataToFirebase(todayXP, newTotalXP, newRank.name, streak);
   }
@@ -967,15 +985,49 @@ function initApp(){
   loadToday(); updAll(); renderNFGrid(); renderHistGrid();
 }
 
+// 🛑 NAYE BACKUP FUNCTIONS 🛑
+function downloadBackup() {
+  const data = {
+    days: localStorage.getItem('rpg_days_v2') || '{}',
+    nf: localStorage.getItem('rpg_nf_v2') || '{}',
+    meta: localStorage.getItem('rpg_meta_v2') || '{}'
+  };
+  const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `LifeRPG_Backup.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function uploadBackup(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data.days) localStorage.setItem('rpg_days_v2', data.days);
+      if(data.nf) localStorage.setItem('rpg_nf_v2', data.nf);
+      if(data.meta) localStorage.setItem('rpg_meta_v2', data.meta);
+      alert('🔥 Backup Restore Ho Gaya! Page refresh ho raha hai...');
+      location.reload();
+    } catch(err) {
+      alert('❌ Error! Sahi LifeRPG_Backup file select karo.');
+    }
+  };
+  reader.readAsText(file);
+}
+
 buildStudyGrid();
 renderWDots();
 initApp();
 </script>
 
 <script type="module">
-  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, push, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
@@ -990,34 +1042,8 @@ initApp();
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 1. DATA LOAD KARNE KA FUNCTION (Website khulte hi automatically chalega)
-  async function fetchBackup() {
-    try {
-      const snapshot = await get(child(ref(db), 'rpg_full_backup'));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        
-        // Cloud ka data utha kar computer ki memory mein wapas daalo
-        if(data.days) localStorage.setItem('rpg_days_v2', data.days);
-        if(data.nf) localStorage.setItem('rpg_nf_v2', data.nf);
-        if(data.meta) localStorage.setItem('rpg_meta_v2', data.meta);
-
-        // Screen ko turant update karo naye data ke sath
-        if(typeof window.initApp === 'function') window.initApp();
-      }
-    } catch(error) {
-      console.error("Cloud se data nahi aaya:", error);
-    }
-  }
-
-  // Jaise hi website khule, data mangwa lo
-  fetchBackup();
-
-  // 2. DATA SAVE KARNE KA FUNCTION
   window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
-    
-    // History logs ke liye data
-    const logData = {
+    const dataToSave = {
       date: new Date().toLocaleDateString('en-IN'),
       time: new Date().toLocaleTimeString('en-IN'),
       season_xp: aajKaXP,
@@ -1026,24 +1052,15 @@ initApp();
       streak: streak
     };
 
-    // Cloud Restore Backup ke liye poora data
-    const backupData = {
-      days: localStorage.getItem('rpg_days_v2') || '{}',
-      nf: localStorage.getItem('rpg_nf_v2') || '{}',
-      meta: localStorage.getItem('rpg_meta_v2') || '{}'
-    };
-
     try {
-      // Dono jagah data save karo (Logs mein aur Backup mein)
-      await push(ref(db, 'season_1_logs'), logData);
-      await set(ref(db, 'rpg_full_backup'), backupData);
-      
-      alert("Wah! Data 100% Cloud mein Save + Backup Ho Gaya! ☁️⚔️");
+      const logsRef = ref(db, 'season_1_logs');
+      const newLogRef = push(logsRef); 
+      await set(newLogRef, dataToSave);
+      // alert hata diya taaki baar baar pareshan na kare
     } catch (error) {
-      alert("Oops! Data save nahi hua: " + error.message);
+      console.log("Firebase error:", error);
     }
   }
-</script>
 </script>
 </body>
 </html>
