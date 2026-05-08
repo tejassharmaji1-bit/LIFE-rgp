@@ -766,7 +766,36 @@ function updAll(){
 
   const rank=getRank(seasonXP);
   const nxtRank=getNextRank(seasonXP);
-  const level=Math.floor(seasonXP/100)+1;
+  // --- NAYA LEVELING SYSTEM (ULTRA HARDCORE SCALING) START ---
+  let level = 1;
+  let remainingXP = seasonXP;
+  const levelCosts = [
+    { limit: 5, cost: 100 },   // Lvl 1-5
+    { limit: 10, cost: 300 },  // Lvl 6-10
+    { limit: 15, cost: 500 },  // Lvl 11-15
+    { limit: 20, cost: 750 },  // Lvl 16-20
+    { limit: 25, cost: 850 },  // Lvl 21-25
+    { limit: 30, cost: 1000 }, // Lvl 26-30
+    { limit: 35, cost: 1200 }, // Lvl 31-35
+    { limit: 40, cost: 1500 }, // Lvl 36-40
+    { limit: 45, cost: 1750 }, // Lvl 41-45
+    { limit: 50, cost: 2000 }, // Lvl 46-50
+    { limit: 55, cost: 2500 }, // Lvl 51-55
+    { limit: 60, cost: 3000 }, // Lvl 56-60
+    { limit: 65, cost: 3250 }, // Lvl 61-65
+    { limit: 70, cost: 4000 }, // Lvl 66-70
+    { limit: 75, cost: 5000 }, // Lvl 71-75
+    { limit: 999, cost: 9999 } // Lvl 76+ 
+  ];
+
+  for (let stage of levelCosts) {
+    while (level < stage.limit && remainingXP >= stage.cost) {
+      remainingXP -= stage.cost;
+      level++;
+    }
+    if (level < stage.limit) break; 
+  }
+  // --- NAYA LEVELING SYSTEM END ---
 
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
