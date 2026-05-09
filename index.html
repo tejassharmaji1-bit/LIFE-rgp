@@ -481,10 +481,15 @@ const RANKS = [
 const BADGE_DEFS = [
   {id:'ironWill', icon:'🛡️', title:'Iron Will', desc:'10 Days NoFap'},
   {id:'monkMode', icon:'🧘‍♂️', title:'Monk Mode', desc:'30 Days NoFap'},
+  {id:'ascended', icon:'🔱', title:'The Ascended', desc:'90 Days NoFap'},
   {id:'lakshya', icon:'🎯', title:'Lakshya Spartan', desc:'Daily 4+ Lectures'},
+  {id:'chemFocus', icon:'🧪', title:'Chemical Focus', desc:'3 Days Revision'},
+  {id:'demon', icon:'🔥', title:'Deep Work Demon', desc:'15 Lec in 7 Days'},
   {id:'aquaman', icon:'💧', title:'Aquaman', desc:'7 Days 8x Water'},
   {id:'ironBody', icon:'🏋️‍♂️', title:'Iron Body', desc:'10 Days Excerise'},
+  {id:'cleanEng', icon:'🥗', title:'Clean Engine', desc:'5 Days No Junk'},
   {id:'focus', icon:'♟️', title:'GM Focus', desc:'10 Days 80%+ Health'},
+  {id:'unbreakable', icon:'👑', title:'Unbreakable', desc:'21 Days Streak'},
 ];
 
 // ══ STATE ══
@@ -897,38 +902,72 @@ function switchTab(t){
 // 🛑 AUTO-CALCULATE BADGES (THE PRESTIGE SYSTEM) 🛑
 function checkBadges(hsc, totalLec) {
   if(!metaData.badges) metaData.badges = {};
-  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0};
+  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0};
   
   let s = metaData.runStreaks;
   let b = metaData.badges;
   let popupMsg = "";
 
+  const addTrophy = (id, msg) => {
+    b[id] = (b[id]||0)+1;
+    popupMsg += (popupMsg ? ", " : "") + msg + " x" + b[id];
+  }
+
   // NoFap Check
   if(nfDays[todayKey]==='win') s.nf++; else s.nf=0;
-  if(s.nf>0 && s.nf%10===0) { b.ironWill = (b.ironWill||0)+1; popupMsg="🛡️ Iron Will x"+b.ironWill; }
-  if(s.nf>0 && s.nf%30===0) { b.monkMode = (b.monkMode||0)+1; popupMsg="🧘‍♂️ Monk Mode x"+b.monkMode; }
+  if(s.nf>0 && s.nf%10===0) addTrophy('ironWill', '🛡️ Iron Will');
+  if(s.nf>0 && s.nf%30===0) addTrophy('monkMode', '🧘‍♂️ Monk Mode');
+  if(s.nf>0 && s.nf%90===0) addTrophy('ascended', '🔱 The Ascended');
 
   // Water Check
   if(water>=8) s.water++; else s.water=0;
-  if(s.water>0 && s.water%7===0) { b.aquaman = (b.aquaman||0)+1; popupMsg="💧 Aquaman x"+b.aquaman; }
+  if(s.water>0 && s.water%7===0) addTrophy('aquaman', '💧 Aquaman');
 
   // Exercise Check
   if(exercises.size>0) s.ex++; else s.ex=0;
-  if(s.ex>0 && s.ex%10===0) { b.ironBody = (b.ironBody||0)+1; popupMsg="🏋️‍♂️ Iron Body x"+b.ironBody; }
+  if(s.ex>0 && s.ex%10===0) addTrophy('ironBody', '🏋️‍♂️ Iron Body');
 
-  // Health Score Check
+  // Health Score Check (General Streak)
   if(hsc.total>=80) s.hsc++; else s.hsc=0;
-  if(s.hsc>0 && s.hsc%10===0) { b.focus = (b.focus||0)+1; popupMsg="♟️ GM Focus x"+b.focus; }
+  if(s.hsc>0 && s.hsc%10===0) addTrophy('focus', '♟️ GM Focus');
+  if(s.hsc>0 && s.hsc%21===0) addTrophy('unbreakable', '👑 Unbreakable');
 
-  // Daily Study Check (No streak needed, just daily output)
-  if(totalLec>=4) { b.lakshya = (b.lakshya||0)+1; popupMsg="🎯 Lakshya Spartan x"+b.lakshya; }
+  // Daily Study Check
+  if(totalLec>=4) addTrophy('lakshya', '🎯 Lakshya Spartan');
+
+  // Clean Engine (No Junk Food Check)
+  if(foods.has('nojunk')) s.nojunk++; else s.nojunk=0;
+  if(s.nojunk>0 && s.nojunk%5===0) addTrophy('cleanEng', '🥗 Clean Engine');
+
+  // Chemical Focus (Revision Check)
+  let didRev = SUBJECTS.some(sub => studyData[sub]?.rev);
+  if(didRev) s.rev++; else s.rev=0;
+  if(s.rev>0 && s.rev%3===0) addTrophy('chemFocus', '🧪 Chemical Focus');
+
+  // Deep Work Demon (15 Lec in last 7 Days)
+  let last7Lec = totalLec;
+  const todayDN = getDayNum(today);
+  if(todayDN) {
+    for(let i=1; i<7; i++) {
+      let rec = allDayData[`s${seasonNum}_d${todayDN - i}`];
+      if(rec && rec.studyData) {
+        SUBJECTS.forEach(sub => { last7Lec += (rec.studyData[sub]?.lec || 0); });
+      }
+    }
+  }
+  // Har 7 din mein bas ek hi baar demon badge milega spam rokne ke liye
+  if(!s.demonLastDay || (todayDN - s.demonLastDay >= 7)) {
+     if(last7Lec >= 15) {
+        addTrophy('demon', '🔥 Deep Work Demon');
+        s.demonLastDay = todayDN;
+     }
+  }
 
   metaData.runStreaks = s;
   metaData.badges = b;
 
   if(popupMsg !== "") alert("🎉 ACHIEVEMENT UNLOCKED: " + popupMsg + "\nTrophy room me check karo!");
 }
-
 function renderBadges() {
   const g = document.getElementById('badgeGrid');
   g.innerHTML = '';
@@ -1118,9 +1157,9 @@ function initApp(){
   nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
   metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
   
-  // Safe init check
+  // Safe init check (Updated to include all new trackers)
   if(!metaData.badges) metaData.badges = {};
-  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0};
+  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0};
 
   loadToday(); 
   updAll(); 
@@ -1129,7 +1168,6 @@ function initApp(){
   renderHistGrid();
   renderBadges();
 }
-
 function downloadBackup() {
   const data = {
     days: localStorage.getItem('rpg_days_v2') || '{}',
