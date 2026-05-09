@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Life RPG — Season Tracker</title>
+<link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -50,9 +51,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .pill{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center;}
 .pill-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;line-height:1;}
 .pill-lbl{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
-.tabs{display:flex;gap:5px;margin-bottom:1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:5px;}
-.tab{flex:1;padding:9px 4px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
-.tab.active{color:var(--text);}
+.tabs{display:flex;gap:5px;margin-bottom:1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:5px;flex-wrap:wrap;}
+.tab{flex:1;min-width:65px;padding:9px 4px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
+.tab.active{color:var(--text); background:var(--surface2);}
 .tab-ic{display:block;font-size:1rem;margin-bottom:2px;}
 .panel{display:none;animation:fadeIn .3s ease;}
 .panel.active{display:block;}
@@ -165,6 +166,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .bkp-btn {flex:1; padding:10px; border-radius:9px; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; cursor:pointer; transition:all 0.2s;}
 .bkp-btn:hover {border-color:#7c6af7; background:var(--surface3);}
 
+/* TROPHY UI */
+.trp-grid {display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;}
+.trp-card {background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:15px 10px; text-align:center; position:relative; filter:grayscale(100%); opacity:0.6; transition:all 0.3s;}
+.trp-card.unlocked {filter:grayscale(0%); opacity:1; border-color:var(--gold); box-shadow:0 0 15px rgba(255,215,0,0.1);}
+.trp-ic {font-size:2.2rem; margin-bottom:5px;}
+.trp-ttl {font-family:'Orbitron',monospace; font-size:.65rem; font-weight:700; color:var(--text); margin-bottom:4px;}
+.trp-sub {font-family:'Space Mono',monospace; font-size:.5rem; color:var(--muted);}
+.trp-badge {position:absolute; top:-8px; right:-8px; background:var(--gold); color:#000; font-family:'Orbitron',monospace; font-size:.7rem; font-weight:900; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--surface); display:none;}
+.trp-card.unlocked .trp-badge {display:flex;}
+
+/* HISTORY SELECT UI */
+.hist-sel {background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:7px; font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; outline:none; cursor:pointer;}
+
 .poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
 .poverlay.open{display:flex;}
 .pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
@@ -185,6 +199,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-top:10px;display:flex;gap:9px;align-items:flex-start;}
 .ai-lbl{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
 .ai-txt{font-size:.82rem;font-weight:600;line-height:1.5;}
+
 @media(max-width:560px){
   .c2{grid-template-columns:1fr;}
   .stat-pills{grid-template-columns:repeat(2,1fr);}
@@ -251,6 +266,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button class="tab" id="tab-study" onclick="switchTab('study')"><span class="tab-ic">📚</span>Study</button>
   <button class="tab" id="tab-nofap" onclick="switchTab('nofap')"><span class="tab-ic">⚔️</span>NoFap</button>
   <button class="tab" id="tab-history" onclick="switchTab('history')"><span class="tab-ic">📅</span>History</button>
+  <button class="tab" id="tab-trophies" onclick="switchTab('trophies')"><span class="tab-ic">🏆</span>Badges</button>
 </div>
 
 <div class="panel active" id="panel-health">
@@ -381,7 +397,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(124,106,247,.12)">📅</div>
-      <div><div class="sec-ttl">90 DAYS HISTORY</div><div class="sec-sub" id="histDateRange">Season 1</div></div>
+      <div>
+        <div class="sec-ttl">90 DAYS HISTORY</div>
+        <div class="sec-sub">Past Seasons bhi dekho</div>
+      </div>
+      <div style="margin-left:auto;">
+         <select id="histSeasonSel" class="hist-sel" onchange="renderHistGrid(parseInt(this.value))">
+            </select>
+      </div>
     </div>
     <div class="leg">
       <div class="li"><div class="ld" style="background:rgba(180,79,255,.5)"></div>God 90%+</div>
@@ -393,6 +416,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:7px">Kisi bhi din pe click karo → detail dekho</div>
   </div>
 </div>
+
+<div class="panel" id="panel-trophies">
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(255,215,0,.12)">🏆</div>
+      <div><div class="sec-ttl">THE TROPHY ROOM</div><div class="sec-sub">x2, x3 lagao aur pro bano</div></div>
+    </div>
+    <div class="trp-grid" id="badgeGrid">
+       </div>
+    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:15px">Roz target poore karo aur Save dabao, badge automatically mil jayega!</div>
+  </div>
+</div>
+
 
 <div class="save-wrap">
   <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
@@ -441,12 +477,22 @@ const RANKS = [
   {name:'GRANDMASTER',emoji:'🔱',color:'#ffffff', xp:16000},
 ];
 
+// ══ BADGE LIST ══
+const BADGE_DEFS = [
+  {id:'ironWill', icon:'🛡️', title:'Iron Will', desc:'10 Days NoFap'},
+  {id:'monkMode', icon:'🧘‍♂️', title:'Monk Mode', desc:'30 Days NoFap'},
+  {id:'lakshya', icon:'🎯', title:'Lakshya Spartan', desc:'Daily 4+ Lectures'},
+  {id:'aquaman', icon:'💧', title:'Aquaman', desc:'7 Days 8x Water'},
+  {id:'ironBody', icon:'🏋️‍♂️', title:'Iron Body', desc:'10 Days Excerise'},
+  {id:'focus', icon:'♟️', title:'GM Focus', desc:'10 Days 80%+ Health'},
+];
+
 // ══ STATE ══
 let water=0, sleepH=0, exercises=new Set(), foods=new Set(), minds=new Set(), mood=0;
 let studyData = {}; 
 let nfDays = {};    
 let allDayData = {}; 
-let metaData = {};   
+let metaData = { badges:{}, runStreaks:{nf:0, water:0, ex:0, hsc:0} };   
 
 const today = new Date(); today.setHours(0,0,0,0);
 const todayKey = getDayKey(today);
@@ -473,15 +519,6 @@ function getDayKey(date) {
   const sn = Math.floor(diff / 90) + 1;
   const dn = (diff % 90) + 1;
   return `s${sn}_d${dn}`;
-}
-function getDateFromKey(key) {
-  const m = key.match(/s(\d+)_d(\d+)/);
-  if(!m) return null;
-  const sn = parseInt(m[1]), dn = parseInt(m[2]);
-  const dayOffset = (sn-1)*90 + (dn-1);
-  const d = new Date(SEASON_START);
-  d.setDate(SEASON_START.getDate() + dayOffset);
-  return d;
 }
 
 document.getElementById('dayNum').textContent = dayNum || '—';
@@ -766,6 +803,7 @@ function updAll(){
 
   const rank=getRank(seasonXP);
   const nxtRank=getNextRank(seasonXP);
+
   // --- NAYA LEVELING SYSTEM (ULTRA HARDCORE SCALING) START ---
   let level = 1;
   let remainingXP = seasonXP;
@@ -845,7 +883,7 @@ function updAll(){
 }
 
 function switchTab(t){
-  ['health','study','nofap','history'].forEach(x=>{
+  ['health','study','nofap','history','trophies'].forEach(x=>{
     document.getElementById('panel-'+x).classList.remove('active');
     document.getElementById('tab-'+x).classList.remove('active');
   });
@@ -853,6 +891,61 @@ function switchTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   if(t==='nofap')renderNFGrid();
   if(t==='history')renderHistGrid();
+  if(t==='trophies')renderBadges();
+}
+
+// 🛑 AUTO-CALCULATE BADGES (THE PRESTIGE SYSTEM) 🛑
+function checkBadges(hsc, totalLec) {
+  if(!metaData.badges) metaData.badges = {};
+  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0};
+  
+  let s = metaData.runStreaks;
+  let b = metaData.badges;
+  let popupMsg = "";
+
+  // NoFap Check
+  if(nfDays[todayKey]==='win') s.nf++; else s.nf=0;
+  if(s.nf>0 && s.nf%10===0) { b.ironWill = (b.ironWill||0)+1; popupMsg="🛡️ Iron Will x"+b.ironWill; }
+  if(s.nf>0 && s.nf%30===0) { b.monkMode = (b.monkMode||0)+1; popupMsg="🧘‍♂️ Monk Mode x"+b.monkMode; }
+
+  // Water Check
+  if(water>=8) s.water++; else s.water=0;
+  if(s.water>0 && s.water%7===0) { b.aquaman = (b.aquaman||0)+1; popupMsg="💧 Aquaman x"+b.aquaman; }
+
+  // Exercise Check
+  if(exercises.size>0) s.ex++; else s.ex=0;
+  if(s.ex>0 && s.ex%10===0) { b.ironBody = (b.ironBody||0)+1; popupMsg="🏋️‍♂️ Iron Body x"+b.ironBody; }
+
+  // Health Score Check
+  if(hsc.total>=80) s.hsc++; else s.hsc=0;
+  if(s.hsc>0 && s.hsc%10===0) { b.focus = (b.focus||0)+1; popupMsg="♟️ GM Focus x"+b.focus; }
+
+  // Daily Study Check (No streak needed, just daily output)
+  if(totalLec>=4) { b.lakshya = (b.lakshya||0)+1; popupMsg="🎯 Lakshya Spartan x"+b.lakshya; }
+
+  metaData.runStreaks = s;
+  metaData.badges = b;
+
+  if(popupMsg !== "") alert("🎉 ACHIEVEMENT UNLOCKED: " + popupMsg + "\nTrophy room me check karo!");
+}
+
+function renderBadges() {
+  const g = document.getElementById('badgeGrid');
+  g.innerHTML = '';
+  const b = metaData.badges || {};
+  
+  BADGE_DEFS.forEach(def => {
+    const count = b[def.id] || 0;
+    const isUnlocked = count > 0;
+    g.innerHTML += `
+      <div class="trp-card ${isUnlocked ? 'unlocked' : ''}">
+         <div class="trp-badge">x${count}</div>
+         <div class="trp-ic">${def.icon}</div>
+         <div class="trp-ttl">${def.title}</div>
+         <div class="trp-sub">${def.desc}</div>
+      </div>
+    `;
+  });
 }
 
 async function saveAll(){
@@ -861,11 +954,16 @@ async function saveAll(){
     return;
   }
   const hsc=calcHealth();
+  const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
+  
   const todayXPObj=calcTodayXP(hsc);
   const todayXP=Math.max(0,todayXPObj.net); 
   const prevTotalXP=calcTotalXP(0);
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
+
+  // Background Badge Calculation
+  checkBadges(hsc, totalLec);
 
   const rec={
     water, sleep:sleepH,
@@ -892,6 +990,7 @@ async function saveAll(){
   updAll();
   renderNFGrid();
   renderHistGrid();
+  renderBadges();
 
   const {streak} = calcStreaks();
 
@@ -901,11 +1000,6 @@ async function saveAll(){
   msg.textContent=`${netXP>=0?'⚡ +':'💀 '}${netXP} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
   msg.style.color=netXP>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
-
-  // Firebase Log Push
-  if(window.saveDataToFirebase) {
-    window.saveDataToFirebase(todayXP, newTotalXP, newRank.name, streak);
-  }
 }
 
 function showRankUp(rank){
@@ -951,18 +1045,30 @@ function getLvC(sc){if(sc>=90)return'sg';if(sc>=80)return'sgo';if(sc>=70)return'
 function getLvCol(sc){if(sc>=90)return'#b44fff';if(sc>=80)return'#00ff88';if(sc>=70)return'#ffd700';return'#ff4d6d';}
 function getLvTxt(sc){if(sc>=90)return'⚡ GOD LEVEL';if(sc>=80)return'🟢 Good Level';if(sc>=70)return'🟡 Average';return'🔴 Low Level';}
 
-function renderHistGrid(){
+function popHistSelect() {
+  const sel = document.getElementById('histSeasonSel');
+  sel.innerHTML = '';
+  for(let i=seasonNum; i>=1; i--){
+    sel.innerHTML += `<option value="${i}">Season ${i}</option>`;
+  }
+  sel.value = seasonNum;
+}
+
+// 🛑 NAYA PAST SEASON HISTORY RENDERER 🛑
+function renderHistGrid(sNum = seasonNum){
   const g=document.getElementById('histGrid'); g.innerHTML='';
+  const isCurrentSeason = (sNum === seasonNum);
   const todayDN=getDayNum(today)||0;
+  
   for(let i=1;i<=90;i++){
-    const key=`s${seasonNum}_d${i}`;
-    const isToday=i===todayDN;
-    const isFuture=i>todayDN&&!isToday;
+    const key=`s${sNum}_d${i}`;
+    const isToday= (isCurrentSeason && i===todayDN);
+    const isFuture= (isCurrentSeason && i>todayDN);
     const rec=allDayData[key];
     const box=document.createElement('div');
-    const dayOffset=(seasonNum-1)*90+(i-1);
+    const dayOffset=(sNum-1)*90+(i-1);
     const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+dayOffset);
-    const dn=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    
     if(isFuture){
       box.className='hbox emp';
       box.innerHTML=`<div class="dn">${i}</div><div class="ds" style="color:var(--border)">·</div>`;
@@ -1011,10 +1117,19 @@ function initApp(){
   allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
   nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
   metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
-  loadToday(); updAll(); renderNFGrid(); renderHistGrid();
+  
+  // Safe init check
+  if(!metaData.badges) metaData.badges = {};
+  if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0};
+
+  loadToday(); 
+  updAll(); 
+  renderNFGrid(); 
+  popHistSelect();
+  renderHistGrid();
+  renderBadges();
 }
 
-// 🛑 NAYE BACKUP FUNCTIONS 🛑
 function downloadBackup() {
   const data = {
     days: localStorage.getItem('rpg_days_v2') || '{}',
@@ -1052,44 +1167,6 @@ function uploadBackup(event) {
 buildStudyGrid();
 renderWDots();
 initApp();
-</script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyD-nbjvED53wn3uTRIZrP7Y23QenMxqab0",
-    authDomain: "life-rgp-tracker.firebaseapp.com",
-    databaseURL: "https://life-rgp-tracker-default-rtdb.firebaseio.com",
-    projectId: "life-rgp-tracker",
-    storageBucket: "life-rgp-tracker.firebasestorage.app",
-    messagingSenderId: "531466954078",
-    appId: "1:531466954078:web:702640e5278e459d919bcf"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  window.saveDataToFirebase = async function(aajKaXP, totalXP, rank, streak) {
-    const dataToSave = {
-      date: new Date().toLocaleDateString('en-IN'),
-      time: new Date().toLocaleTimeString('en-IN'),
-      season_xp: aajKaXP,
-      total_xp: totalXP,
-      rank: rank,
-      streak: streak
-    };
-
-    try {
-      const logsRef = ref(db, 'season_1_logs');
-      const newLogRef = push(logsRef); 
-      await set(newLogRef, dataToSave);
-      // alert hata diya taaki baar baar pareshan na kare
-    } catch (error) {
-      console.log("Firebase error:", error);
-    }
-  }
 </script>
 </body>
 </html>
