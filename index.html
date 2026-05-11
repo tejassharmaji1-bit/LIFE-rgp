@@ -14,6 +14,7 @@
   --food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;
   --bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;
   --diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;
+  --void:#8a2be2; /* Void Rank Color */
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -178,6 +179,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* HISTORY SELECT UI */
 .hist-sel {background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:7px; font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; outline:none; cursor:pointer;}
+.hof-row {display:flex; justify-content:space-between; align-items:center; background:var(--surface2); padding:12px 16px; border-radius:10px; border:1px solid var(--border); margin-bottom:8px;}
 
 .poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
 .poverlay.open{display:flex;}
@@ -218,7 +220,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="hdr-title">LIFE RPG</div>
   <div class="hdr-sub">No Fap · Health · Study · 90 Days</div>
   <div class="season-pill">
-    Season <span class="season-day" id="seasonNum">1</span>
+    Season <span class="season-day" id="seasonNum">1</span> <span id="legacyEmoji"></span>
     &nbsp;·&nbsp; Day <span class="season-day" id="dayNum">—</span> / 90
     &nbsp;·&nbsp; <span id="todayDateStr"></span>
   </div>
@@ -400,10 +402,22 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="panel" id="panel-history">
   <div class="sec">
     <div class="sec-hd">
+      <div class="sec-ic" style="background:rgba(124,106,247,.12)">👑</div>
+      <div>
+        <div class="sec-ttl">HALL OF FAME</div>
+        <div class="sec-sub">Legacy of Past Seasons</div>
+      </div>
+    </div>
+    <div id="hallOfFameList" style="display:flex; flex-direction:column; gap:8px;">
+       </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(124,106,247,.12)">📅</div>
       <div>
-        <div class="sec-ttl">90 DAYS HISTORY</div>
-        <div class="sec-sub">Past Seasons bhi dekho</div>
+        <div class="sec-ttl">90 DAYS GRID</div>
+        <div class="sec-sub">Season map dekho</div>
       </div>
       <div style="margin-left:auto;">
          <select id="histSeasonSel" class="hist-sel" onchange="renderHistGrid(parseInt(this.value))">
@@ -432,7 +446,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:15px">Roz target poore karo aur Save dabao, badge automatically mil jayega!</div>
   </div>
 </div>
-
 
 <div class="save-wrap">
   <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
@@ -471,14 +484,15 @@ const SUBJ_LABELS = {maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪
 
 // ══ RANKS ══
 const RANKS = [
-  {name:'BRONZE',   emoji:'🥉', color:'#cd7f32', xp:0},
-  {name:'SILVER',   emoji:'🥈', color:'#c0c0c0', xp:400},
-  {name:'GOLD',     emoji:'🥇', color:'#ffd700', xp:1000},
-  {name:'PLATINUM', emoji:'💠', color:'#00e5ff', xp:2000},
-  {name:'DIAMOND',  emoji:'💎', color:'#b44fff', xp:4000},
-  {name:'HEROIC',   emoji:'⚔️', color:'#ff4444', xp:7000},
-  {name:'MASTER',   emoji:'👑', color:'#ff8c00', xp:11000},
-  {name:'GRANDMASTER',emoji:'🔱',color:'#ffffff', xp:16000},
+  {name:'BRONZE',     emoji:'🥉', color:'#cd7f32', xp:0},
+  {name:'SILVER',     emoji:'🥈', color:'#c0c0c0', xp:400},
+  {name:'GOLD',       emoji:'🥇', color:'#ffd700', xp:1000},
+  {name:'PLATINUM',   emoji:'💠', color:'#00e5ff', xp:2000},
+  {name:'DIAMOND',    emoji:'💎', color:'#b44fff', xp:4000},
+  {name:'HEROIC',     emoji:'⚔️', color:'#ff4444', xp:7000},
+  {name:'MASTER',     emoji:'👑', color:'#ff8c00', xp:11000},
+  {name:'GRANDMASTER',emoji:'🔱', color:'#ffffff', xp:16000},
+  {name:'VOID',       emoji:'🌌', color:'#8a2be2', xp:23000},
 ];
 
 // ══ BADGE LIST ══
@@ -575,7 +589,6 @@ function chgLec(s, delta) {
   updAll();
 }
 
-// NAYA FUNCTION SELF STUDY HOURS KE LIYE
 function chgHr(s, delta) {
   studyData[s] = studyData[s] || {lec:0, hrs:0, rev:false};
   studyData[s].hrs = Math.max(0, Math.min(12, (studyData[s].hrs || 0) + delta));
@@ -594,7 +607,6 @@ function togRev(s) {
   updAll();
 }
 
-// XP CALCULATION UPDATED (Hrs * 18 XP)
 function calcSubjXP(lec, hrs, rev) {
   let xp = 0;
   for(let i=1; i<=lec; i++) xp += i<=2 ? 30 : 40;
@@ -762,8 +774,7 @@ function calcTotalXP(todayXP){
   Object.keys(allDayData).forEach(k=>{
     if(k!==todayKey && allDayData[k] && allDayData[k].xp) total+=allDayData[k].xp;
   });
-  const pastXP = (metaData.pastSeasonsXP)||0;
-  return Math.max(0, total + todayXP + pastXP); 
+  return Math.max(0, total + todayXP); 
 }
 function calcSeasonXP(todayXP){
   let total=0;
@@ -899,19 +910,32 @@ function updAll(){
     document.getElementById('xpFill').style.width='100%';
     document.getElementById('xpFill').style.background=rank.color;
     document.getElementById('xpBarPct').textContent='MAX';
-    document.getElementById('xpBarLbl').textContent='GRANDMASTER — Peak!';
-    document.getElementById('rXPneed').textContent='Peak rank achieved! 🔱';
+    document.getElementById('xpBarLbl').textContent='THE END — Peak!';
+    document.getElementById('rXPneed').textContent='Peak rank achieved! 🌌';
   }
 
-  document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
-  const lastSeason=metaData.seasons?.[seasonNum-2];
-  if(lastSeason){
-    document.getElementById('sLastRank').textContent=lastSeason.rank||'—';
-    document.getElementById('sLastXP').textContent=(lastSeason.xp||0).toLocaleString();
+  // 🛑 LEGACY SYSTEM (LAST SEASON RANK & EMOJI) 🛑
+  let lastSeasonEmoji = '';
+  if (seasonNum > 1) {
+    let lastSeasonXP = 0;
+    Object.keys(allDayData).forEach(k => {
+       if(k.startsWith('s'+(seasonNum-1)+'_') && allDayData[k]?.xp) lastSeasonXP += allDayData[k].xp;
+    });
+    const lastRankObj = getRank(lastSeasonXP);
+    document.getElementById('sLastRank').textContent = lastRankObj.name;
+    document.getElementById('sLastRank').style.color = lastRankObj.color;
+    document.getElementById('sLastXP').textContent = lastSeasonXP.toLocaleString();
+    if (lastSeasonXP > 0) {
+       lastSeasonEmoji = ' ' + lastRankObj.emoji;
+    }
   } else {
     document.getElementById('sLastRank').textContent='—';
     document.getElementById('sLastXP').textContent='—';
   }
+  
+  // Set Season Header with Legacy Emoji
+  document.getElementById('legacyEmoji').textContent = lastSeasonEmoji;
+  document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
 
   document.getElementById('pStreak').textContent=streak;
   document.getElementById('pBest').textContent=best;
@@ -926,7 +950,7 @@ function switchTab(t){
   document.getElementById('panel-'+t).classList.add('active');
   document.getElementById('tab-'+t).classList.add('active');
   if(t==='nofap')renderNFGrid();
-  if(t==='history')renderHistGrid();
+  if(t==='history') { renderHistGrid(); renderHallOfFame(); }
   if(t==='trophies')renderBadges();
 }
 
@@ -1029,7 +1053,6 @@ async function saveAll(){
   
   const todayXPObj=calcTodayXP(hsc);
   const todayXP=Math.max(0,todayXPObj.net); 
-  const prevTotalXP=calcTotalXP(0);
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
 
@@ -1052,7 +1075,6 @@ async function saveAll(){
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
 
-  const newTotalXP=calcTotalXP(todayXP);
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
   
@@ -1062,6 +1084,7 @@ async function saveAll(){
   renderNFGrid();
   renderHistGrid();
   renderBadges();
+  renderHallOfFame();
 
   const {streak} = calcStreaks();
 
@@ -1126,7 +1149,35 @@ function popHistSelect() {
   sel.value = seasonNum;
 }
 
-// 🛑 NAYA PAST SEASON HISTORY RENDERER 🛑
+// 🛑 HALL OF FAME RENDERER 🛑
+function renderHallOfFame() {
+  const hof = document.getElementById('hallOfFameList');
+  hof.innerHTML = '';
+  if(seasonNum === 1) {
+     hof.innerHTML = `<div class="mtxt">Abhi Season 1 chal raha hai. Legend banna baaki hai!</div>`;
+     return;
+  }
+  for(let i=seasonNum-1; i>=1; i--) {
+     let sXP = 0;
+     Object.keys(allDayData).forEach(k => {
+        if(k.startsWith('s'+i+'_') && allDayData[k].xp) sXP += allDayData[k].xp;
+     });
+     const r = getRank(sXP);
+     hof.innerHTML += `
+       <div class="hof-row">
+          <div>
+             <div style="font-family:'Orbitron', monospace; font-size:0.8rem; font-weight:700;">SEASON ${i}</div>
+             <div style="font-family:'Space Mono', monospace; font-size:0.6rem; color:var(--muted);">${sXP.toLocaleString()} XP</div>
+          </div>
+          <div style="text-align:right;">
+             <div style="font-size:1.4rem;">${r.emoji}</div>
+             <div style="font-family:'Space Mono', monospace; font-size:0.55rem; color:${r.color};">${r.name}</div>
+          </div>
+       </div>
+     `;
+  }
+}
+
 function renderHistGrid(sNum = seasonNum){
   const g=document.getElementById('histGrid'); g.innerHTML='';
   const isCurrentSeason = (sNum === seasonNum);
@@ -1195,7 +1246,6 @@ function initApp(){
   nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
   metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
   
-  // Safe init check (Updated to include all new trackers)
   if(!metaData.badges) metaData.badges = {};
   if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0};
 
@@ -1205,6 +1255,7 @@ function initApp(){
   popHistSelect();
   renderHistGrid();
   renderBadges();
+  renderHallOfFame();
 }
 
 function downloadBackup() {
