@@ -113,7 +113,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .lec-ctrl{display:flex;align-items:center;gap:6px;}
 .lec-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .lec-btn:hover{border-color:#7c6af7;color:#a78bfa;}
-.lec-num{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;min-width:20px;text-align:center;}
+.lec-num{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;min-width:26px;text-align:center;}
 .subj-xp{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--study);margin-top:4px;}
 .rev-tog{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .17s;font-size:.75rem;user-select:none;margin-top:6px;}
 .rev-tog.on{border-color:var(--study);}
@@ -355,7 +355,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(255,224,51,.12)">📚</div>
-      <div><div class="sec-ttl">STUDY TRACKER</div><div class="sec-sub">2 lec = 30 XP each · 3rd+ lec = 40 XP bonus · Revision = 15 XP</div></div>
+      <div><div class="sec-ttl">STUDY TRACKER</div><div class="sec-sub">2 lec = 30 XP · 3rd+ = 40 XP · Self Study = 18 XP/hr · Rev = 15 XP</div></div>
       <div class="sec-xp" id="studyXPDisp">0 XP</div>
     </div>
     <div class="study-grid" id="studyGrid">
@@ -364,6 +364,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div>
         <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Total Lectures</div>
         <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)" id="totalLec">0</div>
+      </div>
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Total Hours</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)"><span id="totalHrs">0</span><span style="font-size:0.8rem">h</span></div>
       </div>
       <div style="text-align:right">
         <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Study XP Today</div>
@@ -497,7 +501,7 @@ let water=0, sleepH=0, exercises=new Set(), foods=new Set(), minds=new Set(), mo
 let studyData = {}; 
 let nfDays = {};    
 let allDayData = {}; 
-let metaData = { badges:{}, runStreaks:{nf:0, water:0, ex:0, hsc:0} };   
+let metaData = { badges:{}, runStreaks:{nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0} };   
 
 const today = new Date(); today.setHours(0,0,0,0);
 const todayKey = getDayKey(today);
@@ -534,7 +538,7 @@ function buildStudyGrid() {
   const g = document.getElementById('studyGrid');
   g.innerHTML = '';
   SUBJECTS.forEach(s => {
-    studyData[s] = studyData[s] || {lec:0, rev:false};
+    studyData[s] = studyData[s] || {lec:0, hrs:0, rev:false};
     g.innerHTML += `
     <div class="subj" id="subj-${s}">
       <div class="subj-nm">${SUBJ_LABELS[s]}</div>
@@ -544,6 +548,14 @@ function buildStudyGrid() {
           <button class="lec-btn" onclick="chgLec('${s}',-1)">−</button>
           <div class="lec-num" id="ln-${s}">0</div>
           <button class="lec-btn" onclick="chgLec('${s}',1)">+</button>
+        </div>
+      </div>
+      <div class="lec-row" style="margin-top:5px;">
+        <div class="lec-lbl">Self Study (Hrs)</div>
+        <div class="lec-ctrl">
+          <button class="lec-btn" onclick="chgHr('${s}',-0.5)">−</button>
+          <div class="lec-num" id="hr-${s}">0</div>
+          <button class="lec-btn" onclick="chgHr('${s}',0.5)">+</button>
         </div>
       </div>
       <div class="subj-xp" id="sxp-${s}">0 XP</div>
@@ -556,14 +568,24 @@ function buildStudyGrid() {
 }
 
 function chgLec(s, delta) {
-  studyData[s] = studyData[s] || {lec:0, rev:false};
+  studyData[s] = studyData[s] || {lec:0, hrs:0, rev:false};
   studyData[s].lec = Math.max(0, Math.min(8, studyData[s].lec + delta));
   updStudyUI(s);
   updStudyTotals();
   updAll();
 }
+
+// NAYA FUNCTION SELF STUDY HOURS KE LIYE
+function chgHr(s, delta) {
+  studyData[s] = studyData[s] || {lec:0, hrs:0, rev:false};
+  studyData[s].hrs = Math.max(0, Math.min(12, (studyData[s].hrs || 0) + delta));
+  updStudyUI(s);
+  updStudyTotals();
+  updAll();
+}
+
 function togRev(s) {
-  studyData[s] = studyData[s] || {lec:0, rev:false};
+  studyData[s] = studyData[s] || {lec:0, hrs:0, rev:false};
   studyData[s].rev = !studyData[s].rev;
   const el = document.getElementById('rev-'+s);
   studyData[s].rev ? el.classList.add('on') : el.classList.remove('on');
@@ -571,26 +593,34 @@ function togRev(s) {
   updStudyTotals();
   updAll();
 }
-function calcSubjXP(lec, rev) {
+
+// XP CALCULATION UPDATED (Hrs * 18 XP)
+function calcSubjXP(lec, hrs, rev) {
   let xp = 0;
   for(let i=1; i<=lec; i++) xp += i<=2 ? 30 : 40;
+  xp += (hrs * 18);
   if(rev) xp += 15;
   return xp;
 }
+
 function updStudyUI(s) {
-  const d = studyData[s] || {lec:0,rev:false};
+  const d = studyData[s] || {lec:0, hrs:0, rev:false};
   document.getElementById('ln-'+s).textContent = d.lec;
-  const xp = calcSubjXP(d.lec, d.rev);
-  document.getElementById('sxp-'+s).textContent = xp + ' XP' + (d.lec>=3?' (bonus! +40/lec)':'');
+  document.getElementById('hr-'+s).textContent = d.hrs || 0;
+  const xp = calcSubjXP(d.lec, d.hrs||0, d.rev);
+  document.getElementById('sxp-'+s).textContent = xp + ' XP' + (d.lec>=3?' (+40/lec bonus)':'');
 }
+
 function updStudyTotals() {
-  let totalLec = 0, totalXP = 0;
+  let totalLec = 0, totalHrs = 0, totalXP = 0;
   SUBJECTS.forEach(s => {
-    const d = studyData[s] || {lec:0,rev:false};
+    const d = studyData[s] || {lec:0, hrs:0, rev:false};
     totalLec += d.lec;
-    totalXP += calcSubjXP(d.lec, d.rev);
+    totalHrs += (d.hrs || 0);
+    totalXP += calcSubjXP(d.lec, d.hrs||0, d.rev);
   });
   document.getElementById('totalLec').textContent = totalLec;
+  document.getElementById('totalHrs').textContent = totalHrs;
   document.getElementById('totalStudyXP').textContent = totalXP + ' XP';
   document.getElementById('studyXPDisp').textContent = totalXP + ' XP';
 }
@@ -716,12 +746,13 @@ function calcTodayXP(hsc){
   if(minds.size>=2)xp+=20;             
   if(hsc.total>=90)xp+=50;             
   else if(hsc.total>=80)xp+=25;        
-  SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.rev||false);});
+  SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0, studyData[s]?.hrs||0, studyData[s]?.rev||false);});
   if(nfDays[todayKey]==='win')xp+=50;   
   if(nfDays[todayKey]==='fail') penalties+=30;       
   if(hsc.total<70 && hsc.total>0) penalties+=50;    
   const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
-  if(totalLec===0) penalties+=35;                    
+  const totalHrs=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.hrs||0),0);
+  if(totalLec===0 && totalHrs===0) penalties+=35;                    
   const net=xp-penalties;
   return {earned:xp, penalties, net};
 }
@@ -968,6 +999,7 @@ function checkBadges(hsc, totalLec) {
 
   if(popupMsg !== "") alert("🎉 ACHIEVEMENT UNLOCKED: " + popupMsg + "\nTrophy room me check karo!");
 }
+
 function renderBadges() {
   const g = document.getElementById('badgeGrid');
   g.innerHTML = '';
@@ -1059,7 +1091,7 @@ function loadToday(){
   minds=new Set(rec.minds||[]);
   mood=rec.mood||0;
   if(rec.studyData){
-    SUBJECTS.forEach(s=>{studyData[s]={...{lec:0,rev:false},...rec.studyData[s]};});
+    SUBJECTS.forEach(s=>{studyData[s]={...{lec:0, hrs:0, rev:false},...rec.studyData[s]};});
   }
   document.getElementById('sSlider').value=sleepH;
   exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
@@ -1073,6 +1105,7 @@ function loadToday(){
   SUBJECTS.forEach(s=>{
     updStudyUI(s);
     document.getElementById('ln-'+s).textContent=studyData[s]?.lec||0;
+    document.getElementById('hr-'+s).textContent=studyData[s]?.hrs||0;
     if(studyData[s]?.rev)document.getElementById('rev-'+s).classList.add('on');
   });
   updStudyTotals();
@@ -1135,7 +1168,12 @@ function openPop(key,r,dateObj,dayN){
   const md=r.minds?.length?r.minds.join(', '):'koi nahi';
   let studyStr='';
   if(r.studyData){
-    SUBJECTS.forEach(s=>{const d=r.studyData[s];if(d?.lec>0)studyStr+=SUBJ_LABELS[s]+': '+d.lec+' lec'+(d.rev?'+rev':'')+' ';});
+    SUBJECTS.forEach(s=>{
+      const d=r.studyData[s];
+      if(d?.lec>0 || d?.hrs>0) {
+        studyStr += SUBJ_LABELS[s]+': '+ (d.lec?d.lec+' lec ':'') + (d.hrs?d.hrs+'h ':'') + (d.rev?'+rev':'')+', ';
+      }
+    });
   }
   document.getElementById('popRows').innerHTML=`
     <div class="pr"><span>💧</span><span class="prlbl">Paani</span><span class="prval" style="color:var(--water)">${r.w||0}% (${r.water||0}/8)</span></div>
@@ -1168,6 +1206,7 @@ function initApp(){
   renderHistGrid();
   renderBadges();
 }
+
 function downloadBackup() {
   const data = {
     days: localStorage.getItem('rpg_days_v2') || '{}',
