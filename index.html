@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+F<!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
@@ -1035,8 +1035,11 @@ async function saveAll(){
   const todayXPObj=calcTodayXP(hsc);
   const todayXP=Math.max(0,todayXPObj.net); 
 
-  const prevRankName = document.getElementById('rName').textContent;
-  const prevLevel = parseInt(document.getElementById('lvlTxt').textContent.replace('Level ', '')) || 1;
+  // 🛑 THE REAL FIX: Screen nahi, pichla Saved Data check karo!
+  const prevSavedXP = allDayData[todayKey]?.xp || 0;
+  const prevSeasonXP = calcSeasonXP(prevSavedXP);
+  const prevRank = getRank(prevSeasonXP);
+  const prevLevel = getLevel(prevSeasonXP);
 
   checkBadges(hsc, totalLec);
 
@@ -1056,16 +1059,15 @@ async function saveAll(){
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
 
-  const newSeasonXP=calcSeasonXP(todayXP);
-  const newRank=getRank(newSeasonXP);
-  const newLevel=getLevel(newSeasonXP); 
+  const newSeasonXP = calcSeasonXP(todayXP);
+  const newRank = getRank(newSeasonXP);
+  const newLevel = getLevel(newSeasonXP); 
   
-  const rankChanged = newRank.name !== prevRankName;
+  const rankChanged = newRank.name !== prevRank.name;
   const levelChanged = newLevel > prevLevel;
 
   // 🛑 POPUP QUEUE: Agar rank aur level dono badhe, toh dono ek-ek karke aayenge
   if(rankChanged) {
-    // Rank popup dikhao, aur use batao ki baad mein kaunsa level popup dikhana hai
     showRankUp(newRank, levelChanged ? newLevel : null);
   } else if(levelChanged) {
     showLevelUp(newLevel);
