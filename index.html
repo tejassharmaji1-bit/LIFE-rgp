@@ -14,7 +14,7 @@
   --food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;
   --bronze:#cd7f32;--silver:#c0c0c0;--gold:#ffd700;--platinum:#00e5ff;
   --diamond:#b44fff;--heroic:#ff4444;--master:#ff8c00;--gm:#ffffff;
-  --void:#8a2be2; /* Void Rank Color */
+  --void:#8a2be2;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -787,6 +787,28 @@ function calcSeasonXP(todayXP){
 function getRank(xp){let r=RANKS[0];for(const rk of RANKS)if(xp>=rk.xp)r=rk;return r;}
 function getNextRank(xp){for(const r of RANKS)if(r.xp>xp)return r;return null;}
 
+// 🛑 NAYA FUNCTION FOR LEVEL POPUP CALCULATION 🛑
+function getLevel(xp) {
+  let lvl = 1;
+  let remaining = xp;
+  const levelCosts = [
+    { limit: 5, cost: 100 }, { limit: 10, cost: 300 }, { limit: 15, cost: 500 },
+    { limit: 20, cost: 750 }, { limit: 25, cost: 850 }, { limit: 30, cost: 1000 },
+    { limit: 35, cost: 1200 }, { limit: 40, cost: 1500 }, { limit: 45, cost: 1750 },
+    { limit: 50, cost: 2000 }, { limit: 55, cost: 2500 }, { limit: 60, cost: 3000 },
+    { limit: 65, cost: 3250 }, { limit: 70, cost: 4000 }, { limit: 75, cost: 5000 },
+    { limit: 999, cost: 9999 }
+  ];
+  for (let stage of levelCosts) {
+    while (lvl < stage.limit && remaining >= stage.cost) {
+      remaining -= stage.cost;
+      lvl++;
+    }
+    if (lvl < stage.limit) break;
+  }
+  return lvl;
+}
+
 function getAdvice(sc){
   if(!sc.total)return'Data bharo — AI feedback milega! 📊';
   if(sc.total<50)return'💀 Full fail. Discipline zero. Kal pakka sudhar.';
@@ -850,37 +872,7 @@ function updAll(){
 
   const rank=getRank(seasonXP);
   const nxtRank=getNextRank(seasonXP);
-
-  // --- NAYA LEVELING SYSTEM (ULTRA HARDCORE SCALING) START ---
-  let level = 1;
-  let remainingXP = seasonXP;
-  const levelCosts = [
-    { limit: 5, cost: 100 },   // Lvl 1-5
-    { limit: 10, cost: 300 },  // Lvl 6-10
-    { limit: 15, cost: 500 },  // Lvl 11-15
-    { limit: 20, cost: 750 },  // Lvl 16-20
-    { limit: 25, cost: 850 },  // Lvl 21-25
-    { limit: 30, cost: 1000 }, // Lvl 26-30
-    { limit: 35, cost: 1200 }, // Lvl 31-35
-    { limit: 40, cost: 1500 }, // Lvl 36-40
-    { limit: 45, cost: 1750 }, // Lvl 41-45
-    { limit: 50, cost: 2000 }, // Lvl 46-50
-    { limit: 55, cost: 2500 }, // Lvl 51-55
-    { limit: 60, cost: 3000 }, // Lvl 56-60
-    { limit: 65, cost: 3250 }, // Lvl 61-65
-    { limit: 70, cost: 4000 }, // Lvl 66-70
-    { limit: 75, cost: 5000 }, // Lvl 71-75
-    { limit: 999, cost: 9999 } // Lvl 76+ 
-  ];
-
-  for (let stage of levelCosts) {
-    while (level < stage.limit && remainingXP >= stage.cost) {
-      remainingXP -= stage.cost;
-      level++;
-    }
-    if (level < stage.limit) break; 
-  }
-  // --- NAYA LEVELING SYSTEM END ---
+  const level=getLevel(seasonXP);
 
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
@@ -933,7 +925,6 @@ function updAll(){
     document.getElementById('sLastXP').textContent='—';
   }
   
-  // Set Season Header with Legacy Emoji
   document.getElementById('legacyEmoji').textContent = lastSeasonEmoji;
   document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
 
@@ -954,7 +945,6 @@ function switchTab(t){
   if(t==='trophies')renderBadges();
 }
 
-// 🛑 AUTO-CALCULATE BADGES (THE PRESTIGE SYSTEM) 🛑
 function checkBadges(hsc, totalLec) {
   if(!metaData.badges) metaData.badges = {};
   if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0};
@@ -968,38 +958,30 @@ function checkBadges(hsc, totalLec) {
     popupMsg += (popupMsg ? ", " : "") + msg + " x" + b[id];
   }
 
-  // NoFap Check
   if(nfDays[todayKey]==='win') s.nf++; else s.nf=0;
   if(s.nf>0 && s.nf%10===0) addTrophy('ironWill', '🛡️ Iron Will');
   if(s.nf>0 && s.nf%30===0) addTrophy('monkMode', '🧘‍♂️ Monk Mode');
   if(s.nf>0 && s.nf%90===0) addTrophy('ascended', '🔱 The Ascended');
 
-  // Water Check
   if(water>=8) s.water++; else s.water=0;
   if(s.water>0 && s.water%7===0) addTrophy('aquaman', '💧 Aquaman');
 
-  // Exercise Check
   if(exercises.size>0) s.ex++; else s.ex=0;
   if(s.ex>0 && s.ex%10===0) addTrophy('ironBody', '🏋️‍♂️ Iron Body');
 
-  // Health Score Check (General Streak)
   if(hsc.total>=80) s.hsc++; else s.hsc=0;
   if(s.hsc>0 && s.hsc%10===0) addTrophy('focus', '♟️ GM Focus');
   if(s.hsc>0 && s.hsc%21===0) addTrophy('unbreakable', '👑 Unbreakable');
 
-  // Daily Study Check
   if(totalLec>=4) addTrophy('lakshya', '🎯 Lakshya Spartan');
 
-  // Clean Engine (No Junk Food Check)
   if(foods.has('nojunk')) s.nojunk++; else s.nojunk=0;
   if(s.nojunk>0 && s.nojunk%5===0) addTrophy('cleanEng', '🥗 Clean Engine');
 
-  // Chemical Focus (Revision Check)
   let didRev = SUBJECTS.some(sub => studyData[sub]?.rev);
   if(didRev) s.rev++; else s.rev=0;
   if(s.rev>0 && s.rev%3===0) addTrophy('chemFocus', '🧪 Chemical Focus');
 
-  // Deep Work Demon (15 Lec in last 7 Days)
   let last7Lec = totalLec;
   const todayDN = getDayNum(today);
   if(todayDN) {
@@ -1010,7 +992,6 @@ function checkBadges(hsc, totalLec) {
       }
     }
   }
-  // Har 7 din mein bas ek hi baar demon badge milega spam rokne ke liye
   if(!s.demonLastDay || (todayDN - s.demonLastDay >= 7)) {
      if(last7Lec >= 15) {
         addTrophy('demon', '🔥 Deep Work Demon');
@@ -1055,8 +1036,8 @@ async function saveAll(){
   const todayXP=Math.max(0,todayXPObj.net); 
   const prevSeasonXP=calcSeasonXP(0);
   const prevRank=getRank(prevSeasonXP);
+  const prevLevel=getLevel(prevSeasonXP); // 🛑 NEW: PICHLA LEVEL
 
-  // Background Badge Calculation
   checkBadges(hsc, totalLec);
 
   const rec={
@@ -1077,8 +1058,14 @@ async function saveAll(){
 
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
+  const newLevel=getLevel(newSeasonXP); // 🛑 NEW: NAYA LEVEL
   
-  if(newRank.name!==prevRank.name) showRankUp(newRank);
+  // 🛑 POPUP LOGIC: Agar Rank badhi toh Rank popup, warna agar Level badha toh Level popup
+  if(newRank.name!==prevRank.name) {
+    showRankUp(newRank);
+  } else if(newLevel > prevLevel) {
+    showLevelUp(newLevel);
+  }
 
   updAll();
   renderNFGrid();
@@ -1098,9 +1085,18 @@ async function saveAll(){
 
 function showRankUp(rank){
   document.getElementById('lvlEm').textContent=rank.emoji;
-  document.getElementById('lvlTi').textContent='RANK UP! '+rank.name;
+  document.getElementById('lvlTi').textContent='RANK UP!';
   document.getElementById('lvlTi').style.color=rank.color;
   document.getElementById('lvlSu').textContent='You reached '+rank.name+' rank! Keep going!';
+  document.getElementById('lvlOver').classList.add('show');
+}
+
+// 🛑 NAYA FUNCTION: LEVEL UP POPUP 🛑
+function showLevelUp(lvl){
+  document.getElementById('lvlEm').textContent='📈';
+  document.getElementById('lvlTi').textContent='LEVEL UP!';
+  document.getElementById('lvlTi').style.color='#00ff88';
+  document.getElementById('lvlSu').textContent='You reached Level '+lvl+'! Keep grinding!';
   document.getElementById('lvlOver').classList.add('show');
 }
 
@@ -1149,7 +1145,6 @@ function popHistSelect() {
   sel.value = seasonNum;
 }
 
-// 🛑 HALL OF FAME RENDERER 🛑
 function renderHallOfFame() {
   const hof = document.getElementById('hallOfFameList');
   hof.innerHTML = '';
