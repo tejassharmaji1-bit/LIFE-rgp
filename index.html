@@ -1034,9 +1034,9 @@ async function saveAll(){
   
   const todayXPObj=calcTodayXP(hsc);
   const todayXP=Math.max(0,todayXPObj.net); 
-  const prevSeasonXP=calcSeasonXP(0);
-  const prevRank=getRank(prevSeasonXP);
-  const prevLevel=getLevel(prevSeasonXP); // 🛑 NEW: PICHLA LEVEL
+
+  const prevRankName = document.getElementById('rName').textContent;
+  const prevLevel = parseInt(document.getElementById('lvlTxt').textContent.replace('Level ', '')) || 1;
 
   checkBadges(hsc, totalLec);
 
@@ -1058,12 +1058,16 @@ async function saveAll(){
 
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
-  const newLevel=getLevel(newSeasonXP); // 🛑 NEW: NAYA LEVEL
+  const newLevel=getLevel(newSeasonXP); 
   
-  // 🛑 POPUP LOGIC: Agar Rank badhi toh Rank popup, warna agar Level badha toh Level popup
-  if(newRank.name!==prevRank.name) {
-    showRankUp(newRank);
-  } else if(newLevel > prevLevel) {
+  const rankChanged = newRank.name !== prevRankName;
+  const levelChanged = newLevel > prevLevel;
+
+  // 🛑 POPUP QUEUE: Agar rank aur level dono badhe, toh dono ek-ek karke aayenge
+  if(rankChanged) {
+    // Rank popup dikhao, aur use batao ki baad mein kaunsa level popup dikhana hai
+    showRankUp(newRank, levelChanged ? newLevel : null);
+  } else if(levelChanged) {
     showLevelUp(newLevel);
   }
 
@@ -1083,20 +1087,35 @@ async function saveAll(){
   setTimeout(()=>msg.textContent='',5000);
 }
 
-function showRankUp(rank){
+function showRankUp(rank, nextLevel){
   document.getElementById('lvlEm').textContent=rank.emoji;
   document.getElementById('lvlTi').textContent='RANK UP!';
   document.getElementById('lvlTi').style.color=rank.color;
   document.getElementById('lvlSu').textContent='You reached '+rank.name+' rank! Keep going!';
+  
+  const btn = document.querySelector('.lvl-cl');
+  btn.onclick = function() {
+    document.getElementById('lvlOver').classList.remove('show');
+    // Agar same din Level Up bhi hua hai, toh 0.4 sec baad agla popup laao
+    if (nextLevel) {
+      setTimeout(() => showLevelUp(nextLevel), 400); 
+    }
+  };
+  
   document.getElementById('lvlOver').classList.add('show');
 }
 
-// 🛑 NAYA FUNCTION: LEVEL UP POPUP 🛑
 function showLevelUp(lvl){
   document.getElementById('lvlEm').textContent='📈';
   document.getElementById('lvlTi').textContent='LEVEL UP!';
   document.getElementById('lvlTi').style.color='#00ff88';
   document.getElementById('lvlSu').textContent='You reached Level '+lvl+'! Keep grinding!';
+  
+  const btn = document.querySelector('.lvl-cl');
+  btn.onclick = function() {
+    document.getElementById('lvlOver').classList.remove('show');
+  };
+  
   document.getElementById('lvlOver').classList.add('show');
 }
 
