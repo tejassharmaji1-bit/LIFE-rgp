@@ -1,4 +1,4 @@
-F<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
@@ -32,7 +32,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .rank-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;}
 .rank-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;}
 .rank-left{display:flex;align-items:center;gap:12px;}
-.rank-emblem{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:2px solid currentColor;flex-shrink:0;}
+.rank-emblem{width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;border:2px solid currentColor;flex-shrink:0;background:var(--surface2);overflow:hidden;}
 .rank-lbl{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
 .rank-nm{font-family:'Orbitron',monospace;font-size:1.25rem;font-weight:700;}
 .rank-xpneed{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:2px;}
@@ -167,7 +167,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .bkp-btn {flex:1; padding:10px; border-radius:9px; background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; cursor:pointer; transition:all 0.2s;}
 .bkp-btn:hover {border-color:#7c6af7; background:var(--surface3);}
 
-/* TROPHY UI */
+/* TROPHY & MISSION UI */
 .trp-grid {display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;}
 .trp-card {background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:15px 10px; text-align:center; position:relative; filter:grayscale(100%); opacity:0.6; transition:all 0.3s;}
 .trp-card.unlocked {filter:grayscale(0%); opacity:1; border-color:var(--gold); box-shadow:0 0 15px rgba(255,215,0,0.1);}
@@ -177,7 +177,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .trp-badge {position:absolute; top:-8px; right:-8px; background:var(--gold); color:#000; font-family:'Orbitron',monospace; font-size:.7rem; font-weight:900; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--surface); display:none;}
 .trp-card.unlocked .trp-badge {display:flex;}
 
-/* HISTORY SELECT UI */
+.quest-row {display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; cursor:pointer; transition:all 0.2s;}
+.quest-row:hover {border-color:#7c6af7;}
+.quest-row.done {opacity:0.6; border-color:#00ff88; background:rgba(0,255,136,0.05);}
+.quest-ck {width:20px; height:20px; border-radius:6px; border:2px solid var(--muted); display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0;}
+.quest-row.done .quest-ck {background:#00ff88; border-color:#00ff88;}
+.quest-ck::after {content:'✓'; color:#000; font-size:0.8rem; font-weight:900; display:none;}
+.quest-row.done .quest-ck::after {display:block;}
+.quest-text {flex:1; font-size:0.8rem; font-weight:600;}
+.quest-xp {font-family:'Orbitron',monospace; font-size:0.75rem; color:#ffd700; font-weight:700; white-space:nowrap;}
+
 .hist-sel {background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:5px 10px; border-radius:7px; font-family:'Orbitron',monospace; font-size:.7rem; font-weight:700; outline:none; cursor:pointer;}
 .hof-row {display:flex; justify-content:space-between; align-items:center; background:var(--surface2); padding:12px 16px; border-radius:10px; border:1px solid var(--border); margin-bottom:8px;}
 
@@ -194,7 +203,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .prval{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:600;}
 .lvlover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;}
 .lvlover.show{display:flex;animation:fadeIn .4s ease;}
-.lvl-em{font-size:4rem;}
+.lvl-em{width:90px; height:90px; font-size:4rem; display:flex; align-items:center; justify-content:center;}
 .lvl-ti{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:900;letter-spacing:.1em;text-align:center;}
 .lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
 .lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
@@ -220,7 +229,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="hdr-title">LIFE RPG</div>
   <div class="hdr-sub">No Fap · Health · Study · 90 Days</div>
   <div class="season-pill">
-    Season <span class="season-day" id="seasonNum">1</span> <span id="legacyEmoji"></span>
+    Season <span class="season-day" id="seasonNum">1</span> <span id="legacyEmoji" style="display:inline-flex; align-items:center; height:18px;"></span>
     &nbsp;·&nbsp; Day <span class="season-day" id="dayNum">—</span> / 90
     &nbsp;·&nbsp; <span id="todayDateStr"></span>
   </div>
@@ -272,6 +281,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <div class="panel active" id="panel-health">
+
+  <div class="sec">
+    <div class="sec-hd" style="margin-bottom:8px;">
+      <div class="sec-ic" style="background:rgba(255,215,0,.12)">📜</div>
+      <div><div class="sec-ttl">DAILY MISSIONS</div><div class="sec-sub">Naye challenges, Extra XP!</div></div>
+    </div>
+    <div id="questContainer">
+      </div>
+  </div>
+
   <div class="c2">
     <div class="card water">
       <div class="ctop"><span style="font-size:1.1rem">💧</span><div><div class="cttl">PAANI</div><div class="csub">8 glass · 5 XP each</div></div></div>
@@ -482,17 +501,39 @@ SEASON_START.setHours(0,0,0,0);
 const SUBJECTS = ['maths','physics','chemistry','english'];
 const SUBJ_LABELS = {maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English'};
 
-// ══ RANKS ══
+// 🛑 CUSTOM LOGOS SUPPORT ADDED HERE 🛑
+// Agar tumhe apna khudka logo lagana hai, toh 'img' ke aage us image ka link single quotes (' ') mein daal do!
+// Maine Free Fire GM aur Master ke dummy link dale hue hain as an example.
 const RANKS = [
-  {name:'BRONZE',     emoji:'🥉', color:'#cd7f32', xp:0},
-  {name:'SILVER',     emoji:'🥈', color:'#c0c0c0', xp:400},
-  {name:'GOLD',       emoji:'🥇', color:'#ffd700', xp:1000},
-  {name:'PLATINUM',   emoji:'💠', color:'#00e5ff', xp:2000},
-  {name:'DIAMOND',    emoji:'💎', color:'#b44fff', xp:4000},
-  {name:'HEROIC',     emoji:'⚔️', color:'#ff4444', xp:7000},
-  {name:'MASTER',     emoji:'👑', color:'#ff8c00', xp:11000},
-  {name:'GRANDMASTER',emoji:'🔱', color:'#ffffff', xp:16000},
-  {name:'VOID',       emoji:'🌌', color:'#8a2be2', xp:23000},
+  {name:'BRONZE',     emoji:'🥉', img:'', color:'#cd7f32', xp:0},
+  {name:'SILVER',     emoji:'🥈', img:'', color:'#c0c0c0', xp:400},
+  {name:'GOLD',       emoji:'🥇', img:'', color:'#ffd700', xp:1000},
+  {name:'PLATINUM',   emoji:'💠', img:'', color:'#00e5ff', xp:2000},
+  {name:'DIAMOND',    emoji:'💎', img:'', color:'#b44fff', xp:4000},
+  {name:'HEROIC',     emoji:'⚔️', img:'', color:'#ff4444', xp:7000},
+  {name:'MASTER',     emoji:'👑', img:'', color:'#ff8c00', xp:11000},
+  {name:'GRANDMASTER',emoji:'🔱', img:'https://i.ibb.co/T1J2Zk3/ff-gm.png', color:'#ffffff', xp:16000}, // Ye dummy link hai, ise Google wale link se replace kar sakte ho
+  {name:'VOID',       emoji:'🌌', img:'', color:'#8a2be2', xp:23000},
+];
+
+// Helper Function: Logo image render karne ke liye
+function getRankHtml(rank) {
+  if (rank.img && rank.img !== '') {
+    return `<img src="${rank.img}" style="width:90%; height:90%; object-fit:contain;">`;
+  }
+  return rank.emoji;
+}
+
+// 🛑 MISSIONS (SIDE QUESTS) POOL 🛑
+const QUEST_POOL = [
+  {id:'q1', text:'Aaj 15 extra questions solve karo', xp:50},
+  {id:'q2', text:'Bina phone use kiye lagatar 2 ghante padho', xp:80},
+  {id:'q3', text:'Aaj bilkul meetha (sugar/sweets) mat khao', xp:40},
+  {id:'q4', text:'50 Pushups ya burpees lagao', xp:50},
+  {id:'q5', text:'Purane topics ka 30 min quick revision karo', xp:60},
+  {id:'q6', text:'Subah jaldi uth kar padhai shuru karo (Before 7 AM)', xp:70},
+  {id:'q7', text:'Aaj social media aur YouTube completely OFF!', xp:100},
+  {id:'q8', text:'Aaj minimum 10 ghante ki total padhai karo', xp:150}
 ];
 
 // ══ BADGE LIST ══
@@ -516,6 +557,8 @@ let studyData = {};
 let nfDays = {};    
 let allDayData = {}; 
 let metaData = { badges:{}, runStreaks:{nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0} };   
+let dailyQuests = [];
+let completedQuests = new Set();
 
 const today = new Date(); today.setHours(0,0,0,0);
 const todayKey = getDayKey(today);
@@ -748,6 +791,7 @@ function calcHealth(){
   return{w,s,e,f,m,total:Math.round((w+s+e+f+m)/5)};
 }
 
+// 🛑 MISSIONS LOGIC ADDED IN XP 🛑
 function calcTodayXP(hsc){
   let xp=0;
   let penalties=0;
@@ -759,12 +803,20 @@ function calcTodayXP(hsc){
   if(hsc.total>=90)xp+=50;             
   else if(hsc.total>=80)xp+=25;        
   SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0, studyData[s]?.hrs||0, studyData[s]?.rev||false);});
+  
   if(nfDays[todayKey]==='win')xp+=50;   
   if(nfDays[todayKey]==='fail') penalties+=30;       
   if(hsc.total<70 && hsc.total>0) penalties+=50;    
   const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
   const totalHrs=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.hrs||0),0);
-  if(totalLec===0 && totalHrs===0) penalties+=35;                    
+  if(totalLec===0 && totalHrs===0) penalties+=35; 
+
+  // Add Quests XP
+  completedQuests.forEach(qId => {
+     let q = QUEST_POOL.find(x => x.id === qId);
+     if(q) xp += q.xp;
+  });
+
   const net=xp-penalties;
   return {earned:xp, penalties, net};
 }
@@ -787,7 +839,6 @@ function calcSeasonXP(todayXP){
 function getRank(xp){let r=RANKS[0];for(const rk of RANKS)if(xp>=rk.xp)r=rk;return r;}
 function getNextRank(xp){for(const r of RANKS)if(r.xp>xp)return r;return null;}
 
-// 🛑 NAYA FUNCTION FOR LEVEL POPUP CALCULATION 🛑
 function getLevel(xp) {
   let lvl = 1;
   let remaining = xp;
@@ -843,6 +894,48 @@ function calcStreaks(){
   return{streak,best,days};
 }
 
+// 🛑 INITIALIZE DAILY QUESTS 🛑
+function initDailyQuests() {
+  if (allDayData[todayKey] && allDayData[todayKey].quests) {
+      dailyQuests = allDayData[todayKey].quests;
+      completedQuests = new Set(allDayData[todayKey].completedQuests || []);
+  } else if (metaData.lastQuestDay === todayKey) {
+      dailyQuests = metaData.currentQuests || [];
+  } else {
+      let shuffled = [...QUEST_POOL].sort(() => 0.5 - Math.random());
+      dailyQuests = [shuffled[0].id, shuffled[1].id]; // Pick 2 random quests
+      metaData.lastQuestDay = todayKey;
+      metaData.currentQuests = dailyQuests;
+      completedQuests = new Set();
+      localStorage.setItem('rpg_meta_v2', JSON.stringify(metaData));
+  }
+  renderQuests();
+}
+
+function toggleQuest(qId) {
+  if(completedQuests.has(qId)) completedQuests.delete(qId);
+  else completedQuests.add(qId);
+  renderQuests();
+  updAll();
+}
+
+function renderQuests() {
+  const container = document.getElementById('questContainer');
+  container.innerHTML = '';
+  dailyQuests.forEach(qId => {
+      const q = QUEST_POOL.find(x => x.id === qId);
+      if(!q) return;
+      const isDone = completedQuests.has(qId);
+      container.innerHTML += `
+        <div class="quest-row ${isDone ? 'done' : ''}" onclick="toggleQuest('${qId}')">
+           <div class="quest-ck"></div>
+           <div class="quest-text">${q.text}</div>
+           <div class="quest-xp">+${q.xp} XP</div>
+        </div>
+      `;
+  });
+}
+
 function updAll(){
   const hsc=calcHealth();
   const todayXPObj=calcTodayXP(hsc);
@@ -876,7 +969,9 @@ function updAll(){
 
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
-  document.getElementById('rEmblem').textContent=rank.emoji;
+  
+  // 🛑 LOGO RENDERING APPLIED HERE 🛑
+  document.getElementById('rEmblem').innerHTML=getRankHtml(rank);
   document.getElementById('rEmblem').style.color=rank.color;
   document.getElementById('rEmblem').style.borderColor=rank.color;
   document.getElementById('rankGlow').style.background=rank.color;
@@ -906,7 +1001,6 @@ function updAll(){
     document.getElementById('rXPneed').textContent='Peak rank achieved! 🌌';
   }
 
-  // 🛑 LEGACY SYSTEM (LAST SEASON RANK & EMOJI) 🛑
   let lastSeasonEmoji = '';
   if (seasonNum > 1) {
     let lastSeasonXP = 0;
@@ -918,14 +1012,15 @@ function updAll(){
     document.getElementById('sLastRank').style.color = lastRankObj.color;
     document.getElementById('sLastXP').textContent = lastSeasonXP.toLocaleString();
     if (lastSeasonXP > 0) {
-       lastSeasonEmoji = ' ' + lastRankObj.emoji;
+       // 🛑 LEGACY HEADER LOGO UPDATED 🛑
+       lastSeasonEmoji = getRankHtml(lastRankObj);
     }
   } else {
     document.getElementById('sLastRank').textContent='—';
     document.getElementById('sLastXP').textContent='—';
   }
   
-  document.getElementById('legacyEmoji').textContent = lastSeasonEmoji;
+  document.getElementById('legacyEmoji').innerHTML = lastSeasonEmoji;
   document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
 
   document.getElementById('pStreak').textContent=streak;
@@ -1035,7 +1130,6 @@ async function saveAll(){
   const todayXPObj=calcTodayXP(hsc);
   const todayXP=Math.max(0,todayXPObj.net); 
 
-  // 🛑 THE REAL FIX: Screen nahi, pichla Saved Data check karo!
   const prevSavedXP = allDayData[todayKey]?.xp || 0;
   const prevSeasonXP = calcSeasonXP(prevSavedXP);
   const prevRank = getRank(prevSeasonXP);
@@ -1049,6 +1143,8 @@ async function saveAll(){
     studyData:{...studyData},
     nofap:nfDays[todayKey]||null,
     score:hsc.total, w:hsc.w, s:hsc.s, e:hsc.e, f:hsc.f, m:hsc.m,
+    quests: dailyQuests,
+    completedQuests: [...completedQuests],
     xp:todayXP, xpEarned:todayXPObj.earned, xpPenalty:todayXPObj.penalties,
     dayNum, seasonNum,
     savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
@@ -1066,7 +1162,6 @@ async function saveAll(){
   const rankChanged = newRank.name !== prevRank.name;
   const levelChanged = newLevel > prevLevel;
 
-  // 🛑 POPUP QUEUE: Agar rank aur level dono badhe, toh dono ek-ek karke aayenge
   if(rankChanged) {
     showRankUp(newRank, levelChanged ? newLevel : null);
   } else if(levelChanged) {
@@ -1090,7 +1185,7 @@ async function saveAll(){
 }
 
 function showRankUp(rank, nextLevel){
-  document.getElementById('lvlEm').textContent=rank.emoji;
+  document.getElementById('lvlEm').innerHTML=getRankHtml(rank);
   document.getElementById('lvlTi').textContent='RANK UP!';
   document.getElementById('lvlTi').style.color=rank.color;
   document.getElementById('lvlSu').textContent='You reached '+rank.name+' rank! Keep going!';
@@ -1098,7 +1193,6 @@ function showRankUp(rank, nextLevel){
   const btn = document.querySelector('.lvl-cl');
   btn.onclick = function() {
     document.getElementById('lvlOver').classList.remove('show');
-    // Agar same din Level Up bhi hua hai, toh 0.4 sec baad agla popup laao
     if (nextLevel) {
       setTimeout(() => showLevelUp(nextLevel), 400); 
     }
@@ -1108,7 +1202,7 @@ function showRankUp(rank, nextLevel){
 }
 
 function showLevelUp(lvl){
-  document.getElementById('lvlEm').textContent='📈';
+  document.getElementById('lvlEm').innerHTML='📈';
   document.getElementById('lvlTi').textContent='LEVEL UP!';
   document.getElementById('lvlTi').style.color='#00ff88';
   document.getElementById('lvlSu').textContent='You reached Level '+lvl+'! Keep grinding!';
@@ -1130,6 +1224,7 @@ function loadToday(){
   foods=new Set(rec.foods||[]);
   minds=new Set(rec.minds||[]);
   mood=rec.mood||0;
+  
   if(rec.studyData){
     SUBJECTS.forEach(s=>{studyData[s]={...{lec:0, hrs:0, rev:false},...rec.studyData[s]};});
   }
@@ -1186,7 +1281,7 @@ function renderHallOfFame() {
              <div style="font-family:'Space Mono', monospace; font-size:0.6rem; color:var(--muted);">${sXP.toLocaleString()} XP</div>
           </div>
           <div style="text-align:right;">
-             <div style="font-size:1.4rem;">${r.emoji}</div>
+             <div style="width:34px; height:34px; margin-left:auto;">${getRankHtml(r)}</div>
              <div style="font-family:'Space Mono', monospace; font-size:0.55rem; color:${r.color};">${r.name}</div>
           </div>
        </div>
@@ -1266,6 +1361,7 @@ function initApp(){
   if(!metaData.runStreaks) metaData.runStreaks = {nf:0, water:0, ex:0, hsc:0, nojunk:0, rev:0};
 
   loadToday(); 
+  initDailyQuests(); // 🛑 DAILY QUESTS INITIALIZE HOGI 🛑
   updAll(); 
   renderNFGrid(); 
   popHistSelect();
