@@ -501,10 +501,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <script>
 // ══ CONFIG ══
-const SEASON_START=new Date('2026-04-04'); SEASON_START.setHours(0,0,0,0);
-const SUBJECTS=['maths','physics','chemistry','english'];
-const SUBJ_LABELS={maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English'};
-
+const SEASON_START = new Date('2026-04-04');
+SEASON_START.setHours(0,0,0,0);
+const SUBJECTS = ['maths', 'physics', 'chemistry', 'english', 'homescience'];
+const SUBJ_LABELS = {
+  maths: '📐 Maths',
+  physics: '⚛️ Physics',
+  chemistry: '🧪 Chemistry',
+  english: '📝 English',
+  homescience: '🍳 Home Science'
+};
 const RANKS=[
   {name:'BRONZE',emoji:'🥉',color:'#cd7f32',xp:0},
   {name:'SILVER',emoji:'🥈',color:'#c0c0c0',xp:400},
