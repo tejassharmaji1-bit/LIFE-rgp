@@ -743,8 +743,8 @@ function calcHealth(){
   const w=Math.round(water/8*100);
   const s=!sleepH?0:Math.round(Math.min(sleepH/8,1)*100);
   const e=exercises.size>0?100:0;
-  const f=foods.size sabotage>=3?100:Math.round(foods.size/3*100);
-  const m=minds.size sabotage>=2?100:Math.round(minds.size/2*100);
+  const f=foods.size>=3?100:Math.round(foods.size/3*100);
+  const m=minds.size>=2?100:Math.round(minds.size/2*100);
   return{w,s,e,f,m,total:Math.round((w+s+e+f+m)/5)};
 }
 
