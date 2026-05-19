@@ -765,8 +765,8 @@ function updAll(){
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
 if (rank.img && rank.img !== '') {
-    // 🛑 MAGIC FIX: mix-blend-mode: screen; लगाने से काला/ग्रे बैकग्राउंड गायब हो जाएगा और सिर्फ चिड़िया चमकेगी!
-    document.getElementById('rEmblem').innerHTML = `<img src="${rank.img}" style="width:100%; height:100%; object-fit:contain; transform: scale(1.6); mix-blend-mode: screen; filter: drop-shadow(0 0 5px ${rank.color});">`;
+    // 🛑 एकदम क्लीन कोड (बड़ा करने के लिए बस scale रखा है)
+    document.getElementById('rEmblem').innerHTML = `<img src="${rank.img}" style="width:100%; height:100%; object-fit:contain; transform: scale(1.6);">`;
   } else {
     document.getElementById('rEmblem').textContent = rank.emoji;
   }
