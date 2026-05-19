@@ -765,10 +765,11 @@ function updAll(){
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
  if (rank.img && rank.img !== '') {
-  document.getElementById('rEmblem').innerHTML = `<img src="${rank.img}" style="width:90%; height:90%; object-fit:contain;">`;
+  document.getElementById('rEmblem').innerHTML = `<img src="${rank.img}" style="width:100%; height:100%; object-fit:contain; transform: scale(1.6);">`;
 } else {
   document.getElementById('rEmblem').textContent = rank.emoji;
-}  document.getElementById('rEmblem').style.borderColor=rank.color;
+}
+  document.getElementById('rEmblem').style.borderColor=rank.color;
   document.getElementById('rankGlow').style.background=rank.color;
   document.getElementById('rankCard').style.borderColor=rank.color+'44';
   document.getElementById('xpBig').textContent=seasonXP.toLocaleString();
