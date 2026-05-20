@@ -416,20 +416,29 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="ev-sep">✏️ Custom Missions</div>
   <div class="custom-form">
     <div class="cf-lbl">Mission Name</div>
-    <input type="text" id="evName" placeholder="e.g. No Sugar Week" maxlength="40">
+    <input type="text" id="evName" placeholder="e.g. No Sugar Challenge" maxlength="40">
     <div class="cf-lbl">Goal / Description</div>
     <input type="text" id="evDesc" placeholder="e.g. 7 din koi meetha nahi khaunga" maxlength="70">
+    
+    <div class="cf-row" style="margin-bottom:8px;">
+      <div>
+        <div class="cf-lbl">Mission Type</div>
+        <select id="evType" style="width:100%;background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 11px;font-family:'Rajdhani',sans-serif;font-size:.85rem;outline:none;">
+          <option value="7">🗓️ Weekly (7 Days)</option>
+          <option value="30">👹 Monthly (30 Days)</option>
+        </select>
+      </div>
+      <div><div class="cf-lbl">Target (Kitni baar?)</div><input type="number" id="evTar" value="7" min="1" max="90" style="margin-bottom:0;"></div>
+    </div>
+
     <div class="cf-row">
       <div><div class="cf-lbl">XP Reward</div><input type="number" id="evXP" value="300" min="50" max="5000"></div>
       <div><div class="cf-lbl">Icon</div><input type="text" id="evIcon" value="🎯" maxlength="4"></div>
     </div>
-    <div class="cf-lbl">Special Title (optional — will appear on rank card)</div>
-    <input type="text" id="evTitle" placeholder="e.g. Sugar Slayer, Night Owl Killer" maxlength="30">
+    <div class="cf-lbl">Special Title (optional — History tab mein dikhega)</div>
+    <input type="text" id="evTitle" placeholder="e.g. Sugar Slayer" maxlength="30">
     <button class="add-ev-btn" onclick="addCustomEvent()">⚡ ADD CUSTOM MISSION</button>
   </div>
-  <div id="customContainer"></div>
-</div>
-
 <!-- HISTORY -->
 <div class="panel" id="panel-history">
   <div class="sec">
@@ -860,7 +869,6 @@ function renderBadges(){
     </div>`;
   });
 }
-
 // ══ EVENTS SYSTEM ══
 const WEEKLY_EVENTS=[
   {id:'w_hydration',icon:'💧',name:'Hydration Hero',desc:'7 consecutive din 8 glass paani piyo',xp:300,title:'Hydration Hero',color:'#00c8ff',
@@ -922,55 +930,98 @@ function evCardHTML(ev,type,claimId,prog,isClaimed){
 
 function renderEvents(){
   const claimed=metaData.eventsClaimed||{};
+  
   // Weekly
-  const wc=document.getElementById('weeklyContainer');wc.innerHTML='';
-  const wkId=getWeekId();
-  WEEKLY_EVENTS.forEach(ev=>{
-    const prog=ev.check();
-    const claimKey=ev.id+'_w'+wkId;
-    wc.innerHTML+=evCardHTML(ev,'weekly',claimKey,prog,!!claimed[claimKey]);
-  });
+  const wc=document.getElementById('weeklyContainer');
+  if(wc) {
+      wc.innerHTML='';
+      WEEKLY_EVENTS.forEach(ev=>{
+        const prog=ev.check();
+        const claimKey=ev.id+'_w_current'; 
+        wc.innerHTML+=evCardHTML(ev,'weekly',claimKey,prog,!!claimed[claimKey]);
+      });
+  }
+
   // Monthly
-  const mc=document.getElementById('monthlyContainer');mc.innerHTML='';
-  const mId=getMonthId();
-  MONTHLY_EVENTS.forEach(ev=>{
-    const cid=ev.id+'_'+mId;const prog=ev.check();
-    mc.innerHTML+=evCardHTML(ev,'monthly',cid,prog,!!claimed[cid]);
-  });
+  const mc=document.getElementById('monthlyContainer');
+  if(mc) {
+      mc.innerHTML='';
+      MONTHLY_EVENTS.forEach(ev=>{
+        const cid=ev.id+'_m_current';
+        const prog=ev.check();
+        mc.innerHTML+=evCardHTML(ev,'monthly',cid,prog,!!claimed[cid]);
+      });
+  }
+
   // Custom
   renderCustomEvents();
 }
 
 function renderCustomEvents(){
-  const cc=document.getElementById('customContainer');cc.innerHTML='';
+  const cc=document.getElementById('customContainer');
+  if(!cc) return;
+  cc.innerHTML='';
   const evs=metaData.customEvents||[];
   if(!evs.length){cc.innerHTML=`<div style="text-align:center;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);padding:16px 0">Koi custom mission nahi — upar se banao! ⬆️</div>`;return;}
+  
+  let currentDay = typeof dayNum !== 'undefined' ? dayNum : 1;
+
   evs.forEach((ev,idx)=>{
-    const isClaimed=ev.claimed;
-    cc.innerHTML+=`<div class="ev-card custom ${isClaimed?'ev-claimed':'ev-done'}">
+    if(typeof ev.current === 'undefined') ev.current = 0;
+    if(typeof ev.target === 'undefined') ev.target = 1;
+    
+    // Check agar timer khatam ho gaya (currentDay > expireDay)
+    const isExpired = currentDay > ev.expireDay && !ev.claimed;
+    const isDone = ev.current >= ev.target;
+    const pct = Math.min(100, Math.round((ev.current/ev.target)*100));
+
+    let btnHtml = '';
+    if(ev.claimed){
+      btnHtml = `<button class="ev-btn claimed-btn">✓ Reward Claimed!</button>`;
+    } else if(isDone){
+      btnHtml = `<button class="ev-btn claim" onclick="claimCustomEvent(${idx})">🎉 MISSION COMPLETE! CLAIM</button>`;
+    } else if(isExpired){
+      btnHtml = `<button class="ev-btn ghost" style="color:#ff4d6d;border-color:#ff4d6d44;width:100%">❌ Expired (Time Up)</button>`;
+    } else {
+      btnHtml = `<button class="ev-btn ghost" onclick="incCustomProg(${idx})" style="color:#00ff88;border-color:#00ff8844;width:100%;cursor:pointer;">+ Track Progress</button>`;
+    }
+
+    cc.innerHTML+=`<div class="ev-card custom ${ev.claimed?'ev-claimed':isDone?'ev-done':''}" style="${isExpired?'opacity:0.6;':''}">
       <div class="ev-top">
         <div class="ev-icon">${ev.icon||'🎯'}</div>
         <div class="ev-info">
           <div class="ev-name" style="color:#00ff88">${ev.name}</div>
           <div class="ev-desc">${ev.desc}</div>
           <div class="ev-tags">
-            <span class="ev-tag" style="color:#00ff88;border-color:#00ff8844">✏️ Custom</span>
+            <span class="ev-tag" style="color:#00ff88;border-color:#00ff8844">${ev.type==='weekly'?'🗓️ Weekly':'👹 Monthly'}</span>
             <span class="ev-tag" style="color:#ffd700;border-color:#ffd70044">+${ev.xp} XP</span>
             ${ev.title?`<span class="ev-tag" style="color:#a78bfa;border-color:#a78bfa44">🏅 "${ev.title}"</span>`:''}
+            ${!isExpired && !ev.claimed ? `<span class="ev-tag" style="color:#ff4d6d;border-color:#ff4d6d44">⏳ Ends Day ${ev.expireDay}</span>` : ''}
           </div>
         </div>
         <div class="ev-right">
           <div class="ev-xp" style="color:#00ff88">+${ev.xp}</div>
           <div class="ev-type">XP</div>
-          ${!isClaimed?`<button onclick="deleteCustomEvent(${idx})" style="margin-top:6px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;display:block;">🗑️</button>`:''}
+          <button onclick="deleteCustomEvent(${idx})" style="margin-top:6px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;display:block;margin-left:auto;">🗑️</button>
         </div>
       </div>
-      ${isClaimed
-        ?`<button class="ev-btn claimed-btn">✓ Reward Claimed!</button>`
-        :`<button class="ev-btn claim" onclick="claimCustomEvent(${idx})">🎉 MISSION COMPLETE! CLAIM</button>`
-      }
+      <div class="ev-prog-wrap">
+        <div class="ev-prog-top"><span>Progress: ${ev.current} / ${ev.target}</span><span>${pct}%</span></div>
+        <div class="ev-bar"><div class="ev-fill" style="width:${pct}%;background:#00ff88"></div></div>
+      </div>
+      ${btnHtml}
     </div>`;
   });
+}
+
+function incCustomProg(idx){
+  if(!metaData.customEvents) return;
+  let ev = metaData.customEvents[idx];
+  if(ev.current < ev.target){
+    ev.current++;
+    localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
+    renderCustomEvents();
+  }
 }
 
 function addCustomEvent(){
@@ -979,15 +1030,36 @@ function addCustomEvent(){
   const xp=parseInt(document.getElementById('evXP').value)||300;
   const icon=document.getElementById('evIcon').value.trim()||'🎯';
   const title=document.getElementById('evTitle').value.trim();
+  
+  const typeEl = document.getElementById('evType');
+  const tarEl = document.getElementById('evTar');
+  
+  const duration = typeEl ? parseInt(typeEl.value) : 7;
+  const target = tarEl ? parseInt(tarEl.value) : 7;
+  
   if(!name||!desc){alert('Mission name aur description dono bharo!');return;}
   if(!metaData.customEvents)metaData.customEvents=[];
-  metaData.customEvents.push({name,desc,xp,icon,title,claimed:false});
+  
+  let currentDay = typeof dayNum !== 'undefined' ? dayNum : 1;
+  
+  metaData.customEvents.push({
+    name, 
+    desc, 
+    xp, 
+    icon, 
+    title, 
+    claimed:false,
+    type: duration === 7 ? 'weekly' : 'monthly',
+    target: target,
+    current: 0,
+    expireDay: currentDay + duration
+  });
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
+  
   document.getElementById('evName').value='';
   document.getElementById('evDesc').value='';
   document.getElementById('evXP').value=300;
-  document.getElementById('evIcon').value='🎯';
-  document.getElementById('evTitle').value='';
+  if(document.getElementById('evTitle')) document.getElementById('evTitle').value='';
   renderCustomEvents();
 }
 
@@ -1016,8 +1088,11 @@ function claimCustomEvent(idx){
   metaData.eventBonusXP=(metaData.eventBonusXP||0)+ev.xp;
   if(ev.title){if(!metaData.titles)metaData.titles=[];if(!metaData.titles.includes(ev.title))metaData.titles.push(ev.title);}
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  showOverlay(ev.icon||'🎯','MISSION COMPLETE!','#00ff88',`+${ev.xp} XP!${ev.title?' "'+ev.title+'" title mila!':' Keep going!'}`);
-  updAll();renderCustomEvents();
+  
+  showOverlay(ev.icon||'🎯','MISSION COMPLETE!','#00ff88',`+${ev.xp} XP!${ev.title?' "'+ev.title+'" title mila! History tab check karo!':' Keep going!'}`);
+  updAll();
+  renderCustomEvents();
+  if(typeof renderHallOfFame === 'function') renderHallOfFame();
 }
 
 // ══ OVERLAY ══
