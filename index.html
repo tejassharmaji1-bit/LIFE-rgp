@@ -877,7 +877,7 @@ const WEEKLY_EVENTS=[
     check:()=>{let t=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});}return{cur:Math.min(t,14),tar:14};}},
   {id:'w_monk',icon:'⚔️',name:'Monk Week',desc:'7 din NoFap streak banao',xp:400,title:'Monk',color:'#ff4d6d',
     check:()=>{let s=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);if(nfDays[getDayKey(d)]==='win')s++;else break;}return{cur:s,tar:7};}},
-  {id:'w_perfect',icon:'👑',name:'Perfect Week',desc:'5 din 80%+ health score laao',xp:500,title:'Perfectionist',color:'#b44fff',
+  {id:'w_perfect',icon:'👑',name:'Perfect Week',desc:'6 din 80%+ health score laao',xp:500,title:'Perfectionist',color:'#b44fff',
     check:()=>{let c=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r&&r.score>=80)c++;}return{cur:Math.min(c,5),tar:5};}},
   {id:'w_mind',icon:'🧠',name:'Mind Master',desc:'7 din 2+ mind activities complete karo',xp:220,title:'Mind Master',color:'#ff5fa0',
     check:()=>{let c=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r&&r.minds?.length>=2)c++;}return{cur:Math.min(c,7),tar:7};}},
@@ -890,8 +890,7 @@ const MONTHLY_EVENTS=[
     check:()=>{let t=0;for(let i=1;i<=90;i++){const r=allDayData[`s${seasonNum}_d${i}`];if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});}return{cur:Math.min(t,100),tar:100};}},
   {id:'m_discipline',icon:'🔱',name:'Discipline King',desc:'Season mein 30 din NoFap',xp:3000,title:'Discipline King',color:'#b44fff',
     check:()=>{let c=0;for(let i=1;i<=90;i++){if(nfDays[`s${seasonNum}_d${i}`]==='win')c++;}return{cur:Math.min(c,30),tar:30};}},
-  {id:'m_legend',icon:'🌌',name:'Season Legend',desc:'Season mein 50+ din data save karo',xp:2500,title:'Season Legend',color:'#8a2be2',
-    check:()=>{let c=0;for(let i=1;i<=90;i++){if(allDayData[`s${seasonNum}_d${i}`])c++;}return{cur:Math.min(c,50),tar:50};}},
+ 
 ];
 
 function evCardHTML(ev,type,claimId,prog,isClaimed){
