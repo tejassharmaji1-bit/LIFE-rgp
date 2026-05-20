@@ -865,13 +865,15 @@ function switchTab(t){
   if(t==='trophies')renderBadges();
   if(t==='missions')renderMissions();
 }
-
 // ══ BADGES ══
 function checkBadges(hsc,totalLec){
   if(!metaData.badges)metaData.badges={};
   if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,nojunk:0,rev:0};
   const s=metaData.runStreaks;const b=metaData.badges;let msg='';
-  const add=(id,txt)=>{b[id]=(b[id]||0)+1;msg+=(msg?', ':''+txt+' x'+b[id];};
+  
+  // 🔴 YAHI THI BIMAARI! Yahan ek ')' bracket miss ho gaya tha
+  const add=(id,txt)=>{b[id]=(b[id]||0)+1;msg+=(msg?', ':'')+txt+' x'+b[id];};
+  
   if(nfDays[todayKey]==='win')s.nf++;else s.nf=0;
   if(s.nf>0&&s.nf%10===0)add('ironWill','🛡️ Iron Will');
   if(s.nf>0&&s.nf%30===0)add('monkMode','🧘 Monk Mode');
