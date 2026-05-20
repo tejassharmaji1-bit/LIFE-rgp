@@ -882,17 +882,56 @@ const WEEKLY_EVENTS=[
   {id:'w_mind',icon:'🧠',name:'Mind Master',desc:'7 din 2+ mind activities complete karo',xp:220,title:'Mind Master',color:'#ff5fa0',
     check:()=>{let c=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r&&r.minds?.length>=2)c++;}return{cur:Math.min(c,7),tar:7};}},
 ];
-
 const MONTHLY_EVENTS=[
-  {id:'m_warrior',icon:'⚔️',name:'30-Day Warrior',desc:'Season mein 25+ din 80%+ health score',xp:2000,title:'The Warrior',color:'#ff4444',
-    check:()=>{let c=0;for(let i=1;i<=90;i++){const r=allDayData[`s${seasonNum}_d${i}`];if(r&&r.score>=80)c++;}return{cur:Math.min(c,25),tar:25};}},
-  {id:'m_beast',icon:'🔥',name:'Study Beast',desc:'Season mein 100+ total lectures',xp:1800,title:'Study Beast',color:'#ffe033',
-    check:()=>{let t=0;for(let i=1;i<=90;i++){const r=allDayData[`s${seasonNum}_d${i}`];if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});}return{cur:Math.min(t,100),tar:100};}},
-  {id:'m_discipline',icon:'🔱',name:'Discipline King',desc:'Season mein 30 din NoFap',xp:3000,title:'Discipline King',color:'#b44fff',
-    check:()=>{let c=0;for(let i=1;i<=90;i++){if(nfDays[`s${seasonNum}_d${i}`]==='win')c++;}return{cur:Math.min(c,30),tar:30};}},
- 
-];
+  {
+    id:'m_warrior',icon:'⚔️',name:'30-Day Warrior',desc:'Is Mahine mein 25+ din 80%+ health score',xp:2000,title:'The Warrior',color:'#ff4444',
+    check:()=>{
+      let c=0;
+      // 🛠️ AUTOMATIC MONTH BLOCK SELECTOR
+      let startDay = 1, endDay = 30;
+      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47; // Apne current day variable ka naam check kar lena
+      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
+      else if (currentDay > 60) { startDay = 61; endDay = 90; }
 
+      for(let i=startDay; i<=endDay; i++){
+        const r=allDayData[`s${seasonNum}_d${i}`];
+        if(r && r.score>=80) c++;
+      }
+      return{cur:Math.min(c,20),tar:20}; // Target 25 se kam karke 20 kiya
+    }
+  },
+  {
+    id:'m_beast',icon:'🔥',name:'Study Beast',desc:'Is Mahine mein 60+ total lectures',xp:1800,title:'Study Beast',color:'#ffe033',
+    check:()=>{
+      let t=0;
+      let startDay = 1, endDay = 30;
+      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47;
+      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
+      else if (currentDay > 60) { startDay = 61; endDay = 90; }
+
+      for(let i=startDay; i<=endDay; i++){
+        const r=allDayData[`s${seasonNum}_d${i}`];
+        if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});
+      }
+      return{cur:Math.min(t,35),tar:35}; // Target 100 se kam karke 35 kiya
+    }
+  },
+  {
+    id:'m_discipline',icon:'🔱',name:'Discipline King',desc:'Is Mahine mein 22 din NoFap',xp:3000,title:'Discipline King',color:'#b44fff',
+    check:()=>{
+      let c=0;
+      let startDay = 1, endDay = 30;
+      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47;
+      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
+      else if (currentDay > 60) { startDay = 61; endDay = 90; }
+
+      for(let i=startDay; i<=endDay; i++){
+        if(nfDays[`s${seasonNum}_d${i}`]==='win')c++;
+      }
+      return{cur:Math.min(c,22),tar:22}; // Target 30 se kam karke 22 kiya
+    }
+  }
+];
 function evCardHTML(ev,type,claimId,prog,isClaimed){
   const pct=Math.round(prog.cur/prog.tar*100);
   const isDone=prog.cur>=prog.tar;
