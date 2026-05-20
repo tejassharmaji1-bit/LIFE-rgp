@@ -23,7 +23,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .rank-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;}
 .rank-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;}
 .rank-left{display:flex;align-items:center;gap:12px;}
-.rank-emblem{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;border:2px solid currentColor;flex-shrink:0;}
+.rank-emblem{width:70px;height:70px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;border:2px solid currentColor;flex-shrink:0;position:relative;overflow:visible;}
 .rank-lbl{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
 .rank-nm{font-family:'Orbitron',monospace;font-size:1.25rem;font-weight:700;}
 .rank-xpneed{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:2px;}
@@ -501,30 +501,22 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <script>
 // ══ CONFIG ══
-const SEASON_START = new Date('2026-04-04');
-SEASON_START.setHours(0,0,0,0);
-const SUBJECTS = ['maths', 'physics', 'chemistry', 'english', 'homescience'];
-const SUBJ_LABELS = {
-  maths: '📐 Maths',
-  physics: '⚛️ Physics',
-  chemistry: '🧪 Chemistry',
-  english: '📝 English',
-  homescience: '🍳 Home Science'
-};
-// ══ RANKS ══
-const RANKS = [
-  {name:'BRONZE',     emoji:'🥉', img:'', color:'#cd7f32', xp:0},
-  {name:'SILVER',     emoji:'🥈', img:'', color:'#c0c0c0', xp:400},
-  {name:'GOLD',       emoji:'🥇', img:'', color:'#ffd700', xp:1000},
-  {name:'PLATINUM', emoji:'💠', img:'', color:'#00e5ff', xp:2000},
-  {name:'DIAMOND',    emoji:'💎', img:'', color:'#b44fff', xp:4000},
-  {name:'HEROIC',     emoji:'🦅', img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png', color:'#ff4444', xp:7000},
-  {name:'MASTER',     emoji:'👑', img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png', color:'#ff8c00', xp:12000},
-  {name:'GRANDMASTER',emoji:'🔱', img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png', color:'#ffffff', xp:17000},
-  {name:'ABSOLUTE CINEMA', emoji:'📽️', img:'', color:'#ff00aa', xp:24000}
-]; // 👈 ये ब्रैकेट और सेमीकोलन मिसिंग था!
+const SEASON_START=new Date('2026-04-04'); SEASON_START.setHours(0,0,0,0);
+const SUBJECTS=['maths','physics','chemistry','english','homescience'];
+const SUBJ_LABELS={maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English',homescience:'🍳 Home Science'};
 
-const BADGE_DEFS=[
+const RANKS=[
+  {name:'BRONZE',     emoji:'🥉',img:'',color:'#cd7f32',xp:0},
+  {name:'SILVER',     emoji:'🥈',img:'',color:'#c0c0c0',xp:400},
+  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1000},
+  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:2000},
+  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:4000},
+  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:7000},
+  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:12000},
+  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:17000},
+  {name:'ABSOLUTE CINEMA',emoji:'📽️',img:'',color:'#ff00aa',xp:24000},
+];
+
 const BADGE_DEFS=[
   {id:'ironWill',icon:'🛡️',title:'Iron Will',desc:'10 Days NoFap'},
   {id:'monkMode',icon:'🧘‍♂️',title:'Monk Mode',desc:'30 Days NoFap'},
@@ -766,11 +758,10 @@ function updAll(){
 
   document.getElementById('rName').textContent=rank.name;
   document.getElementById('rName').style.color=rank.color;
-if (rank.img && rank.img !== '') {
-    // 🛑 एकदम क्लीन कोड (बड़ा करने के लिए बस scale रखा है)
-    document.getElementById('rEmblem').innerHTML = `<img src="${rank.img}" style="width:100%; height:100%; object-fit:contain; transform: scale(1.6);">`;
-  } else {
-    document.getElementById('rEmblem').textContent = rank.emoji;
+  if(rank.img&&rank.img!==''){
+    document.getElementById('rEmblem').innerHTML=`<img src="${rank.img}" style="width:160%;height:160%;object-fit:contain;transform:scale(2.4);position:absolute;">`;
+  }else{
+    document.getElementById('rEmblem').textContent=rank.emoji;
   }
   document.getElementById('rEmblem').style.borderColor=rank.color;
   document.getElementById('rankGlow').style.background=rank.color;
@@ -880,61 +871,23 @@ const WEEKLY_EVENTS=[
     check:()=>{let t=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});}return{cur:Math.min(t,14),tar:14};}},
   {id:'w_monk',icon:'⚔️',name:'Monk Week',desc:'7 din NoFap streak banao',xp:400,title:'Monk',color:'#ff4d6d',
     check:()=>{let s=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);if(nfDays[getDayKey(d)]==='win')s++;else break;}return{cur:s,tar:7};}},
-  {id:'w_perfect',icon:'👑',name:'Perfect Week',desc:'6 din 80%+ health score laao',xp:500,title:'Perfectionist',color:'#b44fff',
+  {id:'w_perfect',icon:'👑',name:'Perfect Week',desc:'5 din 80%+ health score laao',xp:500,title:'Perfectionist',color:'#b44fff',
     check:()=>{let c=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r&&r.score>=80)c++;}return{cur:Math.min(c,5),tar:5};}},
   {id:'w_mind',icon:'🧠',name:'Mind Master',desc:'7 din 2+ mind activities complete karo',xp:220,title:'Mind Master',color:'#ff5fa0',
     check:()=>{let c=0;for(let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);const r=allDayData[getDayKey(d)];if(r&&r.minds?.length>=2)c++;}return{cur:Math.min(c,7),tar:7};}},
 ];
+
 const MONTHLY_EVENTS=[
-  {
-    id:'m_warrior',icon:'⚔️',name:'30-Day Warrior',desc:'Is Mahine mein 25+ din 80%+ health score',xp:2000,title:'The Warrior',color:'#ff4444',
-    check:()=>{
-      let c=0;
-      // 🛠️ AUTOMATIC MONTH BLOCK SELECTOR
-      let startDay = 1, endDay = 30;
-      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47; // Apne current day variable ka naam check kar lena
-      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
-      else if (currentDay > 60) { startDay = 61; endDay = 90; }
-
-      for(let i=startDay; i<=endDay; i++){
-        const r=allDayData[`s${seasonNum}_d${i}`];
-        if(r && r.score>=80) c++;
-      }
-      return{cur:Math.min(c,20),tar:20}; // Target 25 se kam karke 20 kiya
-    }
-  },
-  {
-    id:'m_beast',icon:'🔥',name:'Study Beast',desc:'Is Mahine mein 60+ total lectures',xp:1800,title:'Study Beast',color:'#ffe033',
-    check:()=>{
-      let t=0;
-      let startDay = 1, endDay = 30;
-      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47;
-      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
-      else if (currentDay > 60) { startDay = 61; endDay = 90; }
-
-      for(let i=startDay; i<=endDay; i++){
-        const r=allDayData[`s${seasonNum}_d${i}`];
-        if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});
-      }
-      return{cur:Math.min(t,35),tar:35}; // Target 100 se kam karke 35 kiya
-    }
-  },
-  {
-    id:'m_discipline',icon:'🔱',name:'Discipline King',desc:'Is Mahine mein 22 din NoFap',xp:3000,title:'Discipline King',color:'#b44fff',
-    check:()=>{
-      let c=0;
-      let startDay = 1, endDay = 30;
-      let currentDay = typeof dayNum !== 'undefined' ? dayNum : 47;
-      if (currentDay > 30 && currentDay <= 60) { startDay = 31; endDay = 60; }
-      else if (currentDay > 60) { startDay = 61; endDay = 90; }
-
-      for(let i=startDay; i<=endDay; i++){
-        if(nfDays[`s${seasonNum}_d${i}`]==='win')c++;
-      }
-      return{cur:Math.min(c,22),tar:22}; // Target 30 se kam karke 22 kiya
-    }
-  }
+  {id:'m_warrior',icon:'⚔️',name:'30-Day Warrior',desc:'Season mein 25+ din 80%+ health score',xp:2000,title:'The Warrior',color:'#ff4444',
+    check:()=>{let c=0;for(let i=1;i<=90;i++){const r=allDayData[`s${seasonNum}_d${i}`];if(r&&r.score>=80)c++;}return{cur:Math.min(c,25),tar:25};}},
+  {id:'m_beast',icon:'🔥',name:'Study Beast',desc:'Season mein 100+ total lectures',xp:1800,title:'Study Beast',color:'#ffe033',
+    check:()=>{let t=0;for(let i=1;i<=90;i++){const r=allDayData[`s${seasonNum}_d${i}`];if(r?.studyData)SUBJECTS.forEach(s=>{t+=(r.studyData[s]?.lec||0);});}return{cur:Math.min(t,100),tar:100};}},
+  {id:'m_discipline',icon:'🔱',name:'Discipline King',desc:'Season mein 30 din NoFap',xp:3000,title:'Discipline King',color:'#b44fff',
+    check:()=>{let c=0;for(let i=1;i<=90;i++){if(nfDays[`s${seasonNum}_d${i}`]==='win')c++;}return{cur:Math.min(c,30),tar:30};}},
+  {id:'m_legend',icon:'🌌',name:'Season Legend',desc:'Season mein 50+ din data save karo',xp:2500,title:'Season Legend',color:'#8a2be2',
+    check:()=>{let c=0;for(let i=1;i<=90;i++){if(allDayData[`s${seasonNum}_d${i}`])c++;}return{cur:Math.min(c,50),tar:50};}},
 ];
+
 function evCardHTML(ev,type,claimId,prog,isClaimed){
   const pct=Math.round(prog.cur/prog.tar*100);
   const isDone=prog.cur>=prog.tar;
@@ -971,14 +924,17 @@ function renderEvents(){
   const claimed=metaData.eventsClaimed||{};
   // Weekly
   const wc=document.getElementById('weeklyContainer');wc.innerHTML='';
+  const wkId=getWeekId();
   WEEKLY_EVENTS.forEach(ev=>{
     const prog=ev.check();
-    wc.innerHTML+=evCardHTML(ev,'weekly',ev.id,prog,!!claimed[ev.id]);
+    const claimKey=ev.id+'_w'+wkId;
+    wc.innerHTML+=evCardHTML(ev,'weekly',claimKey,prog,!!claimed[claimKey]);
   });
   // Monthly
   const mc=document.getElementById('monthlyContainer');mc.innerHTML='';
+  const mId=getMonthId();
   MONTHLY_EVENTS.forEach(ev=>{
-    const cid=ev.id+'_s'+seasonNum;const prog=ev.check();
+    const cid=ev.id+'_'+mId;const prog=ev.check();
     mc.innerHTML+=evCardHTML(ev,'monthly',cid,prog,!!claimed[cid]);
   });
   // Custom
