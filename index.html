@@ -417,7 +417,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <!-- MISSIONS -->
 <div class="panel" id="panel-missions">
 
-  <!-- MISSION BUILDER -->
   <div class="mis-builder">
     <div class="mis-builder-title">⚡ New Mission Banao</div>
 
@@ -448,7 +447,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
 
     <div class="mis-form-full">
-      <div class="mis-lbl">Duration — Kitne din ka mission?</div>
+      <div class="mis-lbl">Target (Kitna karna hai? e.g. 14 Lec, 5 Days)</div>
+      <input class="mis-input" type="number" id="mTarget" value="7" min="1" max="999">
+    </div>
+
+    <div class="mis-form-full">
+      <div class="mis-lbl">Duration — Time limit kitne din ki hai?</div>
       <div class="days-grid" id="daysGrid">
         <div class="day-opt sel" data-d="3" onclick="selDay(this)">3 Days</div>
         <div class="day-opt" data-d="7" onclick="selDay(this)">7 Days</div>
@@ -461,6 +465,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="add-mis-btn" onclick="addMission()">⚡ ADD MISSION</button>
   </div>
 
+  <div id="activeMissionsContainer"></div>
+
+</div>
   <!-- ACTIVE MISSIONS -->
   <div id="activeMissionsContainer"></div>
 
@@ -925,12 +932,16 @@ function addMission(){
   const medal=document.getElementById('mMedal').value.trim()||'🎯';
   const xp=Math.max(50,parseInt(document.getElementById('mXP').value)||300);
   const title=document.getElementById('mTitle').value.trim();
+  const target=Math.max(1,parseInt(document.getElementById('mTarget').value)||1); // ⚡ Naya Target
+  
   if(!name||!task){alert('Mission name aur task dono bharo!');return;}
   if(!metaData.missions)metaData.missions=[];
+  
   metaData.missions.push({
     id:'m_'+Date.now(),
     name,task,medal,xp,title,
-    days:selectedDays,
+    target:target, // ⚡ Target alag se save hoga
+    days:selectedDays, // ⏱️ Time limit alag se save hogi
     startDay:dayNum||1,
     endDay:(dayNum||1)+selectedDays-1,
     current:0,
@@ -938,11 +949,13 @@ function addMission(){
     createdAt:new Date().toISOString()
   });
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
+  
   // Clear form
   document.getElementById('mName').value='';
   document.getElementById('mTask').value='';
   document.getElementById('mXP').value=300;
   document.getElementById('mTitle').value='';
+  document.getElementById('mTarget').value=7; 
   renderMissions();
 }
 
@@ -957,20 +970,29 @@ function renderMissions(){
   }
   const dn=dayNum||1;
   missions.forEach((m,idx)=>{
-    const isExpired=dn>m.endDay&&!m.claimed&&!m.current>=m.days;
-    const isDone=m.current>=m.days;
-    const pct=Math.min(100,Math.round((m.current/m.days)*100));
-    const daysLeft=Math.max(0,m.endDay-dn+1);
+    const tar = m.target || m.days; // Purane missions jisme target nahi tha unka fallback
+    const isExpired = dn > m.endDay && !m.claimed && m.current < tar;
+    const isDone = m.current >= tar;
+    const pct = Math.min(100, Math.round((m.current/tar)*100));
+    const daysLeft = Math.max(0, m.endDay - dn + 1);
+    
     let cls='mis-card';
     if(m.claimed)cls+=' claimed-mis';
     else if(isDone)cls+=' done-mis';
     else if(isExpired)cls+=' expired-mis';
     else cls+=' active-mis';
+    
     let btn='';
-    if(m.claimed)btn=`<button class="mis-btn done">✓ Claimed!</button>`;
-    else if(isDone)btn=`<button class="mis-btn clm" onclick="claimMission(${idx})">🎉 CLAIM ${m.medal} +${m.xp} XP</button>`;
-    else if(isExpired)btn=`<button class="mis-btn exp">❌ Time Up</button>`;
-    else btn=`<button class="mis-btn track" onclick="trackMission(${idx})">+ Track Progress (${m.current}/${m.days})</button>`;
+    if(m.claimed) btn=`<button class="mis-btn done">✓ Claimed!</button>`;
+    else if(isDone) btn=`<button class="mis-btn clm" onclick="claimMission(${idx})">🎉 CLAIM ${m.medal} +${m.xp} XP</button>`;
+    else if(isExpired) btn=`<button class="mis-btn exp">❌ Time Up</button>`;
+    else btn=`
+      <div style="display:flex;gap:6px;">
+        <button class="mis-btn track" style="flex:1" onclick="trackMission(${idx}, 1)">+ Track Progress</button>
+        <button class="mis-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 14px;" onclick="trackMission(${idx}, -1)">−1</button>
+      </div>
+    `;
+
     c.innerHTML+=`<div class="${cls}">
       <div class="mis-top">
         <div class="mis-medal">${m.medal}</div>
@@ -978,7 +1000,7 @@ function renderMissions(){
           <div class="mis-name">${m.name}</div>
           <div class="mis-task">${m.task}</div>
           <div class="mis-meta">
-            <span class="mis-tag" style="color:#7c6af7;border-color:#7c6af744">⏱️ ${m.days} Day Mission</span>
+            <span class="mis-tag" style="color:#7c6af7;border-color:#7c6af744">⏱️ ${m.days} Day Limit</span>
             <span class="mis-tag" style="color:#ffd700;border-color:#ffd70044">+${m.xp} XP</span>
             ${m.title?`<span class="mis-tag" style="color:#ff5fa0;border-color:#ff5fa044">🏅 "${m.title}"</span>`:''}
             ${!m.claimed&&!isDone&&!isExpired?`<span class="mis-tag" style="color:#00c8ff;border-color:#00c8ff44">📅 ${daysLeft} days left</span>`:''}
@@ -987,11 +1009,11 @@ function renderMissions(){
         <div class="mis-right">
           <div class="mis-xp">+${m.xp}</div>
           <div style="font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted)">XP</div>
-          <button onclick="deleteMission(${idx})" style="margin-top:6px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;display:block;">🗑️</button>
+          <button onclick="deleteMission(${idx})" style="margin-top:6px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;display:block;margin-left:auto;">🗑️</button>
         </div>
       </div>
       <div class="mis-prog-wrap">
-        <div class="mis-prog-top"><span>${m.current} / ${m.days} din</span><span>${pct}%</span></div>
+        <div class="mis-prog-top"><span>${m.current} / ${tar}</span><span>${pct}%</span></div>
         <div class="mis-bar"><div class="mis-fill" style="width:${pct}%;background:${isDone?'#ffd700':m.claimed?'#00ff88':'#7c6af7'}"></div></div>
       </div>
       ${btn}
@@ -999,10 +1021,14 @@ function renderMissions(){
   });
 }
 
-function trackMission(idx){
+function trackMission(idx, val){
   if(!metaData.missions||!metaData.missions[idx])return;
   const m=metaData.missions[idx];
-  if(m.current<m.days){m.current++;}
+  const tar = m.target || m.days;
+  
+  // +1 ya -1 karne par current zero se niche aur target se upar na jaye
+  m.current = Math.max(0, Math.min(tar, m.current + val));
+  
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   renderMissions();
 }
@@ -1053,7 +1079,6 @@ function renderEarnedMedals(){
       </div>
     </div>`).join('')+'</div>';
 }
-
 // ══ OVERLAY ══
 function showOverlay(emoji,title,color,sub,callback){
   document.getElementById('lvlEm').textContent=emoji;
