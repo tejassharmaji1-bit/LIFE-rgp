@@ -7,7 +7,7 @@
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;--border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;--water:#00c8ff;--sleep:#9d7fff;--exercise:#00ff88;--food:#ff8c42;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;}
+:root{--bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;--border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;--water:#00c8ff;--wakeup:#ffb703;--exercise:#00ff88;--shorts:#ff0000;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
@@ -60,9 +60,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 16px;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
 .card.water::before{background:var(--water);}
-.card.sleep::before{background:var(--sleep);}
+.card.wakeup::before{background:var(--wakeup);}
 .card.exercise::before{background:var(--exercise);}
-.card.food::before{background:var(--food);}
+.card.shorts::before{background:var(--shorts);}
 .card.mind::before{background:var(--mind);}
 .ctop{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
 .cttl{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;}
@@ -78,9 +78,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}
 .btn:hover{border-color:#7c6af7;color:#a78bfa;}
 .btnp{border:none;color:#05050d;font-weight:700;}
-.slwrap{display:flex;align-items:center;gap:8px;margin:7px 0;}
-.slwrap input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--border);border-radius:3px;outline:none;}
-.slwrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;cursor:pointer;}
 .toglist{display:flex;flex-direction:column;gap:6px;}
 .tog{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .17s;font-size:.8rem;user-select:none;}
 .tog:hover{border-color:#7c6af7;}
@@ -218,7 +215,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
 .pclose{position:absolute;top:13px;right:13px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:3px 9px;cursor:pointer;font-size:.7rem;font-family:'Space Mono',monospace;}
 .pdate{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
-.pscore{font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;line-height:1;}
+.pscore{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;line-height:1;}
 .plv{font-size:.8rem;font-weight:600;margin:3px 0 13px;}
 .prows{display:flex;flex-direction:column;gap:6px;}
 .pr{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--surface2);border-radius:8px;}
@@ -230,9 +227,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .lvl-ti{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:900;letter-spacing:.1em;text-align:center;}
 .lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
 .lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
-.ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;margin-top:10px;display:flex;gap:9px;align-items:flex-start;}
-.ai-lbl{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
-.ai-txt{font-size:.82rem;font-weight:600;line-height:1.5;}
+.ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:15px;margin-top:10px;}
+.ai-lbl{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.ai-txt{font-size:.9rem;font-weight:600;line-height:1.5;color:var(--text);}
 .title-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;margin:2px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;}
 @media(max-width:560px){.c2{grid-template-columns:1fr;}.stat-pills{grid-template-columns:repeat(2,1fr);}.study-grid{grid-template-columns:1fr;}.nf-grid{grid-template-columns:repeat(9,1fr);}.hgrid{grid-template-columns:repeat(6,1fr);}.season-row{grid-template-columns:repeat(3,1fr);}.mis-form-grid{grid-template-columns:1fr;}}
 </style>
@@ -240,7 +237,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <body>
 <div class="app">
 <div class="hdr">
-  <div class="hdr-tag">// Life RPG Tracker — Season System</div>
+  <div class="hdr-tag">// Life RPG Tracker — Strict Mode</div>
   <div class="hdr-title">LIFE RPG</div>
   <div class="hdr-sub">No Fap · Health · Study · Missions · 90 Days</div>
   <div class="season-pill">Season <span class="season-day" id="seasonNum">1</span> <span id="legacyEmoji"></span>&nbsp;·&nbsp;Day <span class="season-day" id="dayNum">—</span>/90&nbsp;·&nbsp;<span id="todayDateStr"></span></div>
@@ -293,9 +290,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button class="tab" id="tab-trophies" onclick="switchTab('trophies')"><span class="tab-ic">🏆</span>Badges</button>
 </div>
 
-<!-- HEALTH -->
 <div class="panel active" id="panel-health">
   <div class="c2">
+    <div class="card wakeup">
+      <div class="ctop"><span style="font-size:1.1rem">⏰</span><div><div class="cttl">WAKE UP</div><div class="csub">Strict 1st Alarm Limit!</div></div></div>
+      <div class="tog" id="tog-wakeup" style="color:var(--wakeup);margin-top:10px" onclick="togWakeup()">
+        <div class="ck"></div><span style="color:var(--text)">Woke up at 1st Alarm (+30 XP)</span>
+      </div>
+    </div>
+
     <div class="card water">
       <div class="ctop"><span style="font-size:1.1rem">💧</span><div><div class="cttl">PAANI</div><div class="csub">8 glass · 5 XP each</div></div></div>
       <div style="display:flex;align-items:baseline;gap:5px"><span class="bignum" id="wNum" style="color:var(--water)">0</span><span class="unit">/ 8</span></div>
@@ -306,13 +309,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <button class="btn" onclick="remW()">- Hatao</button>
       </div>
     </div>
-    <div class="card sleep">
-      <div class="ctop"><span style="font-size:1.1rem">😴</span><div><div class="cttl">NEEND</div><div class="csub">7h+ → +30 XP</div></div></div>
-      <div style="display:flex;align-items:baseline;gap:5px"><span class="bignum" id="sNum" style="color:var(--sleep)">0</span><span class="unit">ghante</span></div>
-      <div class="slwrap"><span class="unit">0</span><input type="range" min="0" max="12" step="0.5" value="0" id="sSlider" oninput="updSleep(this.value)"><span class="unit">12h</span></div>
-      <div class="ptrack"><div class="pfill" id="sBar" style="width:0%;background:var(--sleep)"></div></div>
-      <div id="sBadge"></div>
-    </div>
+    
     <div class="card exercise">
       <div class="ctop"><span style="font-size:1.1rem">🏃</span><div><div class="cttl">EXERCISE</div><div class="csub">Koi ek · +30 XP</div></div></div>
       <div class="toglist">
@@ -322,33 +319,28 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
       <div id="exSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
     </div>
-    <div class="card food">
-      <div class="ctop"><span style="font-size:1.1rem">🥗</span><div><div class="cttl">HEALTHY KHANA</div><div class="csub">Koi bhi 3 → +20 XP</div></div></div>
-      <div class="tgtlbl">Selected: <span id="fCnt" style="color:var(--food);font-weight:700">0</span>/5 · Target: <span style="color:var(--food)">3</span></div>
-      <div class="toglist">
-        <div class="tog" id="food-nojunk" style="color:var(--food)" onclick="togFood('nojunk')"><div class="ck"></div><span>🚫 No Junk Food</span></div>
-        <div class="tog" id="food-home" style="color:var(--food)" onclick="togFood('home')"><div class="ck"></div><span>🏠 Home Food (gud/sakar)</span></div>
-        <div class="tog" id="food-oats" style="color:var(--food)" onclick="togFood('oats')"><div class="ck"></div><span>🌾 Oats / Healthy Bowl</span></div>
-        <div class="tog" id="food-milk" style="color:var(--food)" onclick="togFood('milk')"><div class="ck"></div><span>🥛 Milk + Curd</span></div>
-        <div class="tog" id="food-protein" style="color:var(--food)" onclick="togFood('protein')"><div class="ck"></div><span>💊 Protein Shake</span></div>
+    
+    <div class="card shorts">
+      <div class="ctop"><span style="font-size:1.1rem">🚫</span><div><div class="cttl">NO YT SHORTS</div><div class="csub">Dopamine Detox</div></div></div>
+      <div class="tog" id="tog-shorts" style="color:var(--shorts);margin-top:10px" onclick="togShorts()">
+        <div class="ck"></div><span style="color:var(--text)">0 Shorts Today (+25 XP)</span>
       </div>
-      <div id="foodSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
     </div>
   </div>
+
   <div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(255,95,160,.12)">🧠</div>
-      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi bhi 2 karo → +20 XP</div></div>
-      <div class="sec-xp" id="mindCnt">0/4</div>
+      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi 1 karo → +30 XP</div></div>
+      <div class="sec-xp" id="mindCnt">0/1</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px">
-      <div class="tog" id="mind-write" style="color:var(--mind)" onclick="togMind('write')"><div class="ck"></div><span>✍️ Write / Journal</span></div>
-      <div class="tog" id="mind-read" style="color:var(--mind)" onclick="togMind('read')"><div class="ck"></div><span>📖 Read 15-20 min</span></div>
       <div class="tog" id="mind-selftalk" style="color:var(--mind)" onclick="togMind('selftalk')"><div class="ck"></div><span>🗣️ Self Talk</span></div>
       <div class="tog" id="mind-meditation" style="color:var(--mind)" onclick="togMind('meditation')"><div class="ck"></div><span>🧘 Meditation</span></div>
     </div>
     <div id="mindSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
   </div>
+
   <div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(255,95,160,.12)">😊</div>
@@ -363,20 +355,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
     <div class="mtxt" id="moodTxt">Mood select karo</div>
   </div>
-  <div class="sec" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-    <div>
-      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:3px">HEALTH SCORE</div>
-      <div style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;" id="hScoreDisp">0%</div>
-      <div id="xpPreview" style="font-family:'Space Mono',monospace;font-size:.6rem;margin-top:4px"></div>
-    </div>
-    <div class="ai-box" style="flex:1;max-width:280px">
-      <span style="font-size:1.1rem;flex-shrink:0">🤖</span>
-      <div><div class="ai-lbl">AI Feedback</div><div class="ai-txt" id="aiFeed">Data bharo!</div></div>
-    </div>
+
+  <div class="ai-box">
+    <div class="ai-lbl"><span>🤖</span> STRICT PENALTY SYSTEM ACTIVE</div>
+    <div class="ai-txt" id="aiFeed" style="margin-bottom: 8px;">Data bharo!</div>
+    <div id="xpPreview" style="font-family:'Space Mono',monospace;font-size:.65rem;border-top:1px solid var(--border);padding-top:8px;"></div>
   </div>
 </div>
 
-<!-- STUDY -->
 <div class="panel" id="panel-study">
   <div class="sec">
     <div class="sec-hd">
@@ -393,7 +379,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- NOFAP -->
 <div class="panel" id="panel-nofap">
   <div class="sec">
     <div class="nf-hero">
@@ -402,7 +387,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
     <div class="nf-btns">
       <button class="nfbtn win" onclick="setNFToday('win')">✕ AAJ JEET GAYA +50 XP</button>
-      <button class="nfbtn fail" onclick="setNFToday('fail')">0 RELAPSED</button>
+      <button class="nfbtn fail" onclick="setNFToday('fail')">0 RELAPSED (-50 XP)</button>
     </div>
     <div class="nf-grid" id="nfGrid"></div>
     <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:6px">Click karke toggle · ✕=Win · 0=Relapse</div>
@@ -414,7 +399,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- MISSIONS -->
 <div class="panel" id="panel-missions">
 
   <div class="mis-builder">
@@ -427,7 +411,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
     <div class="mis-form-full">
       <div class="mis-lbl">Task / Goal</div>
-      <input class="mis-input" id="mTask" placeholder="e.g. Har din exercise karo, No junk food..." maxlength="70">
+      <input class="mis-input" id="mTask" placeholder="e.g. Har din exercise karo..." maxlength="70">
     </div>
 
     <div class="mis-form-grid">
@@ -443,7 +427,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
     <div class="mis-form-full">
       <div class="mis-lbl">Title (optional — rank card pe dikhega)</div>
-      <input class="mis-input" id="mTitle" placeholder="e.g. Iron Warrior, Clean Eater" maxlength="30">
+      <input class="mis-input" id="mTitle" placeholder="e.g. Iron Warrior" maxlength="30">
     </div>
 
     <div class="mis-form-full">
@@ -468,12 +452,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div id="activeMissionsContainer"></div>
 
 </div>
-  <!-- ACTIVE MISSIONS -->
-  <div id="activeMissionsContainer"></div>
 
-</div>
-
-<!-- HISTORY -->
 <div class="panel" id="panel-history">
   <div class="sec">
     <div class="sec-hd">
@@ -483,7 +462,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div id="hallOfFameList" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 
-  <!-- Earned Medals -->
   <div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(255,215,0,.12)">🏅</div>
@@ -501,17 +479,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div style="margin-left:auto;"><select id="histSeasonSel" class="hist-sel" onchange="renderHistGrid(parseInt(this.value))"></select></div>
     </div>
     <div class="leg">
-      <div class="li"><div class="ld" style="background:rgba(180,79,255,.5)"></div>God 90%+</div>
-      <div class="li"><div class="ld" style="background:rgba(0,255,136,.5)"></div>Good 80%+</div>
-      <div class="li"><div class="ld" style="background:rgba(255,214,0,.5)"></div>Avg 70%+</div>
-      <div class="li"><div class="ld" style="background:rgba(255,77,109,.4)"></div>Low</div>
+      <div class="li"><div class="ld" style="background:rgba(180,79,255,.5)"></div>Flawless</div>
+      <div class="li"><div class="ld" style="background:rgba(0,255,136,.5)"></div>Strong</div>
+      <div class="li"><div class="ld" style="background:rgba(255,214,0,.5)"></div>Avg</div>
+      <div class="li"><div class="ld" style="background:rgba(255,77,109,.4)"></div>Weak</div>
     </div>
     <div class="hgrid" id="histGrid"></div>
     <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:7px">Kisi bhi din pe click karo → detail</div>
   </div>
 </div>
 
-<!-- TROPHIES / BADGES -->
 <div class="panel" id="panel-trophies">
   <div class="sec">
     <div class="sec-hd">
@@ -523,7 +500,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- SAVE -->
 <div class="save-wrap">
   <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
   <div class="save-msg" id="saveMsg"></div>
@@ -535,7 +511,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 </div>
 
-<!-- Day Popup -->
 <div class="poverlay" id="dayPopup" onclick="closePop(event)">
   <div class="pbox">
     <button class="pclose" onclick="document.getElementById('dayPopup').classList.remove('open')">✕</button>
@@ -546,7 +521,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- Level Up Overlay -->
 <div class="lvlover" id="lvlOver">
   <div class="lvl-em" id="lvlEm">🎉</div>
   <div class="lvl-ti" id="lvlTi">RANK UP!</div>
@@ -564,12 +538,12 @@ const SUBJ_LABELS={maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 C
 const RANKS=[
   {name:'BRONZE',     emoji:'🥉',img:'',color:'#cd7f32',xp:0,      note:'Starting point'},
   {name:'SILVER',     emoji:'🥈',img:'',color:'#c0c0c0',xp:600,    note:'Consistent beginner'},
-  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1600,   note:'Rising warrior'},
-  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:3600,   note:'Disciplined grinder'},
-  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:7000,   note:'Elite performer'},
-  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:12000,  note:'Season champion'},
-  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:20000,  note:'Near legendary'},
-  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:30000,  note:'True legend — near impossible'},
+  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1800,   note:'Rising warrior'},
+  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:4000,   note:'Disciplined grinder'},
+  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:8000,   note:'Elite performer'},
+  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:14000,  note:'Season champion'},
+  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:22000,  note:'Near legendary'},
+  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:35000,  note:'True legend — near impossible'},
 ];
 
 const BADGE_DEFS=[
@@ -581,15 +555,19 @@ const BADGE_DEFS=[
   {id:'demon',icon:'🔥',title:'Deep Work Demon',desc:'15 Lec in 7 Days'},
   {id:'aquaman',icon:'💧',title:'Aquaman',desc:'7 Days 8 Glass Water'},
   {id:'ironBody',icon:'🏋️‍♂️',title:'Iron Body',desc:'10 Days Exercise'},
-  {id:'cleanEng',icon:'🥗',title:'Clean Engine',desc:'5 Days No Junk'},
-  {id:'focus',icon:'♟️',title:'GM Focus',desc:'10 Days 80%+ Health'},
   {id:'unbreakable',icon:'👑',title:'Unbreakable',desc:'21 Days Streak'},
+  // New Badges
+  {id:'wakeup7',icon:'🌅',title:'Early Riser',desc:'7 Days 1st Alarm Wakeup'},
+  {id:'wakeup15',icon:'☀️',title:'Dawn Master',desc:'15 Days 1st Alarm Wakeup'},
+  {id:'shorts5',icon:'🚫',title:'Distraction Free',desc:'5 Days No Shorts'},
+  {id:'shorts21',icon:'🧠',title:'Dopamine Detox',desc:'21 Days No Shorts'},
+  {id:'shorts60',icon:'👁️',title:'Focus God',desc:'60 Days No Shorts'}
 ];
 
 // ══ STATE ══
-let water=0,sleepH=0,exercises=new Set(),foods=new Set(),minds=new Set(),mood=0;
+let water=0, wakeup=false, exercises=new Set(), shorts=false, minds=new Set(), mood=0;
 let studyData={},nfDays={},allDayData={};
-let metaData={badges:{},runStreaks:{nf:0,water:0,ex:0,hsc:0,nojunk:0,rev:0},missions:[],earnedMedals:[]};
+let metaData={badges:{},runStreaks:{nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0},missions:[],earnedMedals:[]};
 
 const today=new Date(); today.setHours(0,0,0,0);
 const todayKey=getDayKey(today);
@@ -655,34 +633,31 @@ function renderWDots(){
 function addW(){if(water<8)water++;renderWDots();updAll();}
 function remW(){if(water>0)water--;renderWDots();updAll();}
 
-// ══ SLEEP ══
-function updSleep(v){
-  sleepH=parseFloat(v);
-  document.getElementById('sNum').textContent=sleepH;
-  document.getElementById('sBar').style.width=Math.round(Math.min(sleepH/8,1)*100)+'%';
-  const b=document.getElementById('sBadge');
-  if(!sleepH)b.innerHTML='';
-  else if(sleepH<6)b.innerHTML='<span class="badge" style="color:#ff4d6d;border:1px solid #ff4d6d;background:rgba(255,77,109,.1)">Bahut kam 😴</span>';
-  else if(sleepH<7)b.innerHTML='<span class="badge" style="color:#ffd700;border:1px solid #ffd700;background:rgba(255,215,0,.1)">Thodi aur chahiye</span>';
-  else if(sleepH<=9)b.innerHTML='<span class="badge" style="color:#00ff88;border:1px solid #00ff88;background:rgba(0,255,136,.1)">Perfect! +30 XP</span>';
-  else b.innerHTML='<span class="badge" style="color:#ffd700;border:1px solid #ffd700;background:rgba(255,215,0,.1)">Zyada so gaye</span>';
-  updAll();
-}
-
 // ══ TOGGLES ══
-function togEx(k){const el=document.getElementById('ex-'+k);exercises.has(k)?(exercises.delete(k),el.classList.remove('on')):(exercises.add(k),el.classList.add('on'));document.getElementById('exSt').textContent=exercises.size>0?'✓ '+exercises.size+' activity! +30 XP':'';updAll();}
-function togFood(k){
-  const el=document.getElementById('food-'+k);foods.has(k)?(foods.delete(k),el.classList.remove('on')):(foods.add(k),el.classList.add('on'));
-  document.getElementById('fCnt').textContent=foods.size;
-  const s=document.getElementById('foodSt');
-  if(!foods.size)s.textContent='';else if(foods.size<3){s.textContent=(3-foods.size)+' aur karo!';s.style.color='var(--muted)';}else{s.textContent='Target done! +20 XP';s.style.color='var(--food)';}
+function togWakeup() { 
+  wakeup = !wakeup; 
+  const el = document.getElementById('tog-wakeup');
+  wakeup ? el.classList.add('on') : el.classList.remove('on');
+  updAll(); 
+}
+function togShorts() { 
+  shorts = !shorts; 
+  const el = document.getElementById('tog-shorts');
+  shorts ? el.classList.add('on') : el.classList.remove('on');
+  updAll(); 
+}
+function togEx(k){
+  const el=document.getElementById('ex-'+k);
+  exercises.has(k)?(exercises.delete(k),el.classList.remove('on')):(exercises.add(k),el.classList.add('on'));
+  document.getElementById('exSt').textContent=exercises.size>0?'✓ '+exercises.size+' activity! +30 XP':'';
   updAll();
 }
 function togMind(k){
-  const el=document.getElementById('mind-'+k);minds.has(k)?(minds.delete(k),el.classList.remove('on')):(minds.add(k),el.classList.add('on'));
-  document.getElementById('mindCnt').textContent=minds.size+'/4';
+  const el=document.getElementById('mind-'+k);
+  minds.has(k)?(minds.delete(k),el.classList.remove('on')):(minds.add(k),el.classList.add('on'));
+  document.getElementById('mindCnt').textContent=(minds.size>0?'1':'0')+'/1';
   const s=document.getElementById('mindSt');
-  if(!minds.size)s.textContent='';else if(minds.size<2){s.textContent='1 aur karo!';s.style.color='var(--muted)';}else{s.textContent='Target done! +20 XP';s.style.color='var(--mind)';}
+  if(!minds.size)s.textContent='';else{s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
   updAll();
 }
 
@@ -722,26 +697,35 @@ function renderNFGrid(){
 
 // ══ SCORE & XP ══
 function calcHealth(){
-  const w=Math.round(water/8*100);
-  const s=!sleepH?0:Math.round(Math.min(sleepH/8,1)*100);
-  const e=exercises.size>0?100:0;
-  const f=foods.size>=3?100:Math.round(foods.size/3*100);
-  const m=minds.size>=2?100:Math.round(minds.size/2*100);
-  return{w,s,e,f,m,total:Math.round((w+s+e+f+m)/5)};
+  let c = 0;
+  if(wakeup) c++;
+  if(exercises.size>0) c++;
+  if(shorts) c++;
+  if(minds.size>0) c++;
+  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>0, total: c };
 }
+
 function calcTodayXP(hsc){
   let xp=0,pen=0;
-  xp+=water*5;if(sleepH>=7)xp+=30;if(exercises.size>0)xp+=30;if(foods.size>=3)xp+=20;if(minds.size>=2)xp+=20;
-  if(hsc.total>=90)xp+=50;else if(hsc.total>=80)xp+=25;
+  xp += water * 5;
+
+  if(wakeup) xp += 30; else pen += 30;
+  if(exercises.size > 0) xp += 30; else pen += 30;
+  if(shorts) xp += 25; else pen += 25;
+  if(minds.size > 0) xp += 30; else pen += 15;
+
   SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.hrs||0,studyData[s]?.rev||false);});
-  if(nfDays[todayKey]==='win')xp+=50;
-  if(nfDays[todayKey]==='fail')pen+=30;
-  if(hsc.total<70&&hsc.total>0)pen+=50;
+
+  if(nfDays[todayKey]==='win') xp += 50;
+  else if(nfDays[todayKey]==='fail') pen += 50; // Increased to 50 penalty
+
   const tL=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
   const tH=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.hrs||0),0);
-  if(tL===0&&tH===0)pen+=35;
-  return{earned:xp,penalties:pen,net:xp-pen};
+  if(tL===0 && tH===0) pen += 35; 
+
+  return {earned:xp, penalties:pen, net:xp-pen};
 }
+
 function calcTotalXP(tXP){
   let t=0;Object.keys(allDayData).forEach(k=>{if(k!==todayKey&&allDayData[k]?.xp)t+=allDayData[k].xp;});
   return Math.max(0,t+tXP+(metaData.missionBonusXP||0));
@@ -759,25 +743,22 @@ function getLevel(xp){
   return l;
 }
 function getAdvice(sc){
-  if(!sc.total)return'Data bharo — AI feedback milega! 📊';
-  if(sc.total<50)return'💀 Full fail. Discipline zero. Kal pakka sudhar.';
-  if(sc.w<50)return'💧 Paani kam — energy aur focus dono down.';
-  if(sc.s<60)return'😴 Neend kharab — pura system fail hoga.';
-  if(sc.e===0)return'🏃 Exercise zero — body nahi banegi!';
-  if(sc.f<70)return'🥗 Khana improve kar — growth slow.';
-  if(sc.total<80)return'📈 Theek hai, aur push kar!';
-  if(sc.total<90)return'🟢 Solid! Bas consistency bana ke rakh.';
-  return'🔥 GOD LEVEL! Aaj jeet liya!';
+  if(sc.total === 4) return '🔥 GOD MODE! Sare strict rules follow ho rahe hain!';
+  if(sc.total === 3) return '🟢 Good! Bas 1 task aur fix karna hai.';
+  if(sc.total === 2) return '🟡 Average day. Penalty lag rahi hai, sudhar ja!';
+  if(sc.total === 1) return '🔴 Bohot weak discipline. Penalties kha raha hai tu!';
+  return '💀 Total Disaster! Get back on track immediately!';
 }
 function calcStreaks(){
   let streak=0,best=0,temp=0,days=0;
   for(let i=89;i>=0;i--){
     const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+i+(seasonNum-1)*90);
     const key=getDayKey(d);const rec=allDayData[key];
-    if(rec){days++;if(rec.score>=80){temp++;if(temp>best)best=temp;}else temp=0;}else temp=0;
+    // Streak logic updated: requires all 4 core habits to count as a "perfect" streak day
+    if(rec){days++;if(rec.score===4){temp++;if(temp>best)best=temp;}else temp=0;}else temp=0;
   }
   const dn=getDayNum(today);
-  if(dn){for(let i=dn-1;i>=1;i--){const rec=allDayData[`s${seasonNum}_d${i}`];if(rec&&rec.score>=80)streak++;else break;}}
+  if(dn){for(let i=dn-1;i>=1;i--){const rec=allDayData[`s${seasonNum}_d${i}`];if(rec&&rec.score===4)streak++;else break;}}
   return{streak,best,days};
 }
 
@@ -790,19 +771,14 @@ function updAll(){
   const seasonXP=calcSeasonXP(todayXP);
   const{streak,best,days}=calcStreaks();
 
-  const hEl=document.getElementById('hScoreDisp');
-  hEl.textContent=hsc.total+'%';
-  hEl.style.color=hsc.total>=90?'#b44fff':hsc.total>=80?'#00ff88':hsc.total>=70?'#ffd700':'#ff4d6d';
   document.getElementById('aiFeed').textContent=getAdvice(hsc);
 
   const xpPrev=document.getElementById('xpPreview');
-  if(xpObj.earned>0||xpObj.penalties>0){
-    let h='';
-    if(xpObj.earned>0)h+=`<span style="color:#00ff88">+${xpObj.earned} XP</span>`;
-    if(xpObj.penalties>0)h+=` <span style="color:#ff4d6d">−${xpObj.penalties} penalty</span>`;
-    h+=` <span style="color:#ffd700;font-weight:700">= ${xpObj.net} net</span>`;
-    xpPrev.innerHTML=h;
-  }else xpPrev.textContent='';
+  let h='';
+  if(xpObj.earned>0)h+=`<span style="color:#00ff88">+${xpObj.earned} XP</span>`;
+  if(xpObj.penalties>0)h+=` <span style="color:#ff4d6d">−${xpObj.penalties} penalty</span>`;
+  if(h!=='') h+=` <span style="color:${xpObj.net>=0?'#ffd700':'#ff4d6d'};font-weight:700">= ${xpObj.net} net</span>`;
+  xpPrev.innerHTML=h;
 
   document.getElementById('wNum').textContent=water;
   document.getElementById('wBar').style.width=Math.round(water/8*100)+'%';
@@ -872,35 +848,51 @@ function switchTab(t){
   if(t==='trophies')renderBadges();
   if(t==='missions')renderMissions();
 }
+
 // ══ BADGES ══
 function checkBadges(hsc,totalLec){
   if(!metaData.badges)metaData.badges={};
-  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,nojunk:0,rev:0};
+  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0};
   const s=metaData.runStreaks;const b=metaData.badges;let msg='';
   
-  // 🔴 YAHI THI BIMAARI! Yahan ek ')' bracket miss ho gaya tha
   const add=(id,txt)=>{b[id]=(b[id]||0)+1;msg+=(msg?', ':'')+txt+' x'+b[id];};
   
   if(nfDays[todayKey]==='win')s.nf++;else s.nf=0;
   if(s.nf>0&&s.nf%10===0)add('ironWill','🛡️ Iron Will');
   if(s.nf>0&&s.nf%30===0)add('monkMode','🧘 Monk Mode');
   if(s.nf>0&&s.nf%90===0)add('ascended','🔱 The Ascended');
+  
   if(water>=8)s.water++;else s.water=0;
   if(s.water>0&&s.water%7===0)add('aquaman','💧 Aquaman');
+  
   if(exercises.size>0)s.ex++;else s.ex=0;
   if(s.ex>0&&s.ex%10===0)add('ironBody','🏋️ Iron Body');
-  if(hsc.total>=80)s.hsc++;else s.hsc=0;
-  if(s.hsc>0&&s.hsc%10===0)add('focus','♟️ GM Focus');
+  
+  // Strict streak: requires all 4 core habits to be perfect
+  if(hsc.total===4)s.hsc++;else s.hsc=0;
   if(s.hsc>0&&s.hsc%21===0)add('unbreakable','👑 Unbreakable');
+  
   if(totalLec>=4)add('lakshya','🎯 Lakshya Spartan');
-  if(foods.has('nojunk'))s.nojunk++;else s.nojunk=0;
-  if(s.nojunk>0&&s.nojunk%5===0)add('cleanEng','🥗 Clean Engine');
+  
+  // WAKE UP BADGES
+  if(wakeup)s.wakeup++;else s.wakeup=0;
+  if(s.wakeup>0&&s.wakeup%7===0)add('wakeup7','🌅 Early Riser');
+  if(s.wakeup>0&&s.wakeup%15===0)add('wakeup15','☀️ Dawn Master');
+
+  // NO SHORTS BADGES
+  if(shorts)s.shorts++;else s.shorts=0;
+  if(s.shorts>0&&s.shorts%5===0)add('shorts5','🚫 Distraction Free');
+  if(s.shorts>0&&s.shorts%21===0)add('shorts21','🧠 Dopamine Detox');
+  if(s.shorts>0&&s.shorts%60===0)add('shorts60','👁️ Focus God');
+
   let didRev=SUBJECTS.some(sub=>studyData[sub]?.rev);
   if(didRev)s.rev++;else s.rev=0;
   if(s.rev>0&&s.rev%3===0)add('chemFocus','🧪 Chemical Focus');
+  
   let l7=totalLec;const dn=getDayNum(today);
   if(dn){for(let i=1;i<7;i++){const r=allDayData[`s${seasonNum}_d${dn-i}`];if(r?.studyData)SUBJECTS.forEach(sub=>{l7+=(r.studyData[sub]?.lec||0);});}}
   if(!s.demonLast||(dn-s.demonLast>=7)){if(l7>=15){add('demon','🔥 Deep Work Demon');s.demonLast=dn;}}
+  
   metaData.runStreaks=s;metaData.badges=b;
   if(msg)alert('🎉 ACHIEVEMENT UNLOCKED!\n'+msg+'\n\nTrophy room mein check karo!');
 }
@@ -932,7 +924,7 @@ function addMission(){
   const medal=document.getElementById('mMedal').value.trim()||'🎯';
   const xp=Math.max(50,parseInt(document.getElementById('mXP').value)||300);
   const title=document.getElementById('mTitle').value.trim();
-  const target=Math.max(1,parseInt(document.getElementById('mTarget').value)||1); // ⚡ Naya Target
+  const target=Math.max(1,parseInt(document.getElementById('mTarget').value)||1); 
   
   if(!name||!task){alert('Mission name aur task dono bharo!');return;}
   if(!metaData.missions)metaData.missions=[];
@@ -940,8 +932,8 @@ function addMission(){
   metaData.missions.push({
     id:'m_'+Date.now(),
     name,task,medal,xp,title,
-    target:target, // ⚡ Target alag se save hoga
-    days:selectedDays, // ⏱️ Time limit alag se save hogi
+    target:target, 
+    days:selectedDays, 
     startDay:dayNum||1,
     endDay:(dayNum||1)+selectedDays-1,
     current:0,
@@ -950,7 +942,6 @@ function addMission(){
   });
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   
-  // Clear form
   document.getElementById('mName').value='';
   document.getElementById('mTask').value='';
   document.getElementById('mXP').value=300;
@@ -970,7 +961,7 @@ function renderMissions(){
   }
   const dn=dayNum||1;
   missions.forEach((m,idx)=>{
-    const tar = m.target || m.days; // Purane missions jisme target nahi tha unka fallback
+    const tar = m.target || m.days; 
     const isExpired = dn > m.endDay && !m.claimed && m.current < tar;
     const isDone = m.current >= tar;
     const pct = Math.min(100, Math.round((m.current/tar)*100));
@@ -1025,10 +1016,7 @@ function trackMission(idx, val){
   if(!metaData.missions||!metaData.missions[idx])return;
   const m=metaData.missions[idx];
   const tar = m.target || m.days;
-  
-  // +1 ya -1 karne par current zero se niche aur target se upar na jaye
   m.current = Math.max(0, Math.min(tar, m.current + val));
-  
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   renderMissions();
 }
@@ -1039,14 +1027,12 @@ function claimMission(idx){
   if(m.claimed)return;
   m.claimed=true;
   metaData.missionBonusXP=(metaData.missionBonusXP||0)+m.xp;
-  // Save earned medal
   if(!metaData.earnedMedals)metaData.earnedMedals=[];
   metaData.earnedMedals.push({
     medal:m.medal,name:m.name,xp:m.xp,title:m.title,
     claimedDay:dayNum,claimedSeason:seasonNum,
     claimedAt:new Date().toLocaleDateString('en-IN')
   });
-  // Save title
   if(m.title){
     if(!metaData.missionTitles)metaData.missionTitles=[];
     if(!metaData.missionTitles.includes(m.title))metaData.missionTitles.push(m.title);
@@ -1079,6 +1065,7 @@ function renderEarnedMedals(){
       </div>
     </div>`).join('')+'</div>';
 }
+
 // ══ OVERLAY ══
 function showOverlay(emoji,title,color,sub,callback){
   document.getElementById('lvlEm').textContent=emoji;
@@ -1100,28 +1087,35 @@ async function saveAll(){
   const prevSeasonXP=calcSeasonXP(allDayData[todayKey]?.xp||0);
   const prevRank=getRank(prevSeasonXP);
   const prevLevel=getLevel(prevSeasonXP);
+  
   checkBadges(hsc,totalLec);
+  
   const rec={
-    water,sleep:sleepH,exercises:[...exercises],foods:[...foods],minds:[...minds],mood,
-    studyData:{...studyData},nofap:nfDays[todayKey]||null,
-    score:hsc.total,w:hsc.w,s:hsc.s,e:hsc.e,f:hsc.f,m:hsc.m,
-    xp:todayXP,xpEarned:xpObj.earned,xpPenalty:xpObj.penalties,
-    dayNum,seasonNum,
+    water, wakeup, exercises:[...exercises], shorts, minds:[...minds], mood,
+    studyData:{...studyData}, nofap:nfDays[todayKey]||null,
+    score:hsc.total, // Now saves 0 to 4 instead of %
+    xp:todayXP, xpEarned:xpObj.earned, xpPenalty:xpObj.penalties,
+    dayNum, seasonNum,
     savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
   };
+  
   allDayData[todayKey]=rec;
   localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
   localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
   localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
+  
   const newSeasonXP=calcSeasonXP(todayXP);
   const newRank=getRank(newSeasonXP);
   const newLevel=getLevel(newSeasonXP);
+  
   updAll();renderNFGrid();renderHistGrid();renderBadges();renderHallOfFame();
+  
   const msg=document.getElementById('saveMsg');
   const penMsg=xpObj.penalties>0?` (−${xpObj.penalties} penalty)`:'';
-  msg.textContent=`${xpObj.net>=0?'⚡ +':'💀 '}${xpObj.net} XP${penMsg} · Health: ${hsc.total}% · Day ${dayNum}/90`;
+  msg.textContent=`${xpObj.net>=0?'⚡ +':'💀 '}${xpObj.net} XP${penMsg} · Day ${dayNum}/90`;
   msg.style.color=xpObj.net>=0?'#00ff88':'#ff4d6d';
   setTimeout(()=>msg.textContent='',5000);
+  
   if(newRank.name!==prevRank.name){
     showOverlay(newRank.emoji,'RANK UP! '+newRank.name,newRank.color,'You reached '+newRank.name+'! Keep going! '+newRank.note,
       newLevel>prevLevel?()=>showOverlay('📈','LEVEL UP!','#00ff88','You reached Level '+newLevel+'! Keep grinding!'):null);
@@ -1131,9 +1125,19 @@ async function saveAll(){
 }
 
 // ══ HISTORY ══
-function getLvC(sc){if(sc>=90)return'sg';if(sc>=80)return'sgo';if(sc>=70)return'sa';return'sl';}
-function getLvCol(sc){if(sc>=90)return'#b44fff';if(sc>=80)return'#00ff88';if(sc>=70)return'#ffd700';return'#ff4d6d';}
-function getLvTxt(sc){if(sc>=90)return'⚡ GOD LEVEL';if(sc>=80)return'🟢 Good Level';if(sc>=70)return'🟡 Average';return'🔴 Low Level';}
+// Updated for new 0-4 strict score, with backward compatibility for old % scores
+function getLvC(sc){
+  if(sc > 10) return sc>=90?'sg':sc>=80?'sgo':sc>=70?'sa':'sl'; 
+  return sc===4?'sg':sc===3?'sgo':sc===2?'sa':'sl';
+}
+function getLvCol(sc){
+  if(sc > 10) return sc>=90?'#b44fff':sc>=80?'#00ff88':sc>=70?'#ffd700':'#ff4d6d';
+  return sc===4?'#b44fff':sc===3?'#00ff88':sc===2?'#ffd700':'#ff4d6d';
+}
+function getLvTxt(sc){
+  if(sc > 10) return sc>=90?'⚡ GOD LEVEL':sc>=80?'🟢 Good Level':sc>=70?'🟡 Average':'🔴 Low Level';
+  return sc===4?'⚡ FLAWLESS (4/4)':sc===3?'🟢 STRONG (3/4)':sc===2?'🟡 AVERAGE (2/4)':'🔴 WEAK (0-1/4)';
+}
 
 function popHistSelect(){
   const sel=document.getElementById('histSeasonSel');sel.innerHTML='';
@@ -1163,7 +1167,7 @@ function renderHistGrid(sNum=seasonNum){
     if(isFut){box.className='hbox emp';box.innerHTML=`<div class="dn">${i}</div><div class="ds" style="color:var(--border)">·</div>`;}
     else if(rec){
       box.className='hbox '+getLvC(rec.score)+(isTod?' tod':'');
-      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:${getLvCol(rec.score)}">${rec.score}%</div>`;
+      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:${getLvCol(rec.score)}">${rec.score>10?rec.score+'%':rec.score+'/4'}</div>`;
       box.onclick=()=>openPop(key,rec,d,i);
     }else{
       box.className='hbox'+(isTod?' tod':' emp');
@@ -1179,19 +1183,27 @@ const moodE=['','😞','😐','🙂','😄','🤩'];
 function openPop(key,r,dateObj,dayN){
   const ds=dateObj.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('popDate').textContent=`Day ${dayN} · ${ds}`;
-  const ps=document.getElementById('popScore');ps.textContent=r.score+'%';ps.style.color=getLvCol(r.score);
+  const ps=document.getElementById('popScore');
+  ps.textContent=r.score>10 ? r.score+'%' : r.score+'/4 Tasks';
+  ps.style.color=getLvCol(r.score);
   const pl=document.getElementById('popLv');pl.textContent=getLvTxt(r.score)+' · '+(r.xp||0)+' XP';pl.style.color=getLvCol(r.score);
+  
   const ex=r.exercises?.length?r.exercises.join(', '):'koi nahi';
-  const fd=r.foods?.length?r.foods.join(', '):'koi nahi';
   const md=r.minds?.length?r.minds.join(', '):'koi nahi';
+  
+  // Backward compatibility for popup
+  const wStr = r.wakeup !== undefined ? (r.wakeup ? 'Haan (+30 XP)' : 'Nahi (-30 XP)') : (r.sleep ? r.sleep+'h' : '—');
+  const shStr = r.shorts !== undefined ? (r.shorts ? 'Haan (+25 XP)' : 'Nahi (-25 XP)') : (r.foods ? r.foods.join(', ') : '—');
+
   let studyStr='';
   if(r.studyData)SUBJECTS.forEach(s=>{const d=r.studyData[s];if(d?.lec>0||d?.hrs>0)studyStr+=SUBJ_LABELS[s]+': '+(d.lec?d.lec+'lec ':'')+(d.hrs?d.hrs+'h ':'')+(d.rev?'+rev':'')+' | ';});
+  
   document.getElementById('popRows').innerHTML=`
-    <div class="pr"><span>💧</span><span class="prlbl">Paani</span><span class="prval" style="color:var(--water)">${r.w||0}% (${r.water||0}/8)</span></div>
-    <div class="pr"><span>😴</span><span class="prlbl">Neend</span><span class="prval" style="color:var(--sleep)">${r.s||0}% (${r.sleep||0}h)</span></div>
-    <div class="pr"><span>🏃</span><span class="prlbl">Exercise</span><span class="prval" style="color:var(--exercise)">${r.e||0}% — ${ex}</span></div>
-    <div class="pr"><span>🥗</span><span class="prlbl">Khana</span><span class="prval" style="color:var(--food)">${r.f||0}% — ${fd}</span></div>
-    <div class="pr"><span>🧠</span><span class="prlbl">Mind</span><span class="prval" style="color:var(--mind)">${r.m||0}% — ${md}</span></div>
+    <div class="pr"><span>⏰</span><span class="prlbl">Wake Up (1st Alarm)</span><span class="prval" style="color:var(--wakeup)">${wStr}</span></div>
+    <div class="pr"><span>💧</span><span class="prlbl">Paani</span><span class="prval" style="color:var(--water)">${r.water||0}/8</span></div>
+    <div class="pr"><span>🏃</span><span class="prlbl">Exercise</span><span class="prval" style="color:var(--exercise)">${ex}</span></div>
+    <div class="pr"><span>🚫</span><span class="prlbl">No YT Shorts</span><span class="prval" style="color:var(--shorts)">${shStr}</span></div>
+    <div class="pr"><span>🧠</span><span class="prlbl">Mind</span><span class="prval" style="color:var(--mind)">${md}</span></div>
     <div class="pr"><span>📚</span><span class="prlbl">Study</span><span class="prval" style="color:var(--study)">${studyStr||'koi nahi'}</span></div>
     <div class="pr"><span>${r.nofap==='win'?'✕':'0'}</span><span class="prlbl">NoFap</span><span class="prval" style="color:${r.nofap==='win'?'#00ff88':'#ff4d6d'}">${r.nofap||'—'}</span></div>
     <div class="pr"><span>${r.mood?moodE[r.mood]:'—'}</span><span class="prlbl">Mood</span><span class="prval">${r.mood?moodT[r.mood]:'—'}</span></div>
@@ -1203,7 +1215,7 @@ function closePop(e){if(e.target.id==='dayPopup')document.getElementById('dayPop
 
 // ══ BACKUP ══
 function downloadBackup(){
-  const data={days:localStorage.getItem('rpg_days_v2')||'{}'  ,nf:localStorage.getItem('rpg_nf_v2')||'{}'  ,meta:localStorage.getItem('rpg_meta_v2')||'{}'};
+  const data={days:localStorage.getItem('rpg_days_v2')||'{}',nf:localStorage.getItem('rpg_nf_v2')||'{}',meta:localStorage.getItem('rpg_meta_v2')||'{}'};
   const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download='LifeRPG_Backup.json';a.click();URL.revokeObjectURL(url);
@@ -1227,36 +1239,45 @@ function uploadBackup(event){
 // ══ LOAD TODAY ══
 function loadToday(){
   const rec=allDayData[todayKey];if(!rec)return;
-  water=rec.water||0;sleepH=rec.sleep||0;
-  exercises=new Set(rec.exercises||[]);foods=new Set(rec.foods||[]);minds=new Set(rec.minds||[]);mood=rec.mood||0;
+  water=rec.water||0;
+  wakeup=rec.wakeup||false;
+  exercises=new Set(rec.exercises||[]);
+  shorts=rec.shorts||false;
+  minds=new Set(rec.minds||[]);
+  mood=rec.mood||0;
+  
   if(rec.studyData)SUBJECTS.forEach(s=>{studyData[s]={...{lec:0,hrs:0,rev:false},...rec.studyData[s]};});
-  document.getElementById('sSlider').value=sleepH;
+  
+  if(wakeup) document.getElementById('tog-wakeup').classList.add('on');
+  if(shorts) document.getElementById('tog-shorts').classList.add('on');
+  
   exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
-  foods.forEach(k=>{const el=document.getElementById('food-'+k);if(el)el.classList.add('on');});
   minds.forEach(k=>{const el=document.getElementById('mind-'+k);if(el)el.classList.add('on');});
-  document.getElementById('fCnt').textContent=foods.size;
-  document.getElementById('mindCnt').textContent=minds.size+'/4';
-  if(foods.size>=3){const s=document.getElementById('foodSt');s.textContent='Target done! +20 XP';s.style.color='var(--food)';}
-  if(minds.size>=2){const s=document.getElementById('mindSt');s.textContent='Target done! +20 XP';s.style.color='var(--mind)';}
+  
+  document.getElementById('mindCnt').textContent=(minds.size>0?'1':'0')+'/1';
+  if(minds.size>0){const s=document.getElementById('mindSt');s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
+  
   if(mood>0)setMood(mood);
+  
   SUBJECTS.forEach(s=>{
     updStudyUI(s);
     document.getElementById('ln-'+s).textContent=studyData[s]?.lec||0;
     document.getElementById('hr-'+s).textContent=studyData[s]?.hrs||0;
     if(studyData[s]?.rev)document.getElementById('rev-'+s).classList.add('on');
   });
-  updStudyTotals();renderWDots();updSleep(sleepH);
+  updStudyTotals();renderWDots();
 }
 
 // ══ INIT ══
 function initApp(){
-  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}'  );
-  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}'  );
-  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}'  );
+  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
+  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
+  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
   if(!metaData.badges)metaData.badges={};
-  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,nojunk:0,rev:0};
+  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0};
   if(!metaData.missions)metaData.missions=[];
   if(!metaData.earnedMedals)metaData.earnedMedals=[];
+  
   loadToday();updAll();renderNFGrid();popHistSelect();renderHistGrid();renderBadges();renderHallOfFame();renderMissions();
 }
 
