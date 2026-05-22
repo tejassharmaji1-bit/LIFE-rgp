@@ -534,18 +534,17 @@ const SEASON_START=new Date('2026-04-04'); SEASON_START.setHours(0,0,0,0);
 const SUBJECTS=['maths','physics','chemistry','english','homescience'];
 const SUBJ_LABELS={maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English',homescience:'🍳 Home Science'};
 
-// ══ RANKS — GM is hardest! ══
+// ══ RANKS — GM set to 30K ══
 const RANKS=[
   {name:'BRONZE',     emoji:'🥉',img:'',color:'#cd7f32',xp:0,      note:'Starting point'},
-  {name:'SILVER',     emoji:'🥈',img:'',color:'#c0c0c0',xp:600,    note:'Consistent beginner'},
-  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1800,   note:'Rising warrior'},
-  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:4000,   note:'Disciplined grinder'},
-  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:8000,   note:'Elite performer'},
-  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:14000,  note:'Season champion'},
-  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:22000,  note:'Near legendary'},
-  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:35000,  note:'True legend — near impossible'},
+  {name:'SILVER',     emoji:'🥈',img:'',color:'#c0c0c0',xp:500,    note:'Consistent beginner'},
+  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1500,   note:'Rising warrior'},
+  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:3500,   note:'Disciplined grinder'},
+  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:7000,   note:'Elite performer'},
+  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:12000,  note:'Season champion'},
+  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:19000,  note:'Near legendary'},
+  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:30000,  note:'True legend — peak form'},
 ];
-
 const BADGE_DEFS=[
   {id:'ironWill',icon:'🛡️',title:'Iron Will',desc:'10 Days NoFap'},
   {id:'monkMode',icon:'🧘‍♂️',title:'Monk Mode',desc:'30 Days NoFap'},
@@ -556,7 +555,9 @@ const BADGE_DEFS=[
   {id:'aquaman',icon:'💧',title:'Aquaman',desc:'7 Days 8 Glass Water'},
   {id:'ironBody',icon:'🏋️‍♂️',title:'Iron Body',desc:'10 Days Exercise'},
   {id:'unbreakable',icon:'👑',title:'Unbreakable',desc:'21 Days Streak'},
-  // New Badges
+  // 👇 TERA LEGACY BADGE WAPAS AAGAYA!
+  {id:'cleanEng',icon:'🥗',title:'Clean Engine',desc:'5 Days No Junk (Solidified)'}, 
+  // 👆
   {id:'wakeup7',icon:'🌅',title:'Early Riser',desc:'7 Days 1st Alarm Wakeup'},
   {id:'wakeup15',icon:'☀️',title:'Dawn Master',desc:'15 Days 1st Alarm Wakeup'},
   {id:'shorts5',icon:'🚫',title:'Distraction Free',desc:'5 Days No Shorts'},
@@ -754,11 +755,25 @@ function calcStreaks(){
   for(let i=89;i>=0;i--){
     const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+i+(seasonNum-1)*90);
     const key=getDayKey(d);const rec=allDayData[key];
-    // Streak logic updated: requires all 4 core habits to count as a "perfect" streak day
-    if(rec){days++;if(rec.score===4){temp++;if(temp>best)best=temp;}else temp=0;}else temp=0;
+    
+    if(rec){
+      days++;
+      // 🔥 Old 80% data aur New 4/4 strict data dono support karega!
+      if(rec.score===4 || rec.score>=80){
+        temp++;
+        if(temp>best)best=temp;
+      } else temp=0;
+    } else temp=0;
   }
+  
   const dn=getDayNum(today);
-  if(dn){for(let i=dn-1;i>=1;i--){const rec=allDayData[`s${seasonNum}_d${i}`];if(rec&&rec.score===4)streak++;else break;}}
+  if(dn){
+    for(let i=dn-1;i>=1;i--){
+      const rec=allDayData[`s${seasonNum}_d${i}`];
+      if(rec && (rec.score===4 || rec.score>=80)) streak++;
+      else break;
+    }
+  }
   return{streak,best,days};
 }
 
