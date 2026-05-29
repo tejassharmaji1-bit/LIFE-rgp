@@ -328,13 +328,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
   </div>
 
-  <div class="sec">
+<div class="sec">
     <div class="sec-hd">
       <div class="sec-ic" style="background:rgba(255,95,160,.12)">🧠</div>
-      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi 1 karo → +30 XP</div></div>
-      <div class="sec-xp" id="mindCnt">0/1</div>
+      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi 2 karo → +30 XP</div></div>
+      <div class="sec-xp" id="mindCnt">0/2</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px">
+      <div class="tog" id="mind-write" style="color:var(--mind)" onclick="togMind('write')"><div class="ck"></div><span>✍️ Write / Journal</span></div>
+      <div class="tog" id="mind-read" style="color:var(--mind)" onclick="togMind('read')"><div class="ck"></div><span>📖 Read 15-20 min</span></div>
       <div class="tog" id="mind-selftalk" style="color:var(--mind)" onclick="togMind('selftalk')"><div class="ck"></div><span>🗣️ Self Talk</span></div>
       <div class="tog" id="mind-meditation" style="color:var(--mind)" onclick="togMind('meditation')"><div class="ck"></div><span>🧘 Meditation</span></div>
     </div>
@@ -656,12 +658,13 @@ function togEx(k){
 function togMind(k){
   const el=document.getElementById('mind-'+k);
   minds.has(k)?(minds.delete(k),el.classList.remove('on')):(minds.add(k),el.classList.add('on'));
-  document.getElementById('mindCnt').textContent=(minds.size>0?'1':'0')+'/1';
+  document.getElementById('mindCnt').textContent=minds.size+'/2';
   const s=document.getElementById('mindSt');
-  if(!minds.size)s.textContent='';else{s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
+  if(minds.size===0) s.textContent='';
+  else if(minds.size<2){ s.textContent='1 aur karo!'; s.style.color='var(--muted)'; }
+  else { s.textContent='Target done! +30 XP'; s.style.color='var(--mind)'; }
   updAll();
 }
-
 // ══ MOOD ══
 const moodC=['','#ff4d6d','#ffd700','#00ff88','#00c8ff','#b44fff'];
 const moodT=['','Bahut bura din...','Theek-thaak','Accha lag raha hai!','Bahut accha!','Ekdum mast! Champion!'];
@@ -702,8 +705,8 @@ function calcHealth(){
   if(wakeup) c++;
   if(exercises.size>0) c++;
   if(shorts) c++;
-  if(minds.size>0) c++;
-  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>0, total: c };
+  if(minds.size>=2) c++; // Yahan >= 2
+  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>=2, total: c };
 }
 
 function calcTodayXP(hsc){
@@ -713,12 +716,12 @@ function calcTodayXP(hsc){
   if(wakeup) xp += 30; else pen += 30;
   if(exercises.size > 0) xp += 30; else pen += 30;
   if(shorts) xp += 25; else pen += 25;
-  if(minds.size > 0) xp += 30; else pen += 15;
+  if(minds.size >= 2) xp += 30; else pen += 15; // Yahan >= 2
 
   SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.hrs||0,studyData[s]?.rev||false);});
 
   if(nfDays[todayKey]==='win') xp += 50;
-  else if(nfDays[todayKey]==='fail') pen += 50; // Increased to 50 penalty
+  else if(nfDays[todayKey]==='fail') pen += 50; 
 
   const tL=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
   const tH=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.hrs||0),0);
@@ -726,7 +729,6 @@ function calcTodayXP(hsc){
 
   return {earned:xp, penalties:pen, net:xp-pen};
 }
-
 function calcTotalXP(tXP){
   let t=0;Object.keys(allDayData).forEach(k=>{if(k!==todayKey&&allDayData[k]?.xp)t+=allDayData[k].xp;});
   return Math.max(0,t+tXP+(metaData.missionBonusXP||0));
@@ -1269,9 +1271,9 @@ function loadToday(){
   exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
   minds.forEach(k=>{const el=document.getElementById('mind-'+k);if(el)el.classList.add('on');});
   
-  document.getElementById('mindCnt').textContent=(minds.size>0?'1':'0')+'/1';
-  if(minds.size>0){const s=document.getElementById('mindSt');s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
-  
+ document.getElementById('mindCnt').textContent=minds.size+'/2';
+  if(minds.size>=2){const s=document.getElementById('mindSt');s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
+  else if(minds.size===1){const s=document.getElementById('mindSt');s.textContent='1 aur karo!';s.style.color='var(--muted)';}
   if(mood>0)setMood(mood);
   
   SUBJECTS.forEach(s=>{
