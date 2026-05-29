@@ -565,6 +565,18 @@ const BADGE_DEFS=[
   {id:'shorts5',icon:'🚫',title:'Distraction Free',desc:'5 Days No Shorts'},
   {id:'shorts21',icon:'🧠',title:'Dopamine Detox',desc:'21 Days No Shorts'},
   {id:'shorts60',icon:'👁️',title:'Focus God',desc:'60 Days No Shorts'}
+  // 🪐 Naya 30 Days 100 Lecture Badge Logic
+  let l30 = totalLec;
+  for(let i=1; i<30; i++){
+    let pDate = new Date(today);
+    pDate.setDate(today.getDate() - i);
+    let k = getDayKey(pDate);
+    let r = allDayData[k];
+    if(r && r.studyData){
+      SUBJECTS.forEach(sub=>{ l30 += (r.studyData[sub]?.lec||0); });
+    }
+  }
+  if(l30 >= 100) add('lectureBeast', '🪐 Lecture Beast');
 ];
 
 // ══ STATE ══
