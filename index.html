@@ -563,22 +563,10 @@ const BADGE_DEFS=[
   {id:'wakeup7',icon:'🌅',title:'Early Riser',desc:'7 Days 1st Alarm Wakeup'},
   {id:'wakeup15',icon:'☀️',title:'Dawn Master',desc:'15 Days 1st Alarm Wakeup'},
   {id:'shorts5',icon:'🚫',title:'Distraction Free',desc:'5 Days No Shorts'},
-  {id:'shorts21',icon:'🧠',title:'Dopamine Detox',desc:'21 Days No Shorts'},
-  {id:'shorts60',icon:'👁️',title:'Focus God',desc:'60 Days No Shorts'}
-  // 🪐 Naya 30 Days 100 Lecture Badge Logic
-  let l30 = totalLec;
-  for(let i=1; i<30; i++){
-    let pDate = new Date(today);
-    pDate.setDate(today.getDate() - i);
-    let k = getDayKey(pDate);
-    let r = allDayData[k];
-    if(r && r.studyData){
-      SUBJECTS.forEach(sub=>{ l30 += (r.studyData[sub]?.lec||0); });
-    }
-  }
-  if(l30 >= 100) add('lectureBeast', '🪐 Lecture Beast');
+ {id:'shorts21',icon:'🧠',title:'Dopamine Detox',desc:'21 Days No Shorts'},
+  {id:'shorts60',icon:'👁️',title:'Focus God',desc:'60 Days No Shorts'},
+  {id:'lectureBeast',icon:'🪐',title:'Lecture Beast',desc:'Savage! 30 dino me 100+ Total Lectures!'}
 ];
-
 // ══ STATE ══
 let water=0, wakeup=false, exercises=new Set(), shorts=false, minds=new Set(), mood=0;
 let studyData={},nfDays={},allDayData={};
@@ -920,8 +908,21 @@ function checkBadges(hsc,totalLec){
   
   let l7=totalLec;const dn=getDayNum(today);
   if(dn){for(let i=1;i<7;i++){const r=allDayData[`s${seasonNum}_d${dn-i}`];if(r?.studyData)SUBJECTS.forEach(sub=>{l7+=(r.studyData[sub]?.lec||0);});}}
-  if(!s.demonLast||(dn-s.demonLast>=7)){if(l7>=15){add('demon','🔥 Deep Work Demon');s.demonLast=dn;}}
+if(!s.demonLast||(dn-s.demonLast>=7)){if(l7>=15){add('demon','🔥 Deep Work Demon');s.demonLast=dn;}}
   
+  // 🪐 Naya 30 Days 100 Lecture Badge Logic YAHAN AAYEGA!
+  let l30 = totalLec;
+  for(let i=1; i<30; i++){
+    let pDate = new Date(today);
+    pDate.setDate(today.getDate() - i);
+    let k = getDayKey(pDate);
+    let r = allDayData[k];
+    if(r && r.studyData){
+      SUBJECTS.forEach(sub=>{ l30 += (r.studyData[sub]?.lec||0); });
+    }
+  }
+  if(l30 >= 100) add('lectureBeast', '🪐 Lecture Beast');
+
   metaData.runStreaks=s;metaData.badges=b;
   if(msg)alert('🎉 ACHIEVEMENT UNLOCKED!\n'+msg+'\n\nTrophy room mein check karo!');
 }
