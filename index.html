@@ -783,7 +783,7 @@ function calcStreaks(){
 function updAll(){
   const hsc=calcHealth();
   const xpObj=calcTodayXP(hsc);
-  const todayXP=Math.max(0,xpObj.net);
+ const todayXP=xpObj.net;
   const totalXP=calcTotalXP(todayXP);
   const seasonXP=calcSeasonXP(todayXP);
   const{streak,best,days}=calcStreaks();
@@ -1113,7 +1113,7 @@ async function saveAll(){
   const hsc=calcHealth();
   const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
   const xpObj=calcTodayXP(hsc);
-  const todayXP=Math.max(0,xpObj.net);
+  const todayXP=xpObj.net;
   const prevSeasonXP=calcSeasonXP(allDayData[todayKey]?.xp||0);
   const prevRank=getRank(prevSeasonXP);
   const prevLevel=getLevel(prevSeasonXP);
