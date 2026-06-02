@@ -327,6 +327,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
     </div>
   </div>
+  <div class="card diet" style="border-left: 3px solid #00ff88;">
+      <div class="ctop"><span style="font-size:1.1rem">🥗</span><div><div class="cttl">DIET MODE</div><div class="csub">No Junk & No Sugar (Ghar ka allow)</div></div></div>
+      <div class="toglist">
+        <div class="tog" id="diet-junk" style="color:#00ff88" onclick="togDiet('junk')"><div class="ck"></div><span>🍔 No Junk Food Today</span></div>
+        <div class="tog" id="diet-sugar" style="color:#00ff88" onclick="togDiet('sugar')"><div class="ck"></div><span>🍬 No Sugar Today</span></div>
+      </div>
+      <div id="dietSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
+    </div>
 
 <div class="sec">
     <div class="sec-hd">
@@ -568,7 +576,7 @@ const BADGE_DEFS=[
   {id:'lectureBeast',icon:'🪐',title:'Lecture Beast',desc:'Savage! 30 dino me 100+ Total Lectures!'}
 ];
 // ══ STATE ══
-let water=0, wakeup=false, exercises=new Set(), shorts=false, minds=new Set(), mood=0;
+let water=0, wakeup=false, exercises=new Set(), shorts=false, minds=new Set(), mood=0, dietJunk=false, dietSugar=false;
 let studyData={},nfDays={},allDayData={};
 let metaData={badges:{},runStreaks:{nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0},missions:[],earnedMedals:[]};
 
@@ -649,6 +657,24 @@ function togShorts() {
   shorts ? el.classList.add('on') : el.classList.remove('on');
   updAll(); 
 }
+  function togDiet(type){
+  if(type==='junk') dietJunk = !dietJunk;
+  if(type==='sugar') dietSugar = !dietSugar;
+  
+  const elJunk = document.getElementById('diet-junk');
+  const elSugar = document.getElementById('diet-sugar');
+  
+  dietJunk ? elJunk.classList.add('on') : elJunk.classList.remove('on');
+  dietSugar ? elSugar.classList.add('on') : elSugar.classList.remove('on');
+  
+  const s = document.getElementById('dietSt');
+  if(dietJunk && dietSugar) {
+    s.textContent = 'Diet Perfect! +15 XP'; s.style.color = '#00ff88';
+  } else {
+    s.textContent = 'Diet Broken! Penalty Pending'; s.style.color = 'var(--shorts)';
+  }
+  updAll();
+}
 function togEx(k){
   const el=document.getElementById('ex-'+k);
   exercises.has(k)?(exercises.delete(k),el.classList.remove('on')):(exercises.add(k),el.classList.add('on'));
@@ -698,15 +724,15 @@ function renderNFGrid(){
   document.getElementById('nfXP').textContent='+'+(nfDays[todayKey]==='win'?50:0);
   document.getElementById('pNofap').textContent=wins;
 }
-
 // ══ SCORE & XP ══
 function calcHealth(){
   let c = 0;
   if(wakeup) c++;
   if(exercises.size>0) c++;
   if(shorts) c++;
-  if(minds.size>=2) c++; // Yahan >= 2
-  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>=2, total: c };
+  if(minds.size>=2) c++;
+  if(dietJunk && dietSugar) c++; // Dono tick honge tabhi point milega
+  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>=2, diet: (dietJunk && dietSugar), total: c };
 }
 
 function calcTodayXP(hsc){
@@ -716,7 +742,8 @@ function calcTodayXP(hsc){
   if(wakeup) xp += 30; else pen += 30;
   if(exercises.size > 0) xp += 30; else pen += 30;
   if(shorts) xp += 25; else pen += 25;
-  if(minds.size >= 2) xp += 30; else pen += 15; // Yahan >= 2
+  if(minds.size >= 2) xp += 30; else pen += 15;
+  if(dietJunk && dietSugar) xp += 15; else pen += 30; // +15 XP ya -30 XP Penalty!
 
   SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.hrs||0,studyData[s]?.rev||false);});
 
@@ -746,10 +773,10 @@ function getLevel(xp){
   return l;
 }
 function getAdvice(sc){
-  if(sc.total === 4) return '🔥 GOD MODE! Sare strict rules follow ho rahe hain!';
-  if(sc.total === 3) return '🟢 Good! Bas 1 task aur fix karna hai.';
-  if(sc.total === 2) return '🟡 Average day. Penalty lag rahi hai, sudhar ja!';
-  if(sc.total === 1) return '🔴 Bohot weak discipline. Penalties kha raha hai tu!';
+  if(sc.total === 5) return '🔥 GOD MODE! 5/5 Strict discipline achieved!';
+  if(sc.total === 4) return '🟢 Killer Day! Bas ek habit miss hui.';
+  if(sc.total === 3) return '🟡 Average performance. Penalties lag rahi hain!';
+  if(sc.total <= 2 && sc.total > 0) return '🔴 Weak day, discipline gir raha hai tera!';
   return '💀 Total Disaster! Get back on track immediately!';
 }
 function calcStreaks(){
@@ -1122,8 +1149,9 @@ async function saveAll(){
   
   const rec={
     water, wakeup, exercises:[...exercises], shorts, minds:[...minds], mood,
+    dietJunk, dietSugar, // 👈 YAHAN TERA NAYA DIET DATA ADD HO GAYA HAI
     studyData:{...studyData}, nofap:nfDays[todayKey]||null,
-    score:hsc.total, // Now saves 0 to 4 instead of %
+    score:hsc.total, // Now saves 0 to 5
     xp:todayXP, xpEarned:xpObj.earned, xpPenalty:xpObj.penalties,
     dayNum, seasonNum,
     savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
@@ -1270,6 +1298,13 @@ function uploadBackup(event){
 function loadToday(){
   const rec=allDayData[todayKey];if(!rec)return;
   water=rec.water||0;
+  dietJunk = rec.dietJunk || false;
+  dietSugar = rec.dietSugar || false;
+  if(dietJunk) document.getElementById('diet-junk').classList.add('on');
+  if(dietSugar) document.getElementById('diet-sugar').classList.add('on');
+  if(dietJunk && dietSugar) { 
+    const s = document.getElementById('dietSt'); s.textContent = 'Diet Perfect! +15 XP'; s.style.color = '#00ff88';
+  }
   wakeup=rec.wakeup||false;
   exercises=new Set(rec.exercises||[]);
   shorts=rec.shorts||false;
