@@ -1,1354 +1,398 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Life RPG — Season Tracker</title>
-<link rel="icon" href="data:,">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#05050d;--surface:#0d0d1a;--surface2:#13132a;--surface3:#1a1a35;--border:#2a2a50;--text:#e8e8ff;--muted:#6666aa;--water:#00c8ff;--wakeup:#ffb703;--exercise:#00ff88;--shorts:#ff0000;--mind:#ff5fa0;--study:#ffe033;--nofap:#ff4d6d;}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,100,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,100,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-.app{max-width:920px;margin:0 auto;padding:1.2rem 0.9rem;position:relative;z-index:1;}
-.hdr{text-align:center;margin-bottom:1.5rem;}
-.hdr-tag{font-family:'Space Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;}
-.hdr-title{font-family:'Orbitron',monospace;font-size:clamp(1.8rem,6vw,3rem);font-weight:900;letter-spacing:.06em;background:linear-gradient(135deg,#ff4d6d,#b44fff,#00c8ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
-.hdr-sub{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:5px;letter-spacing:.1em;}
-.season-pill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:5px 16px;border:1px solid var(--border);border-radius:20px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);}
-.season-day{color:var(--text);font-weight:700;}
-.rank-card{border-radius:18px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;border:1px solid var(--border);background:var(--surface);position:relative;overflow:hidden;}
-.rank-glow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;}
-.rank-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;}
-.rank-left{display:flex;align-items:center;gap:12px;}
-.rank-emblem{width:70px;height:70px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;border:2px solid currentColor;flex-shrink:0;position:relative;overflow:visible;}
-.rank-lbl{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
-.rank-nm{font-family:'Orbitron',monospace;font-size:1.25rem;font-weight:700;}
-.rank-xpneed{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:2px;}
-.rank-right{text-align:right;}
-.xp-big{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;line-height:1;}
-.xp-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
-.lvl-txt{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:2px;}
-.xp-bar-wrap{margin-top:.7rem;}
-.xp-bar-top{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:4px;}
-.xp-track{height:7px;background:var(--surface3);border-radius:4px;overflow:hidden;}
-.xp-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.season-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.2rem;}
-.scard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 10px;text-align:center;}
-.scard-val{font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;line-height:1;}
-.scard-lbl{font-family:'Space Mono',monospace;font-size:.54rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
-.stat-pills{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.2rem;}
-.pill{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 8px;text-align:center;}
-.pill-val{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;line-height:1;}
-.pill-lbl{font-family:'Space Mono',monospace;font-size:.52rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
-.tabs{display:flex;gap:4px;margin-bottom:1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:5px;flex-wrap:wrap;}
-.tab{flex:1;min-width:50px;padding:8px 3px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;}
-.tab.active{color:var(--text);background:var(--surface2);}
-.tab-ic{display:block;font-size:.95rem;margin-bottom:2px;}
-.panel{display:none;animation:fadeIn .3s ease;}
-.panel.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.sec{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:16px 18px;margin-bottom:12px;}
-.sec-hd{display:flex;align-items:center;gap:9px;margin-bottom:13px;}
-.sec-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
-.sec-ttl{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.05em;}
-.sec-sub{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:1px;}
-.sec-xp{margin-left:auto;font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);background:var(--surface2);padding:3px 9px;border-radius:20px;border:1px solid var(--border);}
-.c2{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:12px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 16px;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
-.card.water::before{background:var(--water);}
-.card.wakeup::before{background:var(--wakeup);}
-.card.exercise::before{background:var(--exercise);}
-.card.shorts::before{background:var(--shorts);}
-.card.mind::before{background:var(--mind);}
-.ctop{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
-.cttl{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;}
-.csub{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--muted);margin-top:1px;}
-.bignum{font-family:'Orbitron',monospace;font-size:1.7rem;font-weight:700;line-height:1;}
-.unit{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);}
-.ptrack{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;margin:7px 0 5px;}
-.pfill{height:100%;border-radius:3px;transition:width .4s ease;}
-.wdots{display:flex;gap:4px;flex-wrap:wrap;margin:5px 0 8px;}
-.wdot{width:18px;height:18px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .18s;}
-.wdot.on{background:var(--water);border-color:var(--water);}
-.btnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;}
-.btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}
-.btn:hover{border-color:#7c6af7;color:#a78bfa;}
-.btnp{border:none;color:#05050d;font-weight:700;}
-.toglist{display:flex;flex-direction:column;gap:6px;}
-.tog{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .17s;font-size:.8rem;user-select:none;}
-.tog:hover{border-color:#7c6af7;}
-.tog.on{border-color:currentColor;}
-.ck{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .17s;}
-.tog.on .ck{background:currentColor;border-color:currentColor;}
-.ck::after{content:'✓';color:#05050d;font-size:.58rem;font-weight:700;display:none;}
-.tog.on .ck::after{display:block;}
-.tgtlbl{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:6px;}
-.mrow{display:flex;gap:6px;margin-top:4px;}
-.mbtn{flex:1;padding:8px 0;border-radius:8px;border:1px solid var(--border);background:var(--surface2);font-size:1.25rem;cursor:pointer;transition:all .17s;text-align:center;}
-.mbtn:hover{transform:scale(1.1);}
-.mbtn.on{border-width:2px;transform:scale(1.1);}
-.mtxt{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;margin-top:6px;}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;margin-top:4px;}
-.study-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-.subj{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:13px 14px;}
-.subj-nm{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;margin-bottom:9px;}
-.lec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
-.lec-lbl{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);}
-.lec-ctrl{display:flex;align-items:center;gap:6px;}
-.lec-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.lec-btn:hover{border-color:#7c6af7;color:#a78bfa;}
-.lec-num{font-family:'Orbitron',monospace;font-size:.95rem;font-weight:700;min-width:26px;text-align:center;}
-.subj-xp{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--study);margin-top:4px;}
-.rev-tog{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .17s;font-size:.75rem;user-select:none;margin-top:6px;}
-.rev-tog.on{border-color:var(--study);}
-.rev-tog .ck2{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .17s;}
-.rev-tog.on .ck2{background:var(--study);border-color:var(--study);}
-.rev-tog .ck2::after{content:'✓';color:#05050d;font-size:.5rem;font-weight:700;display:none;}
-.rev-tog.on .ck2::after{display:block;}
-.study-total{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:var(--surface2);border-radius:10px;margin-top:11px;flex-wrap:wrap;gap:8px;}
-.nf-hero{text-align:center;padding:.8rem 0 .5rem;}
-.nf-big{font-family:'Orbitron',monospace;font-size:3.2rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--nofap),#b44fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.nf-lbl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;margin-top:3px;}
-.nf-btns{display:flex;gap:9px;justify-content:center;margin:10px 0;}
-.nfbtn{padding:9px 20px;border-radius:9px;border:none;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .2s;}
-.nfbtn:hover{transform:scale(1.04);}
-.nfbtn.win{background:linear-gradient(135deg,#00ff88,#00c8ff);color:#05050d;}
-.nfbtn.fail{background:linear-gradient(135deg,#ff4d6d,#ff8c42);color:#fff;}
-.nf-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:10px 0;}
-.nfbox{aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;user-select:none;}
-.nfbox:hover{border-color:#7c6af7;transform:scale(1.07);z-index:2;}
-.nfbox .nd{font-family:'Space Mono',monospace;font-size:.42rem;color:var(--muted);}
-.nfbox .ns{font-size:.68rem;font-weight:700;line-height:1;}
-.nfbox.win{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.5);}
-.nfbox.fail{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.5);}
-.nfbox.fut{opacity:.2;cursor:default;}
-.nfbox.fut:hover{transform:none;border-color:var(--border);}
-.nfbox.tod{box-shadow:0 0 0 2px var(--nofap);}
-.nf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
-/* MISSIONS / EVENTS */
-.mis-builder{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;}
-.mis-builder-title{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.mis-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-.mis-form-full{margin-bottom:8px;}
-.mis-lbl{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:3px;}
-.mis-input{width:100%;background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 11px;font-family:'Rajdhani',sans-serif;font-size:.85rem;outline:none;}
-.mis-input:focus{border-color:#7c6af7;}
-.mis-select{width:100%;background:var(--surface3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 11px;font-family:'Rajdhani',sans-serif;font-size:.85rem;outline:none;cursor:pointer;}
-.days-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;}
-.day-opt{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface3);color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;cursor:pointer;transition:all .17s;user-select:none;}
-.day-opt.sel{background:var(--accent,#7c6af7);border-color:#7c6af7;color:#fff;}
-.day-opt:hover{border-color:#7c6af7;}
-.add-mis-btn{width:100%;padding:10px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;margin-top:8px;}
-.add-mis-btn:hover{opacity:.88;}
-.mis-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden;}
-.mis-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c6af7,#b44fff);}
-.mis-card.active-mis::before{background:linear-gradient(90deg,#00ff88,#00c8ff);}
-.mis-card.done-mis{border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.03);}
-.mis-card.claimed-mis{opacity:.6;}
-.mis-card.expired-mis{border-color:rgba(239,68,68,.3);opacity:.7;}
-.mis-top{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px;}
-.mis-medal{font-size:1.8rem;line-height:1;flex-shrink:0;}
-.mis-info{flex:1;}
-.mis-name{font-family:'Orbitron',monospace;font-size:.78rem;font-weight:700;margin-bottom:2px;}
-.mis-task{font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:5px;line-height:1.4;}
-.mis-meta{display:flex;gap:5px;flex-wrap:wrap;}
-.mis-tag{padding:2px 8px;border-radius:20px;font-family:'Space Mono',monospace;font-size:.52rem;font-weight:700;border:1px solid;}
-.mis-right{text-align:right;flex-shrink:0;}
-.mis-xp{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:#ffd700;line-height:1;}
-.mis-prog-wrap{margin-bottom:8px;}
-.mis-prog-top{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-bottom:4px;}
-.mis-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
-.mis-fill{height:100%;border-radius:3px;transition:width .5s;}
-.mis-btn{padding:7px 16px;border-radius:8px;border:none;font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;}
-.mis-btn:hover{transform:scale(1.04);}
-.mis-btn.track{background:linear-gradient(135deg,#00ff88,#00c8ff);color:#05050d;}
-.mis-btn.clm{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#05050d;}
-.mis-btn.done{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:#00ff88;cursor:default;}
-.mis-btn.done:hover{transform:none;}
-.mis-btn.exp{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:#ff4d6d;cursor:default;}
-.mis-btn.exp:hover{transform:none;}
-/* EARNED MEDALS in history */
-.medal-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.medal-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.06);font-family:'Space Mono',monospace;font-size:.6rem;color:#ffd700;}
-/* TROPHIES */
-.trp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
-.trp-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:15px 10px;text-align:center;position:relative;filter:grayscale(100%);opacity:.6;transition:all .3s;}
-.trp-card.unlocked{filter:grayscale(0%);opacity:1;border-color:#ffd700;box-shadow:0 0 15px rgba(255,215,0,.1);}
-.trp-ic{font-size:2.2rem;margin-bottom:5px;}
-.trp-ttl{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;color:var(--text);margin-bottom:4px;}
-.trp-sub{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted);}
-.trp-badge{position:absolute;top:-8px;right:-8px;background:#ffd700;color:#000;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:900;width:24px;height:24px;border-radius:50%;display:none;align-items:center;justify-content:center;border:2px solid var(--surface);}
-.trp-card.unlocked .trp-badge{display:flex;}
-/* HISTORY */
-.hgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:12px;}
-.hbox{aspect-ratio:1;border-radius:7px;border:1px solid var(--border);background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;user-select:none;}
-.hbox:hover{border-color:#7c6af7;transform:scale(1.06);z-index:2;}
-.hbox .dn{font-family:'Space Mono',monospace;font-size:.42rem;color:var(--muted);}
-.hbox .ds{font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;}
-.hbox.sg{background:rgba(180,79,255,.18);border-color:rgba(180,79,255,.5);}
-.hbox.sgo{background:rgba(0,255,136,.12);border-color:rgba(0,255,136,.4);}
-.hbox.sa{background:rgba(255,214,0,.12);border-color:rgba(255,214,0,.4);}
-.hbox.sl{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.4);}
-.hbox.emp{opacity:.22;cursor:default;}
-.hbox.emp:hover{transform:none;border-color:var(--border);}
-.hbox.tod{box-shadow:0 0 0 2px #7c6af7;}
-.leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:9px;}
-.li{display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);}
-.ld{width:9px;height:9px;border-radius:3px;}
-.hist-sel{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:7px;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;outline:none;cursor:pointer;}
-.hof-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);padding:12px 16px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;}
-/* SAVE */
-.save-wrap{margin-top:1.2rem;}
-.save-btn{display:block;width:100%;padding:13px;border-radius:13px;border:none;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;cursor:pointer;letter-spacing:.08em;background:linear-gradient(135deg,#7c6af7,#b44fff,#ff4d6d);color:#fff;transition:all .2s;}
-.save-btn:hover{opacity:.88;transform:scale(1.01);}
-.save-msg{text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;margin-top:5px;min-height:1rem;}
-.bkp-row{display:flex;gap:10px;margin-top:10px;}
-.bkp-btn{flex:1;padding:10px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;}
-.bkp-btn:hover{border-color:#7c6af7;background:var(--surface3);}
-/* POPUP */
-.poverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);align-items:center;justify-content:center;z-index:50;padding:1rem;}
-.poverlay.open{display:flex;}
-.pbox{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;max-width:400px;width:100%;position:relative;max-height:90vh;overflow-y:auto;}
-.pclose{position:absolute;top:13px;right:13px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:3px 9px;cursor:pointer;font-size:.7rem;font-family:'Space Mono',monospace;}
-.pdate{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
-.pscore{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:900;line-height:1;}
-.plv{font-size:.8rem;font-weight:600;margin:3px 0 13px;}
-.prows{display:flex;flex-direction:column;gap:6px;}
-.pr{display:flex;align-items:center;gap:9px;padding:6px 10px;background:var(--surface2);border-radius:8px;}
-.prlbl{flex:1;color:var(--muted);font-family:'Space Mono',monospace;font-size:.6rem;}
-.prval{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:600;}
-.lvlover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;}
-.lvlover.show{display:flex;animation:fadeIn .4s ease;}
-.lvl-em{font-size:4rem;}
-.lvl-ti{font-family:'Orbitron',monospace;font-size:clamp(1.4rem,5vw,2.2rem);font-weight:900;letter-spacing:.1em;text-align:center;}
-.lvl-su{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px;}
-.lvl-cl{margin-top:16px;padding:10px 26px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c6af7,#b44fff);color:#fff;font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.05em;}
-.ai-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:15px;margin-top:10px;}
-.ai-lbl{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
-.ai-txt{font-size:.9rem;font-weight:600;line-height:1.5;color:var(--text);}
-.title-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;margin:2px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;}
-@media(max-width:560px){.c2{grid-template-columns:1fr;}.stat-pills{grid-template-columns:repeat(2,1fr);}.study-grid{grid-template-columns:1fr;}.nf-grid{grid-template-columns:repeat(9,1fr);}.hgrid{grid-template-columns:repeat(6,1fr);}.season-row{grid-template-columns:repeat(3,1fr);}.mis-form-grid{grid-template-columns:1fr;}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tejas | Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(20, 20, 25, 0.7);
+            --accent-cyan: #00f0ff;
+            --accent-purple: #8a2be2;
+            --danger-red: #ff3366;
+            --success-green: #00ff66;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, rgba(138, 43, 226, 0.15), transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 30px;
+            padding-bottom: 50px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Cards */
+        .rule-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .rule-info h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .rule-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+        }
+
+        .version-tag {
+            color: var(--accent-purple);
+            background: rgba(138, 43, 226, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: 0.3s;
+        }
+
+        .btn-pass {
+            background: rgba(0, 255, 102, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(0, 255, 102, 0.2);
+        }
+        .btn-pass:hover { background: var(--success-green); color: #000; }
+
+        .btn-fail {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(255, 51, 102, 0.2);
+        }
+        .btn-fail:hover { background: var(--danger-red); color: #fff; box-shadow: 0 0 15px var(--danger-red); }
+
+        /* Modal for Fail Upgrade */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: #111;
+            border: 1px solid var(--danger-red);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(255, 51, 102, 0.2);
+        }
+
+        .modal h2 { margin-bottom: 15px; color: var(--danger-red); font-family: 'JetBrains Mono'; }
+        
+        textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: 'Poppins';
+            resize: none;
+            min-height: 80px;
+        }
+
+        textarea:focus { outline: none; border-color: var(--accent-cyan); }
+        
+        .btn-upgrade { background: var(--accent-cyan); color: #000; width: 100%; padding: 12px; }
+
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="hdr">
-  <div class="hdr-tag">// Life RPG Tracker — Strict Mode</div>
-  <div class="hdr-title">LIFE RPG</div>
-  <div class="hdr-sub">No Fap · Health · Study · Missions · 90 Days</div>
-  <div class="season-pill">Season <span class="season-day" id="seasonNum">1</span> <span id="legacyEmoji"></span>&nbsp;·&nbsp;Day <span class="season-day" id="dayNum">—</span>/90&nbsp;·&nbsp;<span id="todayDateStr"></span></div>
-</div>
 
-<div class="rank-card" id="rankCard">
-  <div class="rank-glow" id="rankGlow"></div>
-  <div class="rank-top">
-    <div class="rank-left">
-      <div class="rank-emblem" id="rEmblem">🥉</div>
-      <div>
-        <div class="rank-lbl">Current Rank</div>
-        <div class="rank-nm" id="rName">BRONZE</div>
-        <div class="rank-xpneed" id="rXPneed">—</div>
-      </div>
-    </div>
-    <div class="rank-right">
-      <div class="xp-big" id="xpBig">0</div>
-      <div class="xp-lbl">Season XP</div>
-      <div class="lvl-txt" id="lvlTxt">Level 1</div>
-      <div class="lvl-txt" id="totalXPDisp" style="color:var(--muted)">Total: 0 XP</div>
-      <div id="titlesDisp" style="margin-top:5px;display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;"></div>
-    </div>
-  </div>
-  <div class="xp-bar-wrap">
-    <div class="xp-bar-top"><span id="xpBarLbl">To next rank</span><span id="xpBarPct">0%</span></div>
-    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
-  </div>
-</div>
-
-<div class="season-row">
-  <div class="scard"><div class="scard-val" id="sSeasonXP" style="color:#ffd700">0</div><div class="scard-lbl">Season XP</div></div>
-  <div class="scard"><div class="scard-val" id="sLastRank" style="color:#c0c0c0">—</div><div class="scard-lbl">Last Season Rank</div></div>
-  <div class="scard"><div class="scard-val" id="sLastXP" style="color:#a78bfa">—</div><div class="scard-lbl">Last Season XP</div></div>
-</div>
-
-<div class="stat-pills">
-  <div class="pill"><div class="pill-val" id="pStreak" style="color:#ff8c42">0</div><div class="pill-lbl">🔥 Streak</div></div>
-  <div class="pill"><div class="pill-val" id="pBest" style="color:#ffd700">0</div><div class="pill-lbl">🏆 Best</div></div>
-  <div class="pill"><div class="pill-val" id="pNofap" style="color:#ff4d6d">0</div><div class="pill-lbl">⚔️ NF Days</div></div>
-  <div class="pill"><div class="pill-val" id="pDays" style="color:#b44fff">0</div><div class="pill-lbl">📅 Tracked</div></div>
-</div>
-
-<div class="tabs">
-  <button class="tab active" id="tab-health" onclick="switchTab('health')"><span class="tab-ic">💪</span>Health</button>
-  <button class="tab" id="tab-study" onclick="switchTab('study')"><span class="tab-ic">📚</span>Study</button>
-  <button class="tab" id="tab-nofap" onclick="switchTab('nofap')"><span class="tab-ic">⚔️</span>NoFap</button>
-  <button class="tab" id="tab-missions" onclick="switchTab('missions')"><span class="tab-ic">⚡</span>Missions</button>
-  <button class="tab" id="tab-history" onclick="switchTab('history')"><span class="tab-ic">📅</span>History</button>
-  <button class="tab" id="tab-trophies" onclick="switchTab('trophies')"><span class="tab-ic">🏆</span>Badges</button>
-</div>
-
-<div class="panel active" id="panel-health">
-  <div class="c2">
-    <div class="card wakeup">
-      <div class="ctop"><span style="font-size:1.1rem">⏰</span><div><div class="cttl">WAKE UP</div><div class="csub">Strict 1st Alarm Limit!</div></div></div>
-      <div class="tog" id="tog-wakeup" style="color:var(--wakeup);margin-top:10px" onclick="togWakeup()">
-        <div class="ck"></div><span style="color:var(--text)">Woke up at 1st Alarm (+30 XP)</span>
-      </div>
-    </div>
-
-    <div class="card water">
-      <div class="ctop"><span style="font-size:1.1rem">💧</span><div><div class="cttl">PAANI</div><div class="csub">8 glass · 5 XP each</div></div></div>
-      <div style="display:flex;align-items:baseline;gap:5px"><span class="bignum" id="wNum" style="color:var(--water)">0</span><span class="unit">/ 8</span></div>
-      <div class="ptrack"><div class="pfill" id="wBar" style="width:0%;background:var(--water)"></div></div>
-      <div class="wdots" id="wDots"></div>
-      <div class="btnrow">
-        <button class="btn btnp" style="background:var(--water)" onclick="addW()">+ Piya</button>
-        <button class="btn" onclick="remW()">- Hatao</button>
-      </div>
-    </div>
-    
-    <div class="card exercise">
-      <div class="ctop"><span style="font-size:1.1rem">🏃</span><div><div class="cttl">EXERCISE</div><div class="csub">Koi ek · +30 XP</div></div></div>
-      <div class="toglist">
-        <div class="tog" id="ex-run" style="color:var(--exercise)" onclick="togEx('run')"><div class="ck"></div><span>🏃 Run / Jogging</span></div>
-        <div class="tog" id="ex-workout" style="color:var(--exercise)" onclick="togEx('workout')"><div class="ck"></div><span>💪 Workout / Gym</span></div>
-        <div class="tog" id="ex-stretch" style="color:var(--exercise)" onclick="togEx('stretch')"><div class="ck"></div><span>🧘 Stretching / Yoga</span></div>
-      </div>
-      <div id="exSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
-    </div>
-    
-    <div class="card shorts">
-      <div class="ctop"><span style="font-size:1.1rem">🚫</span><div><div class="cttl">NO YT SHORTS</div><div class="csub">Dopamine Detox</div></div></div>
-      <div class="tog" id="tog-shorts" style="color:var(--shorts);margin-top:10px" onclick="togShorts()">
-        <div class="ck"></div><span style="color:var(--text)">0 Shorts Today (+25 XP)</span>
-      </div>
-    </div>
-  </div>
-  <div class="card diet" style="border-left: 3px solid #00ff88;">
-      <div class="ctop"><span style="font-size:1.1rem">🥗</span><div><div class="cttl">DIET MODE</div><div class="csub">No Junk & No Sugar (Ghar ka allow)</div></div></div>
-      <div class="toglist">
-        <div class="tog" id="diet-junk" style="color:#00ff88" onclick="togDiet('junk')"><div class="ck"></div><span>🍔 No Junk Food Today</span></div>
-        <div class="tog" id="diet-sugar" style="color:#00ff88" onclick="togDiet('sugar')"><div class="ck"></div><span>🍬 No Sugar Today</span></div>
-      </div>
-      <div id="dietSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
-    </div>
-
-<div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(255,95,160,.12)">🧠</div>
-      <div><div class="sec-ttl">MIND</div><div class="sec-sub">Koi 2 karo → +30 XP</div></div>
-      <div class="sec-xp" id="mindCnt">0/2</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px">
-      <div class="tog" id="mind-write" style="color:var(--mind)" onclick="togMind('write')"><div class="ck"></div><span>✍️ Write / Journal</span></div>
-      <div class="tog" id="mind-read" style="color:var(--mind)" onclick="togMind('read')"><div class="ck"></div><span>📖 Read 15-20 min</span></div>
-      <div class="tog" id="mind-selftalk" style="color:var(--mind)" onclick="togMind('selftalk')"><div class="ck"></div><span>🗣️ Self Talk</span></div>
-      <div class="tog" id="mind-meditation" style="color:var(--mind)" onclick="togMind('meditation')"><div class="ck"></div><span>🧘 Meditation</span></div>
-    </div>
-    <div id="mindSt" style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:6px"></div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(255,95,160,.12)">😊</div>
-      <div><div class="sec-ttl">MOOD</div><div class="sec-sub">Sach batao!</div></div>
-    </div>
-    <div class="mrow">
-      <button class="mbtn" id="mood-1" onclick="setMood(1)">😞</button>
-      <button class="mbtn" id="mood-2" onclick="setMood(2)">😐</button>
-      <button class="mbtn" id="mood-3" onclick="setMood(3)">🙂</button>
-      <button class="mbtn" id="mood-4" onclick="setMood(4)">😄</button>
-      <button class="mbtn" id="mood-5" onclick="setMood(5)">🤩</button>
-    </div>
-    <div class="mtxt" id="moodTxt">Mood select karo</div>
-  </div>
-
-  <div class="ai-box">
-    <div class="ai-lbl"><span>🤖</span> STRICT PENALTY SYSTEM ACTIVE</div>
-    <div class="ai-txt" id="aiFeed" style="margin-bottom: 8px;">Data bharo!</div>
-    <div id="xpPreview" style="font-family:'Space Mono',monospace;font-size:.65rem;border-top:1px solid var(--border);padding-top:8px;"></div>
-  </div>
-</div>
-
-<div class="panel" id="panel-study">
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(255,224,51,.12)">📚</div>
-      <div><div class="sec-ttl">STUDY TRACKER</div><div class="sec-sub">2 lec=30 XP · 3rd+=40 XP · Self Study=18 XP/hr · Rev=15 XP</div></div>
-      <div class="sec-xp" id="studyXPDisp">0 XP</div>
-    </div>
-    <div class="study-grid" id="studyGrid"></div>
-    <div class="study-total">
-      <div><div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Total Lectures</div><div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)" id="totalLec">0</div></div>
-      <div><div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Total Hours</div><div style="font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--study)"><span id="totalHrs">0</span>h</div></div>
-      <div style="text-align:right"><div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted)">Study XP Today</div><div style="font-family:'Orbitron',monospace;font-weight:700;color:var(--study)" id="totalStudyXP">0 XP</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="panel" id="panel-nofap">
-  <div class="sec">
-    <div class="nf-hero">
-      <div class="nf-big" id="nfCount">0</div>
-      <div class="nf-lbl">DAYS STRONG THIS SEASON</div>
-    </div>
-    <div class="nf-btns">
-      <button class="nfbtn win" onclick="setNFToday('win')">✕ AAJ JEET GAYA +50 XP</button>
-      <button class="nfbtn fail" onclick="setNFToday('fail')">0 RELAPSED (-50 XP)</button>
-    </div>
-    <div class="nf-grid" id="nfGrid"></div>
-    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:6px">Click karke toggle · ✕=Win · 0=Relapse</div>
-    <div class="nf-stats">
-      <div class="pill"><div class="pill-val" id="nfWins" style="color:#00ff88">0</div><div class="pill-lbl">✕ Wins</div></div>
-      <div class="pill"><div class="pill-val" id="nfFails" style="color:#ff4d6d">0</div><div class="pill-lbl">0 Fails</div></div>
-      <div class="pill"><div class="pill-val" id="nfXP" style="color:#ffd700">+0</div><div class="pill-lbl">Today XP</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="panel" id="panel-missions">
-
-  <div class="mis-builder">
-    <div class="mis-builder-title">⚡ New Mission Banao</div>
-
-    <div class="mis-form-full">
-      <div class="mis-lbl">Mission Name</div>
-      <input class="mis-input" id="mName" placeholder="e.g. Sugar Free Week, Iron Runner..." maxlength="40">
-    </div>
-
-    <div class="mis-form-full">
-      <div class="mis-lbl">Task / Goal</div>
-      <input class="mis-input" id="mTask" placeholder="e.g. Har din exercise karo..." maxlength="70">
-    </div>
-
-    <div class="mis-form-grid">
-      <div>
-        <div class="mis-lbl">Medal Emoji</div>
-        <input class="mis-input" id="mMedal" value="🎯" maxlength="4" placeholder="🎯">
-      </div>
-      <div>
-        <div class="mis-lbl">XP Reward</div>
-        <input class="mis-input" type="number" id="mXP" value="300" min="50" max="9999">
-      </div>
-    </div>
-
-    <div class="mis-form-full">
-      <div class="mis-lbl">Title (optional — rank card pe dikhega)</div>
-      <input class="mis-input" id="mTitle" placeholder="e.g. Iron Warrior" maxlength="30">
-    </div>
-
-    <div class="mis-form-full">
-      <div class="mis-lbl">Target (Kitna karna hai? e.g. 14 Lec, 5 Days)</div>
-      <input class="mis-input" type="number" id="mTarget" value="7" min="1" max="999">
-    </div>
-
-    <div class="mis-form-full">
-      <div class="mis-lbl">Duration — Time limit kitne din ki hai?</div>
-      <div class="days-grid" id="daysGrid">
-        <div class="day-opt sel" data-d="3" onclick="selDay(this)">3 Days</div>
-        <div class="day-opt" data-d="7" onclick="selDay(this)">7 Days</div>
-        <div class="day-opt" data-d="10" onclick="selDay(this)">10 Days</div>
-        <div class="day-opt" data-d="21" onclick="selDay(this)">21 Days</div>
-        <div class="day-opt" data-d="30" onclick="selDay(this)">30 Days</div>
-      </div>
-    </div>
-
-    <button class="add-mis-btn" onclick="addMission()">⚡ ADD MISSION</button>
-  </div>
-
-  <div id="activeMissionsContainer"></div>
-
-</div>
-
-<div class="panel" id="panel-history">
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(124,106,247,.12)">👑</div>
-      <div><div class="sec-ttl">HALL OF FAME</div><div class="sec-sub">Legacy of Past Seasons</div></div>
-    </div>
-    <div id="hallOfFameList" style="display:flex;flex-direction:column;gap:8px;"></div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(255,215,0,.12)">🏅</div>
-      <div><div class="sec-ttl">EARNED MEDALS</div><div class="sec-sub">Missions complete karne pe mile medals</div></div>
-    </div>
-    <div id="earnedMedalsContainer">
-      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;padding:12px">Koi mission complete karo — medal yahan dikhega!</div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(124,106,247,.12)">📅</div>
-      <div><div class="sec-ttl">90 DAYS GRID</div><div class="sec-sub">Season map</div></div>
-      <div style="margin-left:auto;"><select id="histSeasonSel" class="hist-sel" onchange="renderHistGrid(parseInt(this.value))"></select></div>
-    </div>
-    <div class="leg">
-      <div class="li"><div class="ld" style="background:rgba(180,79,255,.5)"></div>Flawless</div>
-      <div class="li"><div class="ld" style="background:rgba(0,255,136,.5)"></div>Strong</div>
-      <div class="li"><div class="ld" style="background:rgba(255,214,0,.5)"></div>Avg</div>
-      <div class="li"><div class="ld" style="background:rgba(255,77,109,.4)"></div>Weak</div>
-    </div>
-    <div class="hgrid" id="histGrid"></div>
-    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:7px">Kisi bhi din pe click karo → detail</div>
-  </div>
-</div>
-
-<div class="panel" id="panel-trophies">
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-ic" style="background:rgba(255,215,0,.12)">🏆</div>
-      <div><div class="sec-ttl">THE TROPHY ROOM</div><div class="sec-sub">x2 x3 lagao — pro bano</div></div>
-    </div>
-    <div class="trp-grid" id="badgeGrid"></div>
-    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.57rem;color:var(--muted);margin-top:14px">Roz target poore karo aur Save dabao — badge automatically milega!</div>
-  </div>
-</div>
-
-<div class="save-wrap">
-  <button class="save-btn" onclick="saveAll()">⚡ SAVE & EARN XP</button>
-  <div class="save-msg" id="saveMsg"></div>
-  <div class="bkp-row">
-    <button class="bkp-btn" onclick="downloadBackup()">💾 DOWNLOAD DATA</button>
-    <button class="bkp-btn" onclick="document.getElementById('uploadBackup').click()">📂 LOAD DATA</button>
-    <input type="file" id="uploadBackup" style="display:none" accept=".json" onchange="uploadBackup(event)">
-  </div>
-</div>
-</div>
-
-<div class="poverlay" id="dayPopup" onclick="closePop(event)">
-  <div class="pbox">
-    <button class="pclose" onclick="document.getElementById('dayPopup').classList.remove('open')">✕</button>
-    <div class="pdate" id="popDate"></div>
-    <div class="pscore" id="popScore"></div>
-    <div class="plv" id="popLv"></div>
-    <div class="prows" id="popRows"></div>
-  </div>
-</div>
-
-<div class="lvlover" id="lvlOver">
-  <div class="lvl-em" id="lvlEm">🎉</div>
-  <div class="lvl-ti" id="lvlTi">RANK UP!</div>
-  <div class="lvl-su" id="lvlSu">New rank!</div>
-  <button class="lvl-cl" id="lvlClBtn">CONTINUE ⚡</button>
-</div>
-
-<script>
-// ══ CONFIG ══
-const SEASON_START=new Date('2026-04-04'); SEASON_START.setHours(0,0,0,0);
-const SUBJECTS=['maths','physics','chemistry','english','homescience'];
-const SUBJ_LABELS={maths:'📐 Maths',physics:'⚛️ Physics',chemistry:'🧪 Chemistry',english:'📝 English',homescience:'🍳 Home Science'};
-
-// ══ RANKS — GM set to 30K ══
-const RANKS=[
-  {name:'BRONZE',     emoji:'🥉',img:'',color:'#cd7f32',xp:0,      note:'Starting point'},
-  {name:'SILVER',     emoji:'🥈',img:'',color:'#c0c0c0',xp:500,    note:'Consistent beginner'},
-  {name:'GOLD',       emoji:'🥇',img:'',color:'#ffd700',xp:1500,   note:'Rising warrior'},
-  {name:'PLATINUM',   emoji:'💠',img:'',color:'#00e5ff',xp:3500,   note:'Disciplined grinder'},
-  {name:'DIAMOND',    emoji:'💎',img:'',color:'#b44fff',xp:7000,   note:'Elite performer'},
-  {name:'HEROIC',     emoji:'🦅',img:'https://i.ibb.co/FbyH9LGK/image-40046b79-removebg-preview.png',color:'#ff4444',xp:12000,  note:'Season champion'},
-  {name:'MASTER',     emoji:'👑',img:'https://i.ibb.co/jvMTzYS3/b8292a4e-16ed-4d33-a29f-13fbfe44d610-removebg-preview.png',color:'#ff8c00',xp:19000,  note:'Near legendary'},
-  {name:'GRANDMASTER',emoji:'🔱',img:'https://i.ibb.co/BHz7K7Bg/4e4acaad-e2e3-436f-8c20-15305283e4e9-removebg-preview.png',color:'#ffffff',xp:30000,  note:'True legend — peak form'},
-];
-const BADGE_DEFS=[
-  {id:'ironWill',icon:'🛡️',title:'Iron Will',desc:'10 Days NoFap'},
-  {id:'monkMode',icon:'🧘‍♂️',title:'Monk Mode',desc:'30 Days NoFap'},
-  {id:'ascended',icon:'🔱',title:'The Ascended',desc:'90 Days NoFap'},
-  {id:'lakshya',icon:'🎯',title:'Lakshya Spartan',desc:'Daily 4+ Lectures'},
-  {id:'chemFocus',icon:'🧪',title:'Chemical Focus',desc:'3 Days Revision'},
-  {id:'demon',icon:'🔥',title:'Deep Work Demon',desc:'15 Lec in 7 Days'},
-  {id:'aquaman',icon:'💧',title:'Aquaman',desc:'7 Days 8 Glass Water'},
-  {id:'ironBody',icon:'🏋️‍♂️',title:'Iron Body',desc:'10 Days Exercise'},
-  {id:'unbreakable',icon:'👑',title:'Unbreakable',desc:'21 Days Streak'},
-  // 👇 TERA LEGACY BADGE WAPAS AAGAYA!
-  {id:'cleanEng',icon:'🥗',title:'Clean Engine',desc:'5 Days No Junk (Solidified)'}, 
-  // 👆
-  {id:'wakeup7',icon:'🌅',title:'Early Riser',desc:'7 Days 1st Alarm Wakeup'},
-  {id:'wakeup15',icon:'☀️',title:'Dawn Master',desc:'15 Days 1st Alarm Wakeup'},
-  {id:'shorts5',icon:'🚫',title:'Distraction Free',desc:'5 Days No Shorts'},
- {id:'shorts21',icon:'🧠',title:'Dopamine Detox',desc:'21 Days No Shorts'},
-  {id:'shorts60',icon:'👁️',title:'Focus God',desc:'60 Days No Shorts'},
-  {id:'lectureBeast',icon:'🪐',title:'Lecture Beast',desc:'Savage! 30 dino me 100+ Total Lectures!'}
-];
-// ══ STATE ══
-let water=0, wakeup=false, exercises=new Set(), shorts=false, minds=new Set(), mood=0, dietJunk=false, dietSugar=false;
-let studyData={},nfDays={},allDayData={};
-let metaData={badges:{},runStreaks:{nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0},missions:[],earnedMedals:[]};
-
-const today=new Date(); today.setHours(0,0,0,0);
-const todayKey=getDayKey(today);
-const dayNum=getDayNum(today);
-const seasonNum=getSeasonNum(today);
-
-// ══ DATE HELPERS ══
-function getDayNum(d){const x=new Date(d);x.setHours(0,0,0,0);const diff=Math.floor((x-SEASON_START)/86400000);const dn=(diff%90)+1;return dn>0?dn:null;}
-function getSeasonNum(d){const x=new Date(d);x.setHours(0,0,0,0);return Math.floor(Math.floor((x-SEASON_START)/86400000)/90)+1;}
-function getDayKey(d){const x=new Date(d);x.setHours(0,0,0,0);const diff=Math.floor((x-SEASON_START)/86400000);if(diff<0)return null;return`s${Math.floor(diff/90)+1}_d${(diff%90)+1}`;}
-
-document.getElementById('dayNum').textContent=dayNum||'—';
-document.getElementById('seasonNum').textContent=seasonNum;
-document.getElementById('todayDateStr').textContent=today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-
-// ══ STUDY ══
-function buildStudyGrid(){
-  const g=document.getElementById('studyGrid');g.innerHTML='';
-  SUBJECTS.forEach(s=>{
-    studyData[s]=studyData[s]||{lec:0,hrs:0,rev:false};
-    g.innerHTML+=`<div class="subj" id="subj-${s}">
-      <div class="subj-nm">${SUBJ_LABELS[s]}</div>
-      <div class="lec-row"><div class="lec-lbl">Lectures</div><div class="lec-ctrl">
-        <button class="lec-btn" onclick="chgLec('${s}',-1)">−</button>
-        <div class="lec-num" id="ln-${s}">0</div>
-        <button class="lec-btn" onclick="chgLec('${s}',1)">+</button>
-      </div></div>
-      <div class="lec-row" style="margin-top:5px;"><div class="lec-lbl">Self Study (Hrs)</div><div class="lec-ctrl">
-        <button class="lec-btn" onclick="chgHr('${s}',-0.5)">−</button>
-        <div class="lec-num" id="hr-${s}">0</div>
-        <button class="lec-btn" onclick="chgHr('${s}',0.5)">+</button>
-      </div></div>
-      <div class="subj-xp" id="sxp-${s}">0 XP</div>
-      <div class="rev-tog" id="rev-${s}" onclick="togRev('${s}')"><div class="ck2"></div><span>📝 Revision +15 XP</span></div>
-    </div>`;
-  });
-}
-function chgLec(s,d){studyData[s]=studyData[s]||{lec:0,hrs:0,rev:false};studyData[s].lec=Math.max(0,Math.min(8,studyData[s].lec+d));updStudyUI(s);updStudyTotals();updAll();}
-function chgHr(s,d){studyData[s]=studyData[s]||{lec:0,hrs:0,rev:false};studyData[s].hrs=Math.max(0,Math.min(12,(studyData[s].hrs||0)+d));updStudyUI(s);updStudyTotals();updAll();}
-function togRev(s){studyData[s]=studyData[s]||{lec:0,hrs:0,rev:false};studyData[s].rev=!studyData[s].rev;const el=document.getElementById('rev-'+s);studyData[s].rev?el.classList.add('on'):el.classList.remove('on');updStudyUI(s);updStudyTotals();updAll();}
-function calcSubjXP(lec,hrs,rev){let x=0;for(let i=1;i<=lec;i++)x+=i<=2?30:40;x+=(hrs*18);if(rev)x+=15;return x;}
-function updStudyUI(s){
-  const d=studyData[s]||{lec:0,hrs:0,rev:false};
-  document.getElementById('ln-'+s).textContent=d.lec;
-  document.getElementById('hr-'+s).textContent=d.hrs||0;
-  const xp=calcSubjXP(d.lec,d.hrs||0,d.rev);
-  document.getElementById('sxp-'+s).textContent=xp+' XP'+(d.lec>=3?' (+40/lec bonus)':''  );
-}
-function updStudyTotals(){
-  let tL=0,tH=0,tX=0;
-  SUBJECTS.forEach(s=>{const d=studyData[s]||{};tL+=d.lec||0;tH+=d.hrs||0;tX+=calcSubjXP(d.lec||0,d.hrs||0,d.rev||false);});
-  document.getElementById('totalLec').textContent=tL;
-  document.getElementById('totalHrs').textContent=tH;
-  document.getElementById('totalStudyXP').textContent=tX+' XP';
-  document.getElementById('studyXPDisp').textContent=tX+' XP';
-}
-
-// ══ WATER ══
-function renderWDots(){
-  const c=document.getElementById('wDots');c.innerHTML='';
-  for(let i=0;i<8;i++){const d=document.createElement('div');d.className='wdot'+(i<water?' on':'');d.onclick=()=>{water=i<water?i:i+1;renderWDots();updAll();};c.appendChild(d);}
-}
-function addW(){if(water<8)water++;renderWDots();updAll();}
-function remW(){if(water>0)water--;renderWDots();updAll();}
-
-// ══ TOGGLES ══
-function togWakeup() { 
-  wakeup = !wakeup; 
-  const el = document.getElementById('tog-wakeup');
-  wakeup ? el.classList.add('on') : el.classList.remove('on');
-  updAll(); 
-}
-function togShorts() { 
-  shorts = !shorts; 
-  const el = document.getElementById('tog-shorts');
-  shorts ? el.classList.add('on') : el.classList.remove('on');
-  updAll(); 
-}
-  function togDiet(type){
-  if(type==='junk') dietJunk = !dietJunk;
-  if(type==='sugar') dietSugar = !dietSugar;
-  
-  const elJunk = document.getElementById('diet-junk');
-  const elSugar = document.getElementById('diet-sugar');
-  
-  dietJunk ? elJunk.classList.add('on') : elJunk.classList.remove('on');
-  dietSugar ? elSugar.classList.add('on') : elSugar.classList.remove('on');
-  
-  const s = document.getElementById('dietSt');
-  if(dietJunk && dietSugar) {
-    s.textContent = 'Diet Perfect! +15 XP'; s.style.color = '#00ff88';
-  } else {
-    s.textContent = 'Diet Broken! Penalty Pending'; s.style.color = 'var(--shorts)';
-  }
-  updAll();
-}
-function togEx(k){
-  const el=document.getElementById('ex-'+k);
-  exercises.has(k)?(exercises.delete(k),el.classList.remove('on')):(exercises.add(k),el.classList.add('on'));
-  document.getElementById('exSt').textContent=exercises.size>0?'✓ '+exercises.size+' activity! +30 XP':'';
-  updAll();
-}
-function togMind(k){
-  const el=document.getElementById('mind-'+k);
-  minds.has(k)?(minds.delete(k),el.classList.remove('on')):(minds.add(k),el.classList.add('on'));
-  document.getElementById('mindCnt').textContent=minds.size+'/2';
-  const s=document.getElementById('mindSt');
-  if(minds.size===0) s.textContent='';
-  else if(minds.size<2){ s.textContent='1 aur karo!'; s.style.color='var(--muted)'; }
-  else { s.textContent='Target done! +30 XP'; s.style.color='var(--mind)'; }
-  updAll();
-}
-// ══ MOOD ══
-const moodC=['','#ff4d6d','#ffd700','#00ff88','#00c8ff','#b44fff'];
-const moodT=['','Bahut bura din...','Theek-thaak','Accha lag raha hai!','Bahut accha!','Ekdum mast! Champion!'];
-function setMood(n){
-  mood=n;
-  for(let i=1;i<=5;i++){const b=document.getElementById('mood-'+i);b.classList.remove('on');b.style.borderColor='';b.style.background='';}
-  const s=document.getElementById('mood-'+n);s.classList.add('on');s.style.borderColor=moodC[n];s.style.background=moodC[n]+'22';
-  document.getElementById('moodTxt').textContent=moodT[n];document.getElementById('moodTxt').style.color=moodC[n];updAll();
-}
-
-// ══ NOFAP ══
-function setNFToday(st){if(!todayKey)return;nfDays[todayKey]=st;saveNFLocal();renderNFGrid();updAll();}
-function toggleNF(key){const c=nfDays[key];if(!c)nfDays[key]='win';else if(c==='win')nfDays[key]='fail';else delete nfDays[key];saveNFLocal();renderNFGrid();updAll();}
-function saveNFLocal(){localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));}
-function renderNFGrid(){
-  const g=document.getElementById('nfGrid');g.innerHTML='';
-  let wins=0,fails=0;const todayDN=getDayNum(today);
-  for(let i=1;i<=90;i++){
-    const key=`s${seasonNum}_d${i}`;const st=nfDays[key];
-    const isFut=todayDN!==null&&i>todayDN;const isTod=i===todayDN;
-    if(st==='win')wins++;if(st==='fail')fails++;
-    const box=document.createElement('div');
-    box.className='nfbox'+(isFut&&!isTod?' fut':'')+(st==='win'?' win':'')+(st==='fail'?' fail':'')+(isTod?' tod':'');
-    box.innerHTML=`<div class="nd">${i}</div><div class="ns" style="color:${st==='win'?'#00ff88':st==='fail'?'#ff4d6d':'var(--muted)'}">${st==='win'?'✕':st==='fail'?'0':''}</div>`;
-    if(!isFut||isTod)box.onclick=()=>toggleNF(key);
-    g.appendChild(box);
-  }
-  document.getElementById('nfCount').textContent=wins;
-  document.getElementById('nfWins').textContent=wins;
-  document.getElementById('nfFails').textContent=fails;
-  document.getElementById('nfXP').textContent='+'+(nfDays[todayKey]==='win'?50:0);
-  document.getElementById('pNofap').textContent=wins;
-}
-// ══ SCORE & XP ══
-function calcHealth(){
-  let c = 0;
-  if(wakeup) c++;
-  if(exercises.size>0) c++;
-  if(shorts) c++;
-  if(minds.size>=2) c++;
-  if(dietJunk && dietSugar) c++; // Dono tick honge tabhi point milega
-  return { wakeup, ex: exercises.size>0, shorts, mind: minds.size>=2, diet: (dietJunk && dietSugar), total: c };
-}
-
-function calcTodayXP(hsc){
-  let xp=0,pen=0;
-  xp += water * 5;
-
-  if(wakeup) xp += 30; else pen += 30;
-  if(exercises.size > 0) xp += 30; else pen += 30;
-  if(shorts) xp += 25; else pen += 25;
-  if(minds.size >= 2) xp += 30; else pen += 15;
-  if(dietJunk && dietSugar) xp += 15; else pen += 30; // +15 XP ya -30 XP Penalty!
-
-  SUBJECTS.forEach(s=>{xp+=calcSubjXP(studyData[s]?.lec||0,studyData[s]?.hrs||0,studyData[s]?.rev||false);});
-
-  if(nfDays[todayKey]==='win') xp += 50;
-  else if(nfDays[todayKey]==='fail') pen += 50; 
-
-  const tL=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
-  const tH=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.hrs||0),0);
-  if(tL===0 && tH===0) pen += 35; 
-
-  return {earned:xp, penalties:pen, net:xp-pen};
-}
-function calcTotalXP(tXP){
-  let t=0;Object.keys(allDayData).forEach(k=>{if(k!==todayKey&&allDayData[k]?.xp)t+=allDayData[k].xp;});
-  return Math.max(0,t+tXP+(metaData.missionBonusXP||0));
-}
-function calcSeasonXP(tXP){
-  let t=0;Object.keys(allDayData).forEach(k=>{if(k.startsWith('s'+seasonNum+'_')&&k!==todayKey&&allDayData[k]?.xp)t+=allDayData[k].xp;});
-  return Math.max(0,t+tXP+(metaData.missionBonusXP||0));
-}
-function getRank(xp){let r=RANKS[0];for(const rk of RANKS)if(xp>=rk.xp)r=rk;return r;}
-function getNextRank(xp){for(const r of RANKS)if(r.xp>xp)return r;return null;}
-function getLevel(xp){
-  let l=1,rem=xp;
-  const costs=[{l:5,c:100},{l:10,c:300},{l:15,c:500},{l:20,c:750},{l:25,c:850},{l:30,c:1000},{l:35,c:1200},{l:40,c:1500},{l:45,c:1750},{l:50,c:2000},{l:55,c:2500},{l:60,c:3000},{l:65,c:3250},{l:70,c:4000},{l:75,c:5000},{l:999,c:9999}];
-  for(const st of costs){while(l<st.l&&rem>=st.c){rem-=st.c;l++;}if(l<st.l)break;}
-  return l;
-}
-function getAdvice(sc){
-  if(sc.total === 5) return '🔥 GOD MODE! 5/5 Strict discipline achieved!';
-  if(sc.total === 4) return '🟢 Killer Day! Bas ek habit miss hui.';
-  if(sc.total === 3) return '🟡 Average performance. Penalties lag rahi hain!';
-  if(sc.total <= 2 && sc.total > 0) return '🔴 Weak day, discipline gir raha hai tera!';
-  return '💀 Total Disaster! Get back on track immediately!';
-}
-function calcStreaks(){
-  let streak=0,best=0,temp=0,days=0;
-  for(let i=89;i>=0;i--){
-    const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+i+(seasonNum-1)*90);
-    const key=getDayKey(d);const rec=allDayData[key];
-    
-    if(rec){
-      days++;
-      // 🔥 Old 80% data aur New 4/4 strict data dono support karega!
-      if(rec.score===4 || rec.score>=80){
-        temp++;
-        if(temp>best)best=temp;
-      } else temp=0;
-    } else temp=0;
-  }
-  
-  const dn=getDayNum(today);
-  if(dn){
-    for(let i=dn-1;i>=1;i--){
-      const rec=allDayData[`s${seasonNum}_d${i}`];
-      if(rec && (rec.score===4 || rec.score>=80)) streak++;
-      else break;
-    }
-  }
-  return{streak,best,days};
-}
-
-// ══ UPDATE UI ══
-function updAll(){
-  const hsc=calcHealth();
-  const xpObj=calcTodayXP(hsc);
- const todayXP=xpObj.net;
-  const totalXP=calcTotalXP(todayXP);
-  const seasonXP=calcSeasonXP(todayXP);
-  const{streak,best,days}=calcStreaks();
-
-  document.getElementById('aiFeed').textContent=getAdvice(hsc);
-
-  const xpPrev=document.getElementById('xpPreview');
-  let h='';
-  if(xpObj.earned>0)h+=`<span style="color:#00ff88">+${xpObj.earned} XP</span>`;
-  if(xpObj.penalties>0)h+=` <span style="color:#ff4d6d">−${xpObj.penalties} penalty</span>`;
-  if(h!=='') h+=` <span style="color:${xpObj.net>=0?'#ffd700':'#ff4d6d'};font-weight:700">= ${xpObj.net} net</span>`;
-  xpPrev.innerHTML=h;
-
-  document.getElementById('wNum').textContent=water;
-  document.getElementById('wBar').style.width=Math.round(water/8*100)+'%';
-
-  const rank=getRank(seasonXP);
-  const nxtRank=getNextRank(seasonXP);
-  const level=getLevel(seasonXP);
-
-  document.getElementById('rName').textContent=rank.name;
-  document.getElementById('rName').style.color=rank.color;
-  if(rank.img&&rank.img!==''){
-    document.getElementById('rEmblem').innerHTML=`<img src="${rank.img}" style="width:160%;height:160%;object-fit:contain;transform:scale(2.4);position:absolute;">`;
-  }else{
-    document.getElementById('rEmblem').textContent=rank.emoji;
-  }
-  document.getElementById('rEmblem').style.borderColor=rank.color;
-  document.getElementById('rankGlow').style.background=rank.color;
-  document.getElementById('rankCard').style.borderColor=rank.color+'44';
-  document.getElementById('xpBig').textContent=seasonXP.toLocaleString();
-  document.getElementById('xpBig').style.color=rank.color;
-  document.getElementById('lvlTxt').textContent='Level '+level;
-  document.getElementById('totalXPDisp').textContent='Total: '+totalXP.toLocaleString()+' XP';
-
-  // Titles from missions
-  const titles=metaData.missionTitles||[];
-  document.getElementById('titlesDisp').innerHTML=titles.map(t=>`<span class="title-badge">🏅 ${t}</span>`).join('');
-
-  if(nxtRank){
-    const pct=Math.round((seasonXP-rank.xp)/(nxtRank.xp-rank.xp)*100);
-    document.getElementById('xpFill').style.width=pct+'%';
-    document.getElementById('xpFill').style.background=`linear-gradient(90deg,${rank.color},${nxtRank.color})`;
-    document.getElementById('xpBarPct').textContent=pct+'%';
-    document.getElementById('xpBarLbl').textContent='To '+nxtRank.name+' (Need '+nxtRank.xp.toLocaleString()+')';
-    document.getElementById('rXPneed').textContent=(nxtRank.xp-seasonXP).toLocaleString()+' XP → '+nxtRank.name;
-  }else{
-    document.getElementById('xpFill').style.width='100%';
-    document.getElementById('xpFill').style.background=rank.color;
-    document.getElementById('xpBarPct').textContent='MAX';
-    document.getElementById('xpBarLbl').textContent='GRANDMASTER — True Legend!';
-    document.getElementById('rXPneed').textContent='Peak rank achieved! 🔱';
-  }
-
-  if(seasonNum>1){
-    let lsXP=0;Object.keys(allDayData).forEach(k=>{if(k.startsWith('s'+(seasonNum-1)+'_')&&allDayData[k]?.xp)lsXP+=allDayData[k].xp;});
-    const lr=getRank(lsXP);
-    document.getElementById('sLastRank').textContent=lr.name;document.getElementById('sLastRank').style.color=lr.color;
-    document.getElementById('sLastXP').textContent=lsXP.toLocaleString();
-    document.getElementById('legacyEmoji').textContent=lsXP>0?' '+lr.emoji:'';
-  }else{document.getElementById('sLastRank').textContent='—';document.getElementById('sLastXP').textContent='—';}
-
-  document.getElementById('sSeasonXP').textContent=seasonXP.toLocaleString();
-  document.getElementById('pStreak').textContent=streak;
-  document.getElementById('pBest').textContent=best;
-  document.getElementById('pDays').textContent=days;
-}
-
-// ══ TAB SWITCH ══
-function switchTab(t){
-  ['health','study','nofap','missions','history','trophies'].forEach(x=>{
-    document.getElementById('panel-'+x).classList.remove('active');
-    document.getElementById('tab-'+x).classList.remove('active');
-  });
-  document.getElementById('panel-'+t).classList.add('active');
-  document.getElementById('tab-'+t).classList.add('active');
-  if(t==='nofap')renderNFGrid();
-  if(t==='history'){renderHistGrid();renderHallOfFame();renderEarnedMedals();}
-  if(t==='trophies')renderBadges();
-  if(t==='missions')renderMissions();
-}
-
-// ══ BADGES ══
-function checkBadges(hsc,totalLec){
-  if(!metaData.badges)metaData.badges={};
-  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0};
-  const s=metaData.runStreaks;const b=metaData.badges;let msg='';
-  
-  const add=(id,txt)=>{b[id]=(b[id]||0)+1;msg+=(msg?', ':'')+txt+' x'+b[id];};
-  
-  if(nfDays[todayKey]==='win')s.nf++;else s.nf=0;
-  if(s.nf>0&&s.nf%10===0)add('ironWill','🛡️ Iron Will');
-  if(s.nf>0&&s.nf%30===0)add('monkMode','🧘 Monk Mode');
-  if(s.nf>0&&s.nf%90===0)add('ascended','🔱 The Ascended');
-  
-  if(water>=8)s.water++;else s.water=0;
-  if(s.water>0&&s.water%7===0)add('aquaman','💧 Aquaman');
-  
-  if(exercises.size>0)s.ex++;else s.ex=0;
-  if(s.ex>0&&s.ex%10===0)add('ironBody','🏋️ Iron Body');
-  
-  // Strict streak: requires all 4 core habits to be perfect
-  if(hsc.total===4)s.hsc++;else s.hsc=0;
-  if(s.hsc>0&&s.hsc%21===0)add('unbreakable','👑 Unbreakable');
-  
-  if(totalLec>=4)add('lakshya','🎯 Lakshya Spartan');
-  
-  // WAKE UP BADGES
-  if(wakeup)s.wakeup++;else s.wakeup=0;
-  if(s.wakeup>0&&s.wakeup%7===0)add('wakeup7','🌅 Early Riser');
-  if(s.wakeup>0&&s.wakeup%15===0)add('wakeup15','☀️ Dawn Master');
-
-  // NO SHORTS BADGES
-  if(shorts)s.shorts++;else s.shorts=0;
-  if(s.shorts>0&&s.shorts%5===0)add('shorts5','🚫 Distraction Free');
-  if(s.shorts>0&&s.shorts%21===0)add('shorts21','🧠 Dopamine Detox');
-  if(s.shorts>0&&s.shorts%60===0)add('shorts60','👁️ Focus God');
-
-  let didRev=SUBJECTS.some(sub=>studyData[sub]?.rev);
-  if(didRev)s.rev++;else s.rev=0;
-  if(s.rev>0&&s.rev%3===0)add('chemFocus','🧪 Chemical Focus');
-  
-  let l7=totalLec;const dn=getDayNum(today);
-  if(dn){for(let i=1;i<7;i++){const r=allDayData[`s${seasonNum}_d${dn-i}`];if(r?.studyData)SUBJECTS.forEach(sub=>{l7+=(r.studyData[sub]?.lec||0);});}}
-if(!s.demonLast||(dn-s.demonLast>=7)){if(l7>=15){add('demon','🔥 Deep Work Demon');s.demonLast=dn;}}
-  
-  // 🪐 Naya 30 Days 100 Lecture Badge Logic YAHAN AAYEGA!
-  let l30 = totalLec;
-  for(let i=1; i<30; i++){
-    let pDate = new Date(today);
-    pDate.setDate(today.getDate() - i);
-    let k = getDayKey(pDate);
-    let r = allDayData[k];
-    if(r && r.studyData){
-      SUBJECTS.forEach(sub=>{ l30 += (r.studyData[sub]?.lec||0); });
-    }
-  }
-  if(l30 >= 100) add('lectureBeast', '🪐 Lecture Beast');
-
-  metaData.runStreaks=s;metaData.badges=b;
-  if(msg)alert('🎉 ACHIEVEMENT UNLOCKED!\n'+msg+'\n\nTrophy room mein check karo!');
-}
-function renderBadges(){
-  const g=document.getElementById('badgeGrid');g.innerHTML='';
-  const b=metaData.badges||{};
-  BADGE_DEFS.forEach(def=>{
-    const cnt=b[def.id]||0;
-    g.innerHTML+=`<div class="trp-card ${cnt>0?'unlocked':''}">
-      <div class="trp-badge">x${cnt}</div>
-      <div class="trp-ic">${def.icon}</div>
-      <div class="trp-ttl">${def.title}</div>
-      <div class="trp-sub">${def.desc}</div>
-    </div>`;
-  });
-}
-
-// ══ MISSIONS SYSTEM ══
-let selectedDays=3;
-function selDay(el){
-  document.querySelectorAll('.day-opt').forEach(e=>e.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedDays=parseInt(el.dataset.d);
-}
-
-function addMission(){
-  const name=document.getElementById('mName').value.trim();
-  const task=document.getElementById('mTask').value.trim();
-  const medal=document.getElementById('mMedal').value.trim()||'🎯';
-  const xp=Math.max(50,parseInt(document.getElementById('mXP').value)||300);
-  const title=document.getElementById('mTitle').value.trim();
-  const target=Math.max(1,parseInt(document.getElementById('mTarget').value)||1); 
-  
-  if(!name||!task){alert('Mission name aur task dono bharo!');return;}
-  if(!metaData.missions)metaData.missions=[];
-  
-  metaData.missions.push({
-    id:'m_'+Date.now(),
-    name,task,medal,xp,title,
-    target:target, 
-    days:selectedDays, 
-    startDay:dayNum||1,
-    endDay:(dayNum||1)+selectedDays-1,
-    current:0,
-    claimed:false,
-    createdAt:new Date().toISOString()
-  });
-  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  
-  document.getElementById('mName').value='';
-  document.getElementById('mTask').value='';
-  document.getElementById('mXP').value=300;
-  document.getElementById('mTitle').value='';
-  document.getElementById('mTarget').value=7; 
-  renderMissions();
-}
-
-function renderMissions(){
-  const c=document.getElementById('activeMissionsContainer');
-  if(!c)return;
-  c.innerHTML='';
-  const missions=metaData.missions||[];
-  if(!missions.length){
-    c.innerHTML=`<div style="text-align:center;padding:24px;font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted)">Koi mission nahi — upar se banao! ⬆️</div>`;
-    return;
-  }
-  const dn=dayNum||1;
-  missions.forEach((m,idx)=>{
-    const tar = m.target || m.days; 
-    const isExpired = dn > m.endDay && !m.claimed && m.current < tar;
-    const isDone = m.current >= tar;
-    const pct = Math.min(100, Math.round((m.current/tar)*100));
-    const daysLeft = Math.max(0, m.endDay - dn + 1);
-    
-    let cls='mis-card';
-    if(m.claimed)cls+=' claimed-mis';
-    else if(isDone)cls+=' done-mis';
-    else if(isExpired)cls+=' expired-mis';
-    else cls+=' active-mis';
-    
-    let btn='';
-    if(m.claimed) btn=`<button class="mis-btn done">✓ Claimed!</button>`;
-    else if(isDone) btn=`<button class="mis-btn clm" onclick="claimMission(${idx})">🎉 CLAIM ${m.medal} +${m.xp} XP</button>`;
-    else if(isExpired) btn=`<button class="mis-btn exp">❌ Time Up</button>`;
-    else btn=`
-      <div style="display:flex;gap:6px;">
-        <button class="mis-btn track" style="flex:1" onclick="trackMission(${idx}, 1)">+ Track Progress</button>
-        <button class="mis-btn" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 14px;" onclick="trackMission(${idx}, -1)">−1</button>
-      </div>
-    `;
-
-    c.innerHTML+=`<div class="${cls}">
-      <div class="mis-top">
-        <div class="mis-medal">${m.medal}</div>
-        <div class="mis-info">
-          <div class="mis-name">${m.name}</div>
-          <div class="mis-task">${m.task}</div>
-          <div class="mis-meta">
-            <span class="mis-tag" style="color:#7c6af7;border-color:#7c6af744">⏱️ ${m.days} Day Limit</span>
-            <span class="mis-tag" style="color:#ffd700;border-color:#ffd70044">+${m.xp} XP</span>
-            ${m.title?`<span class="mis-tag" style="color:#ff5fa0;border-color:#ff5fa044">🏅 "${m.title}"</span>`:''}
-            ${!m.claimed&&!isDone&&!isExpired?`<span class="mis-tag" style="color:#00c8ff;border-color:#00c8ff44">📅 ${daysLeft} days left</span>`:''}
-          </div>
+    <header>
+        <h1>Iterative Protocol</h1>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('lab')">🧪 The Lab (Daily)</button>
+            <button class="tab-btn" onclick="switchTab('engine')">📜 Active Rules</button>
+            <button class="tab-btn" onclick="switchTab('forge')">♻️ The Forge (Graveyard)</button>
         </div>
-        <div class="mis-right">
-          <div class="mis-xp">+${m.xp}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.5rem;color:var(--muted)">XP</div>
-          <button onclick="deleteMission(${idx})" style="margin-top:6px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;display:block;margin-left:auto;">🗑️</button>
+    </header>
+
+    <div class="container">
+        <!-- THE LAB: Daily Execution -->
+        <div id="lab" class="section active">
+            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px; color: var(--accent-cyan);">> Today's Execution Test</h2>
+            <div id="active-rules-list">
+                <!-- Injected via JS -->
+            </div>
         </div>
-      </div>
-      <div class="mis-prog-wrap">
-        <div class="mis-prog-top"><span>${m.current} / ${tar}</span><span>${pct}%</span></div>
-        <div class="mis-bar"><div class="mis-fill" style="width:${pct}%;background:${isDone?'#ffd700':m.claimed?'#00ff88':'#7c6af7'}"></div></div>
-      </div>
-      ${btn}
-    </div>`;
-  });
-}
 
-function trackMission(idx, val){
-  if(!metaData.missions||!metaData.missions[idx])return;
-  const m=metaData.missions[idx];
-  const tar = m.target || m.days;
-  m.current = Math.max(0, Math.min(tar, m.current + val));
-  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  renderMissions();
-}
+        <!-- RULE ENGINE -->
+        <div id="engine" class="section">
+            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px;">> System Directives</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Rules currently running in your core logic.</p>
+            <div id="engine-list"></div>
+        </div>
 
-function claimMission(idx){
-  if(!metaData.missions||!metaData.missions[idx])return;
-  const m=metaData.missions[idx];
-  if(m.claimed)return;
-  m.claimed=true;
-  metaData.missionBonusXP=(metaData.missionBonusXP||0)+m.xp;
-  if(!metaData.earnedMedals)metaData.earnedMedals=[];
-  metaData.earnedMedals.push({
-    medal:m.medal,name:m.name,xp:m.xp,title:m.title,
-    claimedDay:dayNum,claimedSeason:seasonNum,
-    claimedAt:new Date().toLocaleDateString('en-IN')
-  });
-  if(m.title){
-    if(!metaData.missionTitles)metaData.missionTitles=[];
-    if(!metaData.missionTitles.includes(m.title))metaData.missionTitles.push(m.title);
-  }
-  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  showOverlay(m.medal,'MISSION COMPLETE!','#ffd700',`+${m.xp} XP earned! ${m.title?'Title "'+m.title+'" mila!':''}`,null);
-  updAll();renderMissions();renderEarnedMedals();
-}
+        <!-- THE FORGE (Graveyard) -->
+        <div id="forge" class="section">
+            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px; color: var(--danger-red);">> Decompiled Directives</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Rules that failed the reality test. Awaiting upgrade.</p>
+            <div id="forge-list"></div>
+        </div>
+    </div>
 
-function deleteMission(idx){
-  if(!confirm('Delete this mission?'))return;
-  metaData.missions.splice(idx,1);
-  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  renderMissions();
-}
+    <!-- Upgrade Modal -->
+    <div class="modal-overlay" id="fail-modal">
+        <div class="modal">
+            <h2>PROTOCOL FAILURE DETECTED</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;" id="modal-rule-text"></p>
+            
+            <label style="font-size: 12px; color: var(--accent-cyan);">1. Why did it fail? (Reality Check)</label>
+            <textarea id="fail-reason" placeholder="e.g., Distracted, topic changed, tired..."></textarea>
+            
+            <label style="font-size: 12px; color: var(--accent-purple);">2. Upgrade to Next Version (The Fix)</label>
+            <textarea id="new-rule" placeholder="Write the smarter, upgraded rule here..."></textarea>
+            
+            <button class="btn btn-upgrade" onclick="processUpgrade()">Execute Upgrade (vX.X)</button>
+            <button class="btn" style="background: transparent; color: white; width: 100%; margin-top: 10px;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
 
-function renderEarnedMedals(){
-  const c=document.getElementById('earnedMedalsContainer');if(!c)return;
-  const medals=metaData.earnedMedals||[];
-  if(!medals.length){
-    c.innerHTML=`<div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;padding:12px">Koi mission complete karo — medal yahan dikhega!</div>`;
-    return;
-  }
-  c.innerHTML='<div class="medal-row">'+medals.map(m=>`
-    <div class="medal-badge">
-      <span style="font-size:1.4rem">${m.medal}</span>
-      <div>
-        <div style="font-weight:700;color:var(--text)">${m.name}</div>
-        <div style="font-size:.52rem;color:var(--muted)">Day ${m.claimedDay} · S${m.claimedSeason} · +${m.xp} XP${m.title?' · "'+m.title+'"':''}</div>
-      </div>
-    </div>`).join('')+'</div>';
-}
+    <script>
+        // Initial Database Mockup
+        let rules = [
+            {
+                id: "C1",
+                category: "Communication",
+                text: "Listen 70%, Talk 30%.",
+                version: "1.0",
+                status: "active" // active, failed
+            },
+            {
+                id: "C2",
+                category: "Communication",
+                text: "Wait for everyone to finish, then summarize and answer.",
+                version: "1.0",
+                status: "active"
+            },
+            {
+                id: "S1",
+                category: "Study",
+                text: "Keep phone in another room during NCERT reading.",
+                version: "1.0",
+                status: "active"
+            }
+        ];
 
-// ══ OVERLAY ══
-function showOverlay(emoji,title,color,sub,callback){
-  document.getElementById('lvlEm').textContent=emoji;
-  document.getElementById('lvlTi').textContent=title;
-  document.getElementById('lvlTi').style.color=color;
-  document.getElementById('lvlSu').textContent=sub;
-  const btn=document.getElementById('lvlClBtn');
-  btn.onclick=()=>{document.getElementById('lvlOver').classList.remove('show');if(callback)callback();};
-  document.getElementById('lvlOver').classList.add('show');
-}
+        let currentFailId = null;
 
-// ══ SAVE ══
-async function saveAll(){
-  if(!todayKey){document.getElementById('saveMsg').textContent='Season not started!';return;}
-  const hsc=calcHealth();
-  const totalLec=SUBJECTS.reduce((a,s)=>a+(studyData[s]?.lec||0),0);
-  const xpObj=calcTodayXP(hsc);
-  const todayXP=xpObj.net;
-  const prevSeasonXP=calcSeasonXP(allDayData[todayKey]?.xp||0);
-  const prevRank=getRank(prevSeasonXP);
-  const prevLevel=getLevel(prevSeasonXP);
-  
-  checkBadges(hsc,totalLec);
-  
-  const rec={
-    water, wakeup, exercises:[...exercises], shorts, minds:[...minds], mood,
-    dietJunk, dietSugar, // 👈 YAHAN TERA NAYA DIET DATA ADD HO GAYA HAI
-    studyData:{...studyData}, nofap:nfDays[todayKey]||null,
-    score:hsc.total, // Now saves 0 to 5
-    xp:todayXP, xpEarned:xpObj.earned, xpPenalty:xpObj.penalties,
-    dayNum, seasonNum,
-    savedAt:new Date().toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})
-  };
-  
-  allDayData[todayKey]=rec;
-  localStorage.setItem('rpg_days_v2',JSON.stringify(allDayData));
-  localStorage.setItem('rpg_meta_v2',JSON.stringify(metaData));
-  localStorage.setItem('rpg_nf_v2',JSON.stringify(nfDays));
-  
-  const newSeasonXP=calcSeasonXP(todayXP);
-  const newRank=getRank(newSeasonXP);
-  const newLevel=getLevel(newSeasonXP);
-  
-  updAll();renderNFGrid();renderHistGrid();renderBadges();renderHallOfFame();
-  
-  const msg=document.getElementById('saveMsg');
-  const penMsg=xpObj.penalties>0?` (−${xpObj.penalties} penalty)`:'';
-  msg.textContent=`${xpObj.net>=0?'⚡ +':'💀 '}${xpObj.net} XP${penMsg} · Day ${dayNum}/90`;
-  msg.style.color=xpObj.net>=0?'#00ff88':'#ff4d6d';
-  setTimeout(()=>msg.textContent='',5000);
-  
-  if(newRank.name!==prevRank.name){
-    showOverlay(newRank.emoji,'RANK UP! '+newRank.name,newRank.color,'You reached '+newRank.name+'! Keep going! '+newRank.note,
-      newLevel>prevLevel?()=>showOverlay('📈','LEVEL UP!','#00ff88','You reached Level '+newLevel+'! Keep grinding!'):null);
-  }else if(newLevel>prevLevel){
-    showOverlay('📈','LEVEL UP!','#00ff88','You reached Level '+newLevel+'! Keep grinding!');
-  }
-}
+        function renderApp() {
+            const labList = document.getElementById('active-rules-list');
+            const engineList = document.getElementById('engine-list');
+            const forgeList = document.getElementById('forge-list');
 
-// ══ HISTORY ══
-// Updated for new 0-4 strict score, with backward compatibility for old % scores
-function getLvC(sc){
-  if(sc > 10) return sc>=90?'sg':sc>=80?'sgo':sc>=70?'sa':'sl'; 
-  return sc===4?'sg':sc===3?'sgo':sc===2?'sa':'sl';
-}
-function getLvCol(sc){
-  if(sc > 10) return sc>=90?'#b44fff':sc>=80?'#00ff88':sc>=70?'#ffd700':'#ff4d6d';
-  return sc===4?'#b44fff':sc===3?'#00ff88':sc===2?'#ffd700':'#ff4d6d';
-}
-function getLvTxt(sc){
-  if(sc > 10) return sc>=90?'⚡ GOD LEVEL':sc>=80?'🟢 Good Level':sc>=70?'🟡 Average':'🔴 Low Level';
-  return sc===4?'⚡ FLAWLESS (4/4)':sc===3?'🟢 STRONG (3/4)':sc===2?'🟡 AVERAGE (2/4)':'🔴 WEAK (0-1/4)';
-}
+            labList.innerHTML = ''; engineList.innerHTML = ''; forgeList.innerHTML = '';
 
-function popHistSelect(){
-  const sel=document.getElementById('histSeasonSel');sel.innerHTML='';
-  for(let i=seasonNum;i>=1;i--)sel.innerHTML+=`<option value="${i}">Season ${i}</option>`;
-  sel.value=seasonNum;
-}
-function renderHallOfFame(){
-  const hof=document.getElementById('hallOfFameList');if(!hof)return;hof.innerHTML='';
-  if(seasonNum===1){hof.innerHTML=`<div style="text-align:center;color:var(--muted);font-family:'Space Mono',monospace;font-size:.6rem;padding:16px">Season 1 chal raha hai. Legend banna baaki hai!</div>`;return;}
-  for(let i=seasonNum-1;i>=1;i--){
-    let sXP=0;Object.keys(allDayData).forEach(k=>{if(k.startsWith('s'+i+'_')&&allDayData[k]?.xp)sXP+=allDayData[k].xp;});
-    const r=getRank(sXP);
-    hof.innerHTML+=`<div class="hof-row">
-      <div><div style="font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;">SEASON ${i}</div><div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);">${sXP.toLocaleString()} XP</div></div>
-      <div style="text-align:right;"><div style="font-size:1.4rem;">${r.emoji}</div><div style="font-family:'Space Mono',monospace;font-size:.55rem;color:${r.color};">${r.name}</div></div>
-    </div>`;
-  }
-}
-function renderHistGrid(sNum=seasonNum){
-  const g=document.getElementById('histGrid');if(!g)return;g.innerHTML='';
-  const isCur=sNum===seasonNum;const todayDN=getDayNum(today)||0;
-  for(let i=1;i<=90;i++){
-    const key=`s${sNum}_d${i}`;
-    const isTod=isCur&&i===todayDN;const isFut=isCur&&i>todayDN;
-    const rec=allDayData[key];const box=document.createElement('div');
-    const dayOff=(sNum-1)*90+(i-1);const d=new Date(SEASON_START);d.setDate(SEASON_START.getDate()+dayOff);
-    if(isFut){box.className='hbox emp';box.innerHTML=`<div class="dn">${i}</div><div class="ds" style="color:var(--border)">·</div>`;}
-    else if(rec){
-      box.className='hbox '+getLvC(rec.score)+(isTod?' tod':'');
-      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:${getLvCol(rec.score)}">${rec.score>10?rec.score+'%':rec.score+'/4'}</div>`;
-      box.onclick=()=>openPop(key,rec,d,i);
-    }else{
-      box.className='hbox'+(isTod?' tod':' emp');
-      box.innerHTML=`<div class="dn">D${i}</div><div class="ds" style="color:var(--muted)">—</div>`;
-      if(isTod)box.classList.remove('emp');
-    }
-    g.appendChild(box);
-  }
-}
+            rules.forEach(rule => {
+                if(rule.status === 'active') {
+                    // Render for Lab
+                    labList.innerHTML += `
+                        <div class="rule-card">
+                            <div class="rule-info">
+                                <h3>${rule.text}</h3>
+                                <div class="rule-meta">
+                                    <span class="version-tag">v${rule.version}</span>
+                                    <span>[${rule.category}]</span>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-pass" onclick="alert('Rule Validated. Good job.')">PASS</button>
+                                <button class="btn btn-fail" onclick="openFailModal('${rule.id}')">FAIL</button>
+                            </div>
+                        </div>
+                    `;
+                    // Render for Engine
+                    engineList.innerHTML += `
+                        <div class="rule-card" style="border-left: 3px solid var(--accent-cyan);">
+                            <div class="rule-info">
+                                <h3>${rule.text}</h3>
+                                <div class="rule-meta">
+                                    <span class="version-tag">v${rule.version}</span>
+                                    <span>[${rule.category}]</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (rule.status === 'failed') {
+                    // Render for Forge
+                    forgeList.innerHTML += `
+                        <div class="rule-card" style="border-left: 3px solid var(--danger-red); opacity: 0.7;">
+                            <div class="rule-info">
+                                <h3><del>${rule.text}</del></h3>
+                                <div class="rule-meta" style="margin-top: 8px;">
+                                    <span style="color: var(--danger-red);">Cause of Death:</span> ${rule.failReason}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
 
-// ══ POPUP ══
-const moodE=['','😞','😐','🙂','😄','🤩'];
-function openPop(key,r,dateObj,dayN){
-  const ds=dateObj.toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('popDate').textContent=`Day ${dayN} · ${ds}`;
-  const ps=document.getElementById('popScore');
-  ps.textContent=r.score>10 ? r.score+'%' : r.score+'/4 Tasks';
-  ps.style.color=getLvCol(r.score);
-  const pl=document.getElementById('popLv');pl.textContent=getLvTxt(r.score)+' · '+(r.xp||0)+' XP';pl.style.color=getLvCol(r.score);
-  
-  const ex=r.exercises?.length?r.exercises.join(', '):'koi nahi';
-  const md=r.minds?.length?r.minds.join(', '):'koi nahi';
-  
-  // Backward compatibility for popup
-  const wStr = r.wakeup !== undefined ? (r.wakeup ? 'Haan (+30 XP)' : 'Nahi (-30 XP)') : (r.sleep ? r.sleep+'h' : '—');
-  const shStr = r.shorts !== undefined ? (r.shorts ? 'Haan (+25 XP)' : 'Nahi (-25 XP)') : (r.foods ? r.foods.join(', ') : '—');
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
 
-  let studyStr='';
-  if(r.studyData)SUBJECTS.forEach(s=>{const d=r.studyData[s];if(d?.lec>0||d?.hrs>0)studyStr+=SUBJ_LABELS[s]+': '+(d.lec?d.lec+'lec ':'')+(d.hrs?d.hrs+'h ':'')+(d.rev?'+rev':'')+' | ';});
-  
-  document.getElementById('popRows').innerHTML=`
-    <div class="pr"><span>⏰</span><span class="prlbl">Wake Up (1st Alarm)</span><span class="prval" style="color:var(--wakeup)">${wStr}</span></div>
-    <div class="pr"><span>💧</span><span class="prlbl">Paani</span><span class="prval" style="color:var(--water)">${r.water||0}/8</span></div>
-    <div class="pr"><span>🏃</span><span class="prlbl">Exercise</span><span class="prval" style="color:var(--exercise)">${ex}</span></div>
-    <div class="pr"><span>🚫</span><span class="prlbl">No YT Shorts</span><span class="prval" style="color:var(--shorts)">${shStr}</span></div>
-    <div class="pr"><span>🧠</span><span class="prlbl">Mind</span><span class="prval" style="color:var(--mind)">${md}</span></div>
-    <div class="pr"><span>📚</span><span class="prlbl">Study</span><span class="prval" style="color:var(--study)">${studyStr||'koi nahi'}</span></div>
-    <div class="pr"><span>${r.nofap==='win'?'✕':'0'}</span><span class="prlbl">NoFap</span><span class="prval" style="color:${r.nofap==='win'?'#00ff88':'#ff4d6d'}">${r.nofap||'—'}</span></div>
-    <div class="pr"><span>${r.mood?moodE[r.mood]:'—'}</span><span class="prlbl">Mood</span><span class="prval">${r.mood?moodT[r.mood]:'—'}</span></div>
-    ${r.xpPenalty>0?`<div class="pr"><span>💀</span><span class="prlbl">Penalty</span><span class="prval" style="color:#ff4d6d">−${r.xpPenalty} XP</span></div>`:''}
-  `;
-  document.getElementById('dayPopup').classList.add('open');
-}
-function closePop(e){if(e.target.id==='dayPopup')document.getElementById('dayPopup').classList.remove('open');}
+        function openFailModal(id) {
+            currentFailId = id;
+            const rule = rules.find(r => r.id === id);
+            document.getElementById('modal-rule-text').innerText = `"${rule.text}"`;
+            document.getElementById('fail-modal').style.display = 'flex';
+        }
 
-// ══ BACKUP ══
-function downloadBackup(){
-  const data={days:localStorage.getItem('rpg_days_v2')||'{}',nf:localStorage.getItem('rpg_nf_v2')||'{}',meta:localStorage.getItem('rpg_meta_v2')||'{}'};
-  const blob=new Blob([JSON.stringify(data)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='LifeRPG_Backup.json';a.click();URL.revokeObjectURL(url);
-}
-function uploadBackup(event){
-  const file=event.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      const data=JSON.parse(e.target.result);
-      if(data.days)localStorage.setItem('rpg_days_v2',data.days);
-      if(data.nf)localStorage.setItem('rpg_nf_v2',data.nf);
-      if(data.meta)localStorage.setItem('rpg_meta_v2',data.meta);
-      alert('🔥 Backup Restore Ho Gaya! Page refresh ho raha hai...');
-      location.reload();
-    }catch(err){alert('❌ Error! Sahi LifeRPG_Backup.json select karo.');}
-  };
-  reader.readAsText(file);
-}
+        function closeModal() {
+            document.getElementById('fail-modal').style.display = 'none';
+            document.getElementById('fail-reason').value = '';
+            document.getElementById('new-rule').value = '';
+        }
 
-// ══ LOAD TODAY ══
-function loadToday(){
-  const rec=allDayData[todayKey];if(!rec)return;
-  water=rec.water||0;
-  dietJunk = rec.dietJunk || false;
-  dietSugar = rec.dietSugar || false;
-  if(dietJunk) document.getElementById('diet-junk').classList.add('on');
-  if(dietSugar) document.getElementById('diet-sugar').classList.add('on');
-  if(dietJunk && dietSugar) { 
-    const s = document.getElementById('dietSt'); s.textContent = 'Diet Perfect! +15 XP'; s.style.color = '#00ff88';
-  }
-  wakeup=rec.wakeup||false;
-  exercises=new Set(rec.exercises||[]);
-  shorts=rec.shorts||false;
-  minds=new Set(rec.minds||[]);
-  mood=rec.mood||0;
-  
-  if(rec.studyData)SUBJECTS.forEach(s=>{studyData[s]={...{lec:0,hrs:0,rev:false},...rec.studyData[s]};});
-  
-  if(wakeup) document.getElementById('tog-wakeup').classList.add('on');
-  if(shorts) document.getElementById('tog-shorts').classList.add('on');
-  
-  exercises.forEach(k=>{const el=document.getElementById('ex-'+k);if(el)el.classList.add('on');});
-  minds.forEach(k=>{const el=document.getElementById('mind-'+k);if(el)el.classList.add('on');});
-  
- document.getElementById('mindCnt').textContent=minds.size+'/2';
-  if(minds.size>=2){const s=document.getElementById('mindSt');s.textContent='Target done! +30 XP';s.style.color='var(--mind)';}
-  else if(minds.size===1){const s=document.getElementById('mindSt');s.textContent='1 aur karo!';s.style.color='var(--muted)';}
-  if(mood>0)setMood(mood);
-  
-  SUBJECTS.forEach(s=>{
-    updStudyUI(s);
-    document.getElementById('ln-'+s).textContent=studyData[s]?.lec||0;
-    document.getElementById('hr-'+s).textContent=studyData[s]?.hrs||0;
-    if(studyData[s]?.rev)document.getElementById('rev-'+s).classList.add('on');
-  });
-  updStudyTotals();renderWDots();
-}
+        function processUpgrade() {
+            const reason = document.getElementById('fail-reason').value;
+            const newText = document.getElementById('new-rule').value;
 
-// ══ INIT ══
-function initApp(){
-  allDayData=JSON.parse(localStorage.getItem('rpg_days_v2')||'{}');
-  nfDays=JSON.parse(localStorage.getItem('rpg_nf_v2')||'{}');
-  metaData=JSON.parse(localStorage.getItem('rpg_meta_v2')||'{}');
-  if(!metaData.badges)metaData.badges={};
-  if(!metaData.runStreaks)metaData.runStreaks={nf:0,water:0,ex:0,hsc:0,rev:0,wakeup:0,shorts:0};
-  if(!metaData.missions)metaData.missions=[];
-  if(!metaData.earnedMedals)metaData.earnedMedals=[];
-  
-  loadToday();updAll();renderNFGrid();popHistSelect();renderHistGrid();renderBadges();renderHallOfFame();renderMissions();
-}
+            if(!reason || !newText) return alert("Fill both fields to upgrade protocol.");
 
-buildStudyGrid();
-renderWDots();
-initApp();
-</script>
+            // 1. Move old rule to failed state
+            const oldRuleIndex = rules.findIndex(r => r.id === currentFailId);
+            rules[oldRuleIndex].status = 'failed';
+            rules[oldRuleIndex].failReason = reason;
+
+            // 2. Create new version
+            let oldVer = parseFloat(rules[oldRuleIndex].version);
+            let newVer = (oldVer + 0.1).toFixed(1);
+
+            rules.push({
+                id: currentFailId + "_upg_" + Date.now(),
+                category: rules[oldRuleIndex].category,
+                text: newText,
+                version: newVer,
+                status: 'active'
+            });
+
+            closeModal();
+            renderApp();
+            
+            // Switch to Forge to show the dramatic effect
+            switchTab('forge');
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+        }
+
+        // Initialize
+        renderApp();
+    </script>
 </body>
 </html>
