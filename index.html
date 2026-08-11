@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tejas | Command Center</title>
+    <title>Tejas | Command Center v1.1</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
 
         header {
             width: 100%;
-            padding: 30px 20px;
+            padding: 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -40,7 +40,7 @@
 
         h1 {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 24px;
+            font-size: 22px;
             letter-spacing: 2px;
             text-transform: uppercase;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
@@ -50,20 +50,21 @@
 
         .nav-tabs {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-muted);
-            padding: 8px 20px;
+            padding: 8px 15px;
             border-radius: 20px;
             cursor: pointer;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 11px;
             transition: all 0.3s ease;
         }
 
@@ -73,18 +74,32 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
 
+        .add-rule-btn {
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid var(--accent-purple);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            margin: 20px 0;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .add-rule-btn:hover {
+            background: var(--accent-purple);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+
         .container {
             width: 90%;
-            max-width: 800px;
-            margin-top: 30px;
+            max-width: 600px;
+            margin-top: 10px;
             padding-bottom: 50px;
         }
 
-        .section {
-            display: none;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
+        .section { display: none; animation: fadeIn 0.4s ease forwards; }
         .section.active { display: block; }
 
         @keyframes fadeIn {
@@ -92,77 +107,40 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Glassmorphism Cards */
         .rule-card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 15px;
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .rule-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .rule-info h3 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             margin-bottom: 5px;
         }
 
         .rule-meta {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             display: flex;
             gap: 10px;
         }
 
-        .version-tag {
-            color: var(--accent-purple);
-            background: rgba(138, 43, 226, 0.1);
+        .category-tag {
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.1);
             padding: 2px 6px;
             border-radius: 4px;
         }
 
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            transition: 0.3s;
-        }
-
-        .btn-pass {
-            background: rgba(0, 255, 102, 0.1);
-            color: var(--success-green);
-            border: 1px solid rgba(0, 255, 102, 0.2);
-        }
-        .btn-pass:hover { background: var(--success-green); color: #000; }
-
-        .btn-fail {
-            background: rgba(255, 51, 102, 0.1);
-            color: var(--danger-red);
-            border: 1px solid rgba(255, 51, 102, 0.2);
-        }
-        .btn-fail:hover { background: var(--danger-red); color: #fff; box-shadow: 0 0 15px var(--danger-red); }
-
-        /* Modal for Fail Upgrade */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -176,17 +154,17 @@
 
         .modal {
             background: #111;
-            border: 1px solid var(--danger-red);
-            padding: 30px;
+            border: 1px solid var(--accent-purple);
+            padding: 25px;
             border-radius: 12px;
             width: 90%;
-            max-width: 500px;
-            box-shadow: 0 0 30px rgba(255, 51, 102, 0.2);
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.2);
         }
 
-        .modal h2 { margin-bottom: 15px; color: var(--danger-red); font-family: 'JetBrains Mono'; }
+        .modal h2 { margin-bottom: 15px; font-size: 16px; font-family: 'JetBrains Mono'; color: var(--accent-cyan); }
         
-        textarea {
+        select, textarea {
             width: 100%;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -195,14 +173,15 @@
             border-radius: 6px;
             margin-bottom: 15px;
             font-family: 'Poppins';
-            resize: none;
-            min-height: 80px;
         }
-
-        textarea:focus { outline: none; border-color: var(--accent-cyan); }
         
-        .btn-upgrade { background: var(--accent-cyan); color: #000; width: 100%; padding: 12px; }
+        textarea { resize: none; min-height: 80px; }
+        select:focus, textarea:focus { outline: none; border-color: var(--accent-cyan); }
+        
+        .btn-submit { background: var(--accent-cyan); color: #000; width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-cancel { background: transparent; color: #888; width: 100%; padding: 10px; border: none; cursor: pointer; margin-top: 5px; }
 
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 30px; font-family: 'JetBrains Mono'; }
     </style>
 </head>
 <body>
@@ -210,132 +189,106 @@
     <header>
         <h1>Iterative Protocol</h1>
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('lab')">🧪 The Lab (Daily)</button>
+            <button class="tab-btn active" onclick="switchTab('lab')">🧪 Daily Lab</button>
             <button class="tab-btn" onclick="switchTab('engine')">📜 Active Rules</button>
-            <button class="tab-btn" onclick="switchTab('forge')">♻️ The Forge (Graveyard)</button>
+            <button class="tab-btn" onclick="switchTab('forge')">♻️ Graveyard</button>
         </div>
     </header>
 
     <div class="container">
+        <!-- Add Rule Button -->
+        <button class="add-rule-btn" onclick="openAddModal()">+ CREATE NEW RULE</button>
+
         <!-- THE LAB: Daily Execution -->
         <div id="lab" class="section active">
-            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px; color: var(--accent-cyan);">> Today's Execution Test</h2>
-            <div id="active-rules-list">
-                <!-- Injected via JS -->
-            </div>
+            <div id="lab-list"></div>
         </div>
 
         <!-- RULE ENGINE -->
         <div id="engine" class="section">
-            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px;">> System Directives</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Rules currently running in your core logic.</p>
             <div id="engine-list"></div>
         </div>
 
-        <!-- THE FORGE (Graveyard) -->
+        <!-- THE FORGE -->
         <div id="forge" class="section">
-            <h2 style="margin-bottom: 20px; font-weight: 300; font-size: 18px; color: var(--danger-red);">> Decompiled Directives</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Rules that failed the reality test. Awaiting upgrade.</p>
             <div id="forge-list"></div>
         </div>
     </div>
 
-    <!-- Upgrade Modal -->
-    <div class="modal-overlay" id="fail-modal">
+    <!-- Create Rule Modal -->
+    <div class="modal-overlay" id="add-modal">
         <div class="modal">
-            <h2>PROTOCOL FAILURE DETECTED</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 10px;" id="modal-rule-text"></p>
+            <h2>CREATE NEW RULE</h2>
             
-            <label style="font-size: 12px; color: var(--accent-cyan);">1. Why did it fail? (Reality Check)</label>
-            <textarea id="fail-reason" placeholder="e.g., Distracted, topic changed, tired..."></textarea>
+            <label style="font-size: 11px; color: var(--text-muted);">Select Category</label>
+            <select id="rule-category">
+                <option value="Study">📚 Study</option>
+                <option value="Mind">🧠 Mind</option>
+                <option value="Exercise">💪 Exercise</option>
+                <option value="Schedule">⏱️ Schedule</option>
+                <option value="Communication">🗣️ Communication</option>
+                <option value="Hair & Skin Care">🧴 Hair or Skin Care</option>
+                <option value="Voice">🎙️ Voice</option>
+            </select>
             
-            <label style="font-size: 12px; color: var(--accent-purple);">2. Upgrade to Next Version (The Fix)</label>
-            <textarea id="new-rule" placeholder="Write the smarter, upgraded rule here..."></textarea>
+            <label style="font-size: 11px; color: var(--text-muted);">Define the Rule</label>
+            <textarea id="rule-text" placeholder="e.g. Listen 70%, Talk 30%..."></textarea>
             
-            <button class="btn btn-upgrade" onclick="processUpgrade()">Execute Upgrade (vX.X)</button>
-            <button class="btn" style="background: transparent; color: white; width: 100%; margin-top: 10px;" onclick="closeModal()">Cancel</button>
+            <button class="btn-submit" onclick="saveNewRule()">DEPLOY RULE v1.0</button>
+            <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
         </div>
     </div>
 
     <script>
-        // Initial Database Mockup
-        let rules = [
-            {
-                id: "C1",
-                category: "Communication",
-                text: "Listen 70%, Talk 30%.",
-                version: "1.0",
-                status: "active" // active, failed
-            },
-            {
-                id: "C2",
-                category: "Communication",
-                text: "Wait for everyone to finish, then summarize and answer.",
-                version: "1.0",
-                status: "active"
-            },
-            {
-                id: "S1",
-                category: "Study",
-                text: "Keep phone in another room during NCERT reading.",
-                version: "1.0",
-                status: "active"
-            }
-        ];
-
-        let currentFailId = null;
+        // Start with an empty list. No hardcoded rules!
+        let rules = [];
 
         function renderApp() {
-            const labList = document.getElementById('active-rules-list');
+            const labList = document.getElementById('lab-list');
             const engineList = document.getElementById('engine-list');
             const forgeList = document.getElementById('forge-list');
 
             labList.innerHTML = ''; engineList.innerHTML = ''; forgeList.innerHTML = '';
 
+            let hasActive = false;
+
             rules.forEach(rule => {
                 if(rule.status === 'active') {
+                    hasActive = true;
                     // Render for Lab
                     labList.innerHTML += `
-                        <div class="rule-card">
+                        <div class="rule-card" style="border-left: 2px solid var(--accent-purple);">
                             <div class="rule-info">
                                 <h3>${rule.text}</h3>
                                 <div class="rule-meta">
-                                    <span class="version-tag">v${rule.version}</span>
-                                    <span>[${rule.category}]</span>
+                                    <span class="category-tag">${rule.category}</span>
+                                    <span>v${rule.version}</span>
                                 </div>
-                            </div>
-                            <div class="actions">
-                                <button class="btn btn-pass" onclick="alert('Rule Validated. Good job.')">PASS</button>
-                                <button class="btn btn-fail" onclick="openFailModal('${rule.id}')">FAIL</button>
                             </div>
                         </div>
                     `;
                     // Render for Engine
                     engineList.innerHTML += `
-                        <div class="rule-card" style="border-left: 3px solid var(--accent-cyan);">
+                        <div class="rule-card" style="border-left: 2px solid var(--accent-cyan);">
                             <div class="rule-info">
                                 <h3>${rule.text}</h3>
                                 <div class="rule-meta">
-                                    <span class="version-tag">v${rule.version}</span>
-                                    <span>[${rule.category}]</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (rule.status === 'failed') {
-                    // Render for Forge
-                    forgeList.innerHTML += `
-                        <div class="rule-card" style="border-left: 3px solid var(--danger-red); opacity: 0.7;">
-                            <div class="rule-info">
-                                <h3><del>${rule.text}</del></h3>
-                                <div class="rule-meta" style="margin-top: 8px;">
-                                    <span style="color: var(--danger-red);">Cause of Death:</span> ${rule.failReason}
+                                    <span class="category-tag">${rule.category}</span>
+                                    <span>v${rule.version}</span>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
             });
+
+            if(!hasActive) {
+                labList.innerHTML = `<div class="empty-state">No rules active. Click '+ CREATE NEW RULE' to start building your system.</div>`;
+                engineList.innerHTML = `<div class="empty-state">System empty.</div>`;
+            }
+            if(forgeList.innerHTML === '') {
+                forgeList.innerHTML = `<div class="empty-state">Graveyard is empty. No failed rules yet.</div>`;
+            }
         }
 
         function switchTab(tabId) {
@@ -346,52 +299,37 @@
             event.target.classList.add('active');
         }
 
-        function openFailModal(id) {
-            currentFailId = id;
-            const rule = rules.find(r => r.id === id);
-            document.getElementById('modal-rule-text').innerText = `"${rule.text}"`;
-            document.getElementById('fail-modal').style.display = 'flex';
+        function openAddModal() {
+            document.getElementById('add-modal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('fail-modal').style.display = 'none';
-            document.getElementById('fail-reason').value = '';
-            document.getElementById('new-rule').value = '';
+        function closeAddModal() {
+            document.getElementById('add-modal').style.display = 'none';
+            document.getElementById('rule-text').value = '';
         }
 
-        function processUpgrade() {
-            const reason = document.getElementById('fail-reason').value;
-            const newText = document.getElementById('new-rule').value;
+        function saveNewRule() {
+            const category = document.getElementById('rule-category').value;
+            const text = document.getElementById('rule-text').value;
 
-            if(!reason || !newText) return alert("Fill both fields to upgrade protocol.");
-
-            // 1. Move old rule to failed state
-            const oldRuleIndex = rules.findIndex(r => r.id === currentFailId);
-            rules[oldRuleIndex].status = 'failed';
-            rules[oldRuleIndex].failReason = reason;
-
-            // 2. Create new version
-            let oldVer = parseFloat(rules[oldRuleIndex].version);
-            let newVer = (oldVer + 0.1).toFixed(1);
+            if(!text.trim()) {
+                alert("Bhai, rule toh likh!");
+                return;
+            }
 
             rules.push({
-                id: currentFailId + "_upg_" + Date.now(),
-                category: rules[oldRuleIndex].category,
-                text: newText,
-                version: newVer,
+                id: "R_" + Date.now(),
+                category: category,
+                text: text,
+                version: "1.0",
                 status: 'active'
             });
 
-            closeModal();
+            closeAddModal();
             renderApp();
-            
-            // Switch to Forge to show the dramatic effect
-            switchTab('forge');
-            document.querySelectorAll('.tab-btn')[2].classList.add('active');
-            document.querySelectorAll('.tab-btn')[0].classList.remove('active');
         }
 
-        // Initialize
+        // Initialize empty state
         renderApp();
     </script>
 </body>
